@@ -103,22 +103,22 @@ export function DigitalCraftPage() {
                     filter: 'drop-shadow(0 0 12px rgba(29, 28, 25, 0.25))'
                   }}
                 >
-                  <p className="text-white/50 text-xs font-bold tracking-[0.35em] uppercase mb-4">
-                    Digital Craft Specialist
-                  </p>
-                  <h1
-                    className="text-white leading-tight mb-2"
-                    style={{ fontFamily: 'Georgia, serif', fontSize: 'clamp(2rem, 5vw, 3.5rem)' }}
-                  >
-                    Production Precision
-                  </h1>
-                  <p className="text-white/75 mb-5" style={{ fontSize: 'clamp(1rem, 2vw, 1.25rem)' }}>
-                    Design & Print Solutions
-                  </p>
-                  <p className="text-white/55 text-sm md:text-base max-w-sm leading-relaxed">
-                    Turning creative concepts into production-ready assets.<br />
-                    Print optimization. File cleanup. Design solutions.
-                  </p>
+<p className="text-white/50 text-xs font-bold tracking-[0.35em] uppercase mb-4">
+  DIGITAL CRAFTSMANSHIP
+</p>
+
+<h1
+  className="text-white leading-tight mb-3"
+  style={{ fontFamily: 'Georgia, serif', fontSize: 'clamp(2rem, 5vw, 3.5rem)' }}
+>
+  Designing for production quality
+</h1>
+
+<p className="text-white/60 text-sm md:text-base max-w-sm leading-relaxed">
+  From concept to production
+  <br />
+  Thoughtfully designed and executed
+</p>
                 </motion.div>
               </div>
             </div>
