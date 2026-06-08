@@ -2,7 +2,7 @@ import React from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { ImageWithFallback } from './figma/ImageWithFallback';
 import logImg from '../../imports/log.png';
-
+import profileImg from '../../imports/keem-profile.png';
 export function NavBar() {
   const location = useLocation();
   const isFashion =
@@ -10,11 +10,11 @@ export function NavBar() {
 
   return (
     <div className="flex items-center justify-center gap-5 pt-5 pb-3">
-      <ImageWithFallback
-        src={logImg}
-        alt="KEEMVERSE"
-        className="h-7 w-auto object-contain opacity-70"
-      />
+ <ImageWithFallback
+  src={profileImg}
+  alt="Keem"
+  className="h-13 w-13 rounded-full object-cover border border-white shadow-lg"
+/>
 
       <div className="bg-white/90 backdrop-blur-md p-1.5 rounded-full flex shadow-lg border border-stone-200 relative">
         <div
@@ -48,6 +48,12 @@ export function NavBar() {
           DIGITAL CRAFT
         </NavLink>
       </div>
+
+      <ImageWithFallback
+        src={logImg}
+        alt="KEEMVERSE"
+        className="h-14 w-auto object-contain opacity-90"
+      />
     </div>
   );
 }
