@@ -2,7 +2,7 @@ import React from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { ImageWithFallback } from './figma/ImageWithFallback';
 import logImg from '../../imports/log.png';
-import profileImg from '../../imports/keem-profile.png';
+import profileImg from '../../imports/keem-profile.jpg';
 export function NavBar() {
   const location = useLocation();
   const isFashion =
