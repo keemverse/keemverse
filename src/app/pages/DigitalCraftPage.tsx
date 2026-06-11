@@ -123,49 +123,42 @@ export function DigitalCraftPage() {
               </div>
             </div>
           </section>
-
-          {/* ── WHO I AM ── */}
-          <section className="mt-24">
-            <SectionDivider label="Who I Am" />
+          <section className="mt-16">
             <div className="max-w-xl mx-auto text-center">
 {/* Introduction */}
-<p className="text-stone-700 font-medium text-lg md:text-xl mb-2">
+<p className="text-stone-700 font-medium text-lg md:text-xl mb-4">
   Hi, I'm Keem.
-</p>
-
-<p className="text-stone-500 text-sm md:text-base tracking-wide mb-8">
-Digital Craft Specialist • Designer • Creative Builder
 </p>
 
 {/* Large statement */}
 <h2
   className="mb-6 leading-snug text-stone-900"
-  style={{ fontFamily: 'Georgia, serif', fontSize: 'clamp(1.75rem, 3.5vw, 2.5rem)' }}
+  style={{
+    fontFamily: 'Georgia, serif',
+    fontSize: 'clamp(1.75rem, 3.5vw, 2.5rem)',
+  }}
 >
   I help creators, apparel brands, and print businesses solve design and production problems.
 </h2>
 
-              {/* Supporting statement */}
-              <p className="text-stone-600 leading-loose text-base md:text-lg mb-12">
-                From custom graphics and production-ready artwork to print file optimization and repair, I make sure creative assets are ready to perform.
-              </p>
+{/* Supporting statement */}
+<p className="text-stone-600 leading-loose text-base md:text-lg mb-10">
+  From custom graphics and production-ready artwork to print file optimization and repair, I make sure creative assets are ready to perform.
+</p>
 
-              {/* Key focus */}
-              <div className="flex flex-col items-center gap-3">
-                <p className="text-xs font-bold tracking-[0.2em] uppercase text-stone-400">
-                  Key Focus
-                </p>
-                <div className="flex flex-wrap justify-center gap-4">
-                  {['Creative designs.', 'Clean files.', 'Better prints.'].map((line) => (
-                    <span key={line} className="font-bold text-stone-900 text-base md:text-lg">
-                      {line}
-                    </span>
-                  ))}
-                </div>
-              </div>
+<div className="flex flex-wrap justify-center gap-4">
+  {['Creative designs.', 'Clean files.', 'Better prints.'].map((line) => (
+    <span
+      key={line}
+      className="font-bold text-stone-900 text-base md:text-lg"
+    >
+      {line}
+    </span>
+  ))}
+</div>
             </div>
 
-            {/* Stats below — separated for clarity */}
+{/* Stats below — separated for clarity */}
             <div className="mt-16 grid grid-cols-3 gap-4 max-w-md mx-auto">
               {stats.map((s) => (
                 <div
@@ -184,13 +177,10 @@ Digital Craft Specialist • Designer • Creative Builder
             </div>
 
             {/* Supporting tagline */}
-            <p className="text-stone-500 text-xs leading-relaxed text-center mt-8">
-              Powered by modern production workflows, AI-assisted optimization, and quality-control systems.
-            </p>
           </section>
 
           {/* ── WORK WITH ME ── */}
-          <section className="mt-24">
+  <section className="mt-20">
             <SectionDivider label="Work With Me" />
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
               {services.map((svc, i) => (
