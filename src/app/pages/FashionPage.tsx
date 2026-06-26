@@ -228,12 +228,14 @@ export function FashionPage() {
                   className="group overflow-hidden rounded-[28px] bg-white border border-stone-200/60 shadow-sm hover:-translate-y-1 hover:shadow-2xl transition-all duration-500 ease-[cubic-bezier(.22,1,.36,1)]"
                 >
                   <div className="relative h-[340px] overflow-hidden">
+                    <div className="absolute inset-0 will-change-transform transition-all duration-[900ms] ease-[cubic-bezier(.22,1,.36,1)] group-hover:scale-[1.03] group-hover:-translate-y-1.5">
                     <ImageWithFallback
                       src={item.image}
                       alt={item.title}
-                      className="w-full h-full object-cover will-change-transform transition-all duration-[900ms] ease-[cubic-bezier(.22,1,.36,1)] group-hover:scale-[1.03] group-hover:-translate-y-1.5"
+                      className="w-full h-full object-cover"
                     />
-                    <div className="absolute inset-x-0 bottom-0 h-3/4 bg-gradient-to-t from-white via-white/90 via-white/55 to-transparent transition-opacity duration-500 group-hover:opacity-90" />
+                    <div className="absolute inset-x-0 bottom-0 h-[45%] bg-gradient-to-t from-white via-white/60 via-white/55 to-transparent" />
+                    </div>
                     <span className="absolute top-4 left-4 rounded-full bg-white/95 text-[11px] tracking-wide font-semibold px-3 py-1 text-stone-900">
                       {item.tag}
                     </span>

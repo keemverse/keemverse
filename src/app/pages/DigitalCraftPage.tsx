@@ -3,9 +3,11 @@ import { motion } from 'motion/react';
 import { ImageWithFallback } from '../components/figma/ImageWithFallback';
 import { SocialFooter } from '../components/SocialFooter';
 import { UpworkIcon, BehanceIcon } from '../components/Icons';
-import { FileImage, Briefcase, Layers, ShoppingBag } from 'lucide-react';
+import { FileImage, Briefcase, Layers } from 'lucide-react';
 import tlogImg from '../../imports/tlog.png';
 import heroPortrait from '../../imports/IMG_5353-Edit.jpeg';
+import printableGraphicsHero from '../../imports/printable-graphics-hero.jpg';
+import dtfDesignPacksHero from '../../imports/dtf-design-packs-hero.jpg';
 
 const services = [
   {
@@ -28,15 +30,19 @@ const services = [
 const shop = [
   {
     title: 'Printable Graphics',
-    desc: 'Production-ready graphics for shirts, decals, stickers, Stanley cups, and craft projects.',
-    tag: 'Live',
-    cta: 'SHOP NOW',
+    desc: 'Production-ready artwork for apparel, decals, stickers, cups, posters, and creative projects.',
+    image: printableGraphicsHero,
+    cta: 'Shop Graphics',
+    tag: 'LIVE',
+    href: '/craft/graphics',
   },
   {
     title: 'DTF Design Packs',
-    desc: 'Design packs built specifically for DTF printing businesses.',
-    tag: 'Live',
-    cta: 'SHOP NOW',
+    desc: 'Premium DTF-ready artwork designed for apparel brands and print businesses.',
+    image: dtfDesignPacksHero,
+    cta: 'Shop Packs',
+    tag: 'LIVE',
+    href: '/craft/dtf',
   },
 ];
 
@@ -227,46 +233,58 @@ export function DigitalCraftPage() {
           {/* ── SHOP ── */}
           <section className="mt-24">
             <SectionDivider label="Shop" />
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 max-w-3xl mx-auto">
+
+            <p className="text-center text-sm text-stone-500 mb-8">
+              Curated. Created. Designed for your world.
+            </p>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
               {shop.map((item, i) => (
-                <motion.div
+                <motion.a
                   key={i}
-                  initial={{ opacity: 0, scale: 0.97 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
+                  href={item.href}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  whileHover={{ y: -8 }}
                   viewport={{ once: true }}
-                  transition={{ duration: 0.4, delay: i * 0.1 }}
-                  className="group relative flex flex-col items-center text-center rounded-3xl p-8 md:p-10 transition-all border border-stone-200/60"
-                  style={{
-                    backgroundColor: '#FFFFFF'
-                  }}
+                  transition={{ duration: 0.45, delay: i * 0.08 }}
+                  className="group overflow-hidden rounded-[28px] bg-white border border-stone-200/60 shadow-sm hover:-translate-y-1 hover:shadow-2xl transition-all duration-500 ease-[cubic-bezier(.22,1,.36,1)]"
                 >
-                  <span className="absolute top-4 right-4 text-xs font-bold px-3 py-1 rounded-full text-white" style={{ backgroundColor: '#1D1C19' }}>
-                    {item.tag}
-                  </span>
-                  <div className="w-14 h-14 rounded-full flex items-center justify-center mb-5 mt-1 group-hover:scale-110 transition-transform" style={{ backgroundColor: '#F5F2EC' }}>
-                    <ShoppingBag className="w-6 h-6" style={{ color: '#1D1C19' }} />
+                  <div className="group/hero relative h-[340px] overflow-hidden">
+                    <div className="absolute inset-0 will-change-transform transition-all duration-[900ms] ease-[cubic-bezier(.22,1,.36,1)] group-hover:scale-[1.03] group-hover:-translate-y-1.5">
+                    <ImageWithFallback
+                      src={item.image}
+                      alt={item.title}
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-x-0 bottom-0 h-[45%] bg-gradient-to-t from-white via-white/60 via-white/55 to-transparent" />
+                    </div>
+                    <span className="absolute top-4 left-4 rounded-full bg-white/95 text-[11px] tracking-wide font-semibold px-3 py-1 text-stone-900">
+                      {item.tag}
+                    </span>
                   </div>
-                  <h3 className="font-bold mb-2 text-lg text-stone-900">{item.title}</h3>
-                  <p className="text-stone-600 text-sm leading-relaxed mb-6 flex-grow">{item.desc}</p>
-                  <a
-                    href="#"
-                    className="px-6 py-2.5 rounded-full text-xs font-bold tracking-wide transition-all border"
-                    style={{
-                      borderColor: '#1D1C19',
-                      color: '#1D1C19'
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.backgroundColor = '#1D1C19';
-                      e.currentTarget.style.color = '#FFFFFF';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.backgroundColor = 'transparent';
-                      e.currentTarget.style.color = '#1D1C19';
-                    }}
-                  >
-                    {item.cta}
-                  </a>
-                </motion.div>
+
+                  <div className="px-8 pb-8 -mt-10 relative z-10 text-center">
+                    <h3 className="text-[2rem] font-serif text-stone-900">
+                      {item.title}
+                    </h3>
+
+                    
+
+                    <div className="min-h-[72px] flex items-start justify-center">
+                      <p className="text-sm leading-7 text-stone-600 max-w-xs mx-auto">
+                        {item.desc}
+                      </p>
+                    </div>
+
+                    <div className="mt-auto pt-8">
+                      <span className="inline-flex items-center gap-2 rounded-full border border-stone-300 bg-[#ECE5D9] px-7 py-3 text-xs font-semibold tracking-[0.15em] text-stone-900 shadow-[inset_0_1px_0_rgba(255,255,255,.9),0_8px_20px_rgba(0,0,0,.06)] transition-all duration-300 ease-[cubic-bezier(.22,1,.36,1)] group-hover:-translate-y-0.5 group-hover:bg-[#E5DDCF]">
+                        {item.cta}
+                        <span className="transition-transform group-hover:translate-x-1">→</span>
+                      </span>
+                    </div>
+                  </div>
+                </motion.a>
               ))}
             </div>
           </section>
