@@ -149,19 +149,11 @@ export function DigitalCraftPage() {
 
 {/* Supporting statement */}
 <p className="text-stone-600 leading-loose text-base md:text-lg mb-10">
-  From custom graphics and production-ready artwork to print file optimization and repair, I make sure creative assets are ready to perform.
+  From custom graphics and production-ready artwork to print file optimization
+  and repair, I help apparel brands, creators, and print businesses deliver
+  creative designs, clean files, and better prints.
 </p>
 
-<div className="flex flex-wrap justify-center gap-4">
-  {['Creative designs.', 'Clean files.', 'Better prints.'].map((line) => (
-    <span
-      key={line}
-      className="font-bold text-stone-900 text-base md:text-lg"
-    >
-      {line}
-    </span>
-  ))}
-</div>
             </div>
 
 {/* Stats below — separated for clarity */}
