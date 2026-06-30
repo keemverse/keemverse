@@ -10,7 +10,8 @@ export function NavBar() {
   const navigate = useNavigate();
 
   const isFashion =
-    location.pathname === '/' || location.pathname === '/fashion';
+  location.pathname === "/" ||
+  location.pathname.startsWith("/fashion");
 
   const handleToggle = () => {
     navigate(isFashion ? '/digital-craft' : '/fashion');
@@ -21,10 +22,11 @@ export function NavBar() {
       <div className="max-w-5xl mx-auto flex items-center justify-between">
 
         {/* Dynamic Identity */}
-        <div
-          key={isFashion ? 'fashion' : 'craft'}
-          className="w-12 h-12 flex items-center justify-center animate-in fade-in zoom-in duration-300"
-        >
+       <button
+  key={isFashion ? "fashion" : "craft"}
+  onClick={() => navigate(isFashion ? "/fashion" : "/digital-craft")}
+  className="w-12 h-12 flex items-center justify-center animate-in fade-in zoom-in duration-300 cursor-pointer"
+>
           <ImageWithFallback
             src={isFashion ? profileImg : logImg}
             alt={isFashion ? 'Soft Keem' : 'KEEMVERSE'}
@@ -34,7 +36,7 @@ export function NavBar() {
                 : 'h-10 w-auto object-contain opacity-90'
             }
           />
-        </div>
+        </button>
 
         {/* Universe Switch */}
         <div className="flex items-center gap-3">
@@ -81,7 +83,7 @@ export function NavBar() {
       shadow-[0_1px_3px_rgba(0,0,0,0.18)]
       transition-all
       duration-300
-      ${isFashion ? 'left-[1px]' : 'left-[23px]'}
+      ${isFashion ? "left-[1px]" : "left-[23px]"}
     `}
   />
 </button>
