@@ -210,11 +210,6 @@ export function FashionPage() {
           {/* ── SHOP ── */}
           <section className="mt-24">
             <SectionDivider label="Shop" />
-
-            <p className="text-center text-sm text-stone-500 mb-8">
-              Curated. Created. Designed for your world.
-            </p>
-
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
               {shop.map((item, i) => (
   <UniverseShopCard

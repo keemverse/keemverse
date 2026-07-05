@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { motion } from "motion/react";
 
+import SkeletonCard from "../components/SkeletonCard";
 import UniverseSearch from "../components/UniverseSearch";
 import UniverseTabs from "../components/UniverseTabs";
 import ProductCard from "../components/ProductCard";
@@ -37,16 +38,17 @@ export default function FashionFindsPage() {
   const [selected, setSelected] = useState<any | null>(null);
 
   const [products, setProducts] = useState<any[]>([]);
+const [loading, setLoading] = useState(true);
 
 useEffect(() => {
   getProducts()
     .then((data) => {
-      console.log(data[0]);
-console.log("Price:", data[0].Price);
-console.log("Type:", typeof data[0].Price);
       setProducts(data);
     })
-    .catch(console.error);
+    .catch(console.error)
+    .finally(() => {
+      setLoading(false);
+    });
 }, []);
 
   const featured = products.filter(
@@ -123,42 +125,73 @@ const filteredProducts = products.filter((p) => {
 
         <h2 className="font-serif text-3xl mb-6">All Products</h2>
 
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-          {filteredProducts.map((product) => (
-  <ProductCard
-    key={product.ID}
-    name={product["Product Name"]}
-    price={formatPrice(product.Price)}
-    image={product["Image URL"]}
-    source={product.Source}
-    category={product.Category}
-    buttonText="SHOP NOW"
-    affiliateLink={product["Affiliate Link"]}
-    onOpen={() => setSelected(product)}
-  />
-))}
-        </div>
+{loading ? (
+  <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+    {Array.from({ length: 8 }).map((_, i) => (
+      <SkeletonCard key={i} />
+    ))}
+  </div>
+) : filteredProducts.length === 0 ? (
+  <div className="py-24 text-center">
+    <div className="text-5xl mb-4">🔍</div>
+
+    <h3 className="font-serif text-3xl text-stone-900">
+      No curated finds
+    </h3>
+
+    <p className="mt-3 text-stone-500">
+      Try another search or browse another category.
+    </p>
+
+    <button
+      onClick={() => {
+        setQuery("");
+        setActiveTab("All");
+      }}
+      className="mt-8 rounded-full bg-stone-900 px-6 py-3 text-sm uppercase tracking-[0.18em] text-white hover:bg-black transition"
+    >
+      Clear Search
+    </button>
+  </div>
+) : (
+  <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+    {filteredProducts.map((product) => (
+      <ProductCard
+        key={product.ID}
+        name={product["Product Name"]}
+        price={formatPrice(product.Price)}
+        image={product["Image URL"]}
+        source={product.Source}
+        category={product.Category}
+        buttonText="SHOP NOW"
+        affiliateLink={product["Affiliate Link"]}
+        onOpen={() => setSelected(product)}
+      />
+    ))}
+  </div>
+)}
 
 {selected && (
-  <ProductPopup
-    open={true}
-    onClose={() => setSelected(null)}
-    name={selected["Product Name"]}
-    price={formatPrice(selected.Price)}
-    image={selected["Image URL"]}
-    source={selected.Source}
-    category={selected.Category}
-    description={selected.Description || ""}
-    tags={
-      selected.Tags
-        ? String(selected.Tags)
-            .split(",")
-            .map((t: string) => t.trim())
-        : []
-    }
-    whyPicked={selected["Why Picked"] || ""}
-    affiliateLink={selected["Affiliate Link"]}
-  />
+ <ProductPopup
+  open={true}
+  onClose={() => setSelected(null)}
+  name={selected["Product Name"]}
+  price={formatPrice(selected.Price)}
+  image={selected["Image URL"]}
+  source={selected.Source}
+  category={selected.Category}
+  description={selected.Description || ""}
+  rating={selected.Rating}
+  tags={
+    selected.Tags
+      ? String(selected.Tags)
+          .split(",")
+          .map((t: string) => t.trim())
+      : []
+  }
+  whyPicked={selected["Why I Picked"] || ""}
+  affiliateLink={selected["Affiliate Link"]}
+/>
 )}
       </main>
 
