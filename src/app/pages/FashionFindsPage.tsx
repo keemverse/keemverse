@@ -8,6 +8,7 @@ import ProductCard from "../components/ProductCard";
 import ProductPopup from "../components/ProductPopup";
 import { SocialFooter } from "../components/SocialFooter";
 import { getProducts } from "../lib/products";
+import FashionFAQ from "../components/FashionFAQ";
 const categories = [
   "All",
   "Sneakers",
@@ -43,8 +44,10 @@ const [loading, setLoading] = useState(true);
 useEffect(() => {
   getProducts()
     .then((data) => {
-      setProducts(data);
-    })
+  console.log(data);
+  console.log(data.map((p) => p["Affiliate Link"]));
+  setProducts(data);
+})
     .catch(console.error)
     .finally(() => {
       setLoading(false);
@@ -108,15 +111,15 @@ const filteredProducts = products.filter((p) => {
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
               {featured.map((product) => (
   <ProductCard
-  key={product.ID}
+  key={`${product["Product Name"]}-${product.Source}`}
   name={product["Product Name"]}
   price={formatPrice(product.Price)}
   image={product["Image URL"]}
   source={product.Source}
   category={product.Category}
   buttonText="SHOP NOW"
-  affiliateLink={product["Affiliate Link"]}
-  onOpen={() => setSelected(product)}
+affiliateLink={product["Affiliate Link"]}
+onOpen={() => setSelected(product)}
 />
 ))}
             </div>
@@ -157,15 +160,15 @@ const filteredProducts = products.filter((p) => {
   <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
     {filteredProducts.map((product) => (
       <ProductCard
-        key={product.ID}
+        key={`${product["Product Name"]}-${product.Source}`}
         name={product["Product Name"]}
         price={formatPrice(product.Price)}
         image={product["Image URL"]}
         source={product.Source}
         category={product.Category}
         buttonText="SHOP NOW"
-        affiliateLink={product["Affiliate Link"]}
-        onOpen={() => setSelected(product)}
+affiliateLink={product["Affiliate Link"]}
+onOpen={() => setSelected(product)}
       />
     ))}
   </div>
@@ -193,9 +196,12 @@ const filteredProducts = products.filter((p) => {
   affiliateLink={selected["Affiliate Link"]}
 />
 )}
-      </main>
 
-      <SocialFooter />
+<FashionFAQ />
+
+</main>
+
+<SocialFooter />
     </div>
   );
 }

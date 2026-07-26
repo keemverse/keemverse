@@ -47,7 +47,7 @@ export default function ProductCard({
           <div className="absolute inset-x-0 bottom-0 h-[3%] bg-gradient-to-t from-white/100 to-transparent" />
         </div>
 
-        <span className="absolute top-4 right-4 rounded-full bg-white/95 backdrop-blur-md px-4 py-2 text-[10px] uppercase tracking-[0.22em] font-bold shadow-lg">
+        <span className="absolute top-2 right-2 rounded-full bg-white/95 backdrop-blur-md px-1 py-0.5 text-[7px] uppercase tracking-[0.22em] font-bold shadow-lg">
           {source}
         </span>
       </div>
