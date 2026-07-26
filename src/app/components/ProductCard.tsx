@@ -37,14 +37,14 @@ export default function ProductCard({
   className="group cursor-pointer overflow-hidden rounded-[30px] bg-white border border-stone-200/70 shadow-[0_8px_30px_rgba(0,0,0,.05)] hover:shadow-[0_25px_70px_rgba(0,0,0,.12)] transition-all duration-500 ease-[cubic-bezier(.22,1,.36,1)]"
   onClick={onOpen}
 >
-      <div className="relative h-40 md:h-56 overflow-hidden">
+      <div className="relative h-52 md:h-72 overflow-hidden">
         <div className="absolute inset-0 will-change-transform transition-all duration-[900ms] ease-[cubic-bezier(.22,1,.36,1)] group-hover:scale-[1.07]">
           <ImageWithFallback
             src={image}
             alt={name}
             className="w-full h-full object-cover"
           />
-          <div className="absolute inset-x-0 bottom-0 h-[25%] bg-gradient-to-t from-white via-white/35 to-transparent" />
+          <div className="absolute inset-x-0 bottom-0 h-[3%] bg-gradient-to-t from-white/100 to-transparent" />
         </div>
 
         <span className="absolute top-4 right-4 rounded-full bg-white/95 backdrop-blur-md px-4 py-2 text-[10px] uppercase tracking-[0.22em] font-bold shadow-lg">
