@@ -2,14 +2,14 @@ import { motion } from 'motion/react';
 import { ShoppingBag, Camera, Palette, Layers } from 'lucide-react';
 import { SocialFooter } from '../components/SocialFooter';
 import { ImageWithFallback } from '../components/figma/ImageWithFallback';
-import fashionFindsHero from '../../imports/fashion-finds-hero.jpg';
-import printableGraphicsHero from '../../imports/printable-graphics-hero.jpg';
+import fashionPageHero from '../../imports/IMG_7304.jpeg';
+import craftPageHero from '../../imports/IMG_5353-Edit.jpeg';
 
 const hero = [
   {
     title: 'fashion',
     description: 'Curated finds, styling, and visual storytelling.',
-    image: fashionFindsHero,
+    image: fashionPageHero,
     cta: 'enter',
     tag: 'LIVE',
     href: '/fashion/finds',
@@ -23,7 +23,7 @@ const hero = [
   {
     title: 'craft',
     description: 'Production-ready artwork and design packs.',
-    image: printableGraphicsHero,
+    image: craftPageHero,
     cta: 'enter',
     tag: 'LIVE',
     href: '/digital-craft',

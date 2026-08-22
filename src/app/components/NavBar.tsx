@@ -21,10 +21,11 @@ export function NavBar() {
     <div className="w-full px-4 pt-5 pb-4">
       <div className="max-w-5xl mx-auto flex items-center justify-between">
 
-        {/* Dynamic Identity */}
+        {/* Dynamic Identity — doubles as a Home button back to the landing page */}
        <button
   key={isFashion ? "fashion" : "craft"}
-  onClick={() => navigate(isFashion ? "/fashion" : "/digital-craft")}
+  onClick={() => navigate("/")}
+  aria-label="Back to Keemverse home"
   className="w-12 h-12 flex items-center justify-center animate-in fade-in zoom-in duration-300 cursor-pointer"
 >
           <ImageWithFallback

@@ -8,6 +8,7 @@ interface UniverseShopCardProps {
   href: string;
   tag?: string;
   index?: number;
+  onOpen?: () => void;
 }
 
 export default function UniverseShopCard({
@@ -18,16 +19,27 @@ export default function UniverseShopCard({
   href,
   tag = "LIVE",
   index = 0,
+  onOpen,
 }: UniverseShopCardProps) {
+  const isPending = href === "#";
+
   return (
     <motion.a
       href={href}
+      onClick={
+        isPending && onOpen
+          ? (e) => {
+              e.preventDefault();
+              onOpen();
+            }
+          : undefined
+      }
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       whileHover={{ y: -8 }}
       viewport={{ once: true }}
       transition={{ duration: 0.45, delay: index * 0.08 }}
-      className="group overflow-hidden rounded-[28px] bg-white border border-stone-200/60 shadow-sm hover:-translate-y-1 hover:shadow-2xl transition-all duration-500 ease-[cubic-bezier(.22,1,.36,1)]"
+      className="group overflow-hidden rounded-[28px] bg-white border border-stone-200/60 shadow-sm hover:-translate-y-1 hover:shadow-2xl transition-all duration-500 ease-[cubic-bezier(.22,1,.36,1)] cursor-pointer"
     >
                   <div className="relative h-[340px] overflow-hidden">
                     <div className="absolute inset-0 will-change-transform transition-all duration-[900ms] ease-[cubic-bezier(.22,1,.36,1)] group-hover:scale-[1.03] group-hover:-translate-y-1.5">

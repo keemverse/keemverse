@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'motion/react';
 import { ImageWithFallback } from '../components/figma/ImageWithFallback';
 import { SocialFooter } from '../components/SocialFooter';
+import { ComingSoonModal } from '../components/ComingSoonModal';
 import { UpworkIcon, BehanceIcon } from '../components/Icons';
 import { FileImage, Briefcase, Layers } from 'lucide-react';
 import tlogImg from '../../imports/tlog.png';
@@ -33,17 +34,17 @@ const shop = [
     title: 'Printable Graphics',
     description: 'Production-ready artwork for apparel, decals, stickers, cups, posters, and creative projects.',
     image: printableGraphicsHero,
-    cta: 'Shop Graphics',
-    tag: 'LIVE',
-    href: '/digital-craft',
+    cta: 'Coming Soon',
+    tag: 'PENDING',
+    href: '#',
   },
   {
     title: 'DTF Design Packs',
     description: 'Premium DTF-ready artwork designed for apparel brands and print businesses.',
     image: dtfDesignPacksHero,
-    cta: 'Shop Packs',
-    tag: 'LIVE',
-    href: '/digital-craft',
+    cta: 'Coming Soon',
+    tag: 'PENDING',
+    href: '#',
   },
 ];
 
@@ -64,8 +65,17 @@ function SectionDivider({ label }: { label: string }) {
 }
 
 export function DigitalCraftPage() {
+  const [comingSoon, setComingSoon] = useState<string | null>(null);
+
   return (
     <div className="min-h-screen text-stone-900" style={{ backgroundColor: '#F5F2EA' }}>
+      <ComingSoonModal
+        open={!!comingSoon}
+        onClose={() => setComingSoon(null)}
+        title={comingSoon ? `${comingSoon} — Coming Soon` : 'Coming Soon'}
+        description="This shop isn't live yet — check back soon."
+      />
+
       <main className="pt-8 pb-0 px-5 md:px-8">
         <div className="max-w-6xl mx-auto">
 
@@ -207,19 +217,21 @@ export function DigitalCraftPage() {
 
             <div className="flex flex-wrap justify-center gap-4 mt-10">
               <a
-                href="#"
+                href="https://www.upwork.com/freelancers/~0106ded5c187eb05c8?mp_source=share"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="flex items-center gap-2.5 px-8 py-4 rounded-full bg-[#14A800] text-white font-bold text-sm hover:bg-[#0f8c00] transition-colors shadow-lg shadow-[#14A800]/20"
               >
                 <UpworkIcon className="w-5 h-5" />
                 Hire on Upwork
               </a>
-              <a
-                href="#"
+              <button
+                onClick={() => setComingSoon('Behance')}
                 className="flex items-center gap-2.5 px-8 py-4 rounded-full bg-[#1769FF] text-white font-bold text-sm hover:bg-[#0d55d9] transition-colors shadow-lg shadow-[#1769FF]/20"
               >
                 <BehanceIcon className="w-5 h-5" />
                 View Behance
-              </a>
+              </button>
             </div>
           </section>
 
@@ -242,6 +254,7 @@ export function DigitalCraftPage() {
     href={item.href}
     tag={item.tag}
     index={i}
+    onOpen={() => setComingSoon(item.title)}
   />
 ))}
             </div>
