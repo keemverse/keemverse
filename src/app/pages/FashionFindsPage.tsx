@@ -9,6 +9,7 @@ import ProductPopup from "../components/ProductPopup";
 import { SocialFooter } from "../components/SocialFooter";
 import { getProducts } from "../lib/products";
 import FashionFAQ from "../components/FashionFAQ";
+import SectionDivider from "../components/SectionDivider";
 const categories = [
   "All",
   "Sneakers",
@@ -106,7 +107,7 @@ const filteredProducts = products.filter((p) => {
 
         {featured.length > 0 && (
           <>
-            <h2 className="font-serif text-3xl mb-6">Featured Finds</h2>
+            <SectionDivider label="Featured Finds" />
 
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
               {featured.map((product) => (
@@ -126,7 +127,7 @@ onOpen={() => setSelected(product)}
           </>
         )}
 
-        <h2 className="font-serif text-3xl mb-6">All Products</h2>
+        <SectionDivider label="All Finds" />
 
 {loading ? (
   <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">

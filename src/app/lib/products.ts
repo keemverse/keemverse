@@ -10,3 +10,15 @@ export async function getProducts() {
 
   return response.json();
 }
+
+export async function getPresets() {
+  const response = await fetch(
+    `${API_URL}?sheet=Lightroom%20Presets`
+  );
+
+  if (!response.ok) {
+    throw new Error("Failed to load Lightroom presets");
+  }
+
+  return response.json();
+}

@@ -35,7 +35,7 @@ const shop = [
     image: printableGraphicsHero,
     cta: 'Shop Graphics',
     tag: 'LIVE',
-    href: '/craft/graphics',
+    href: '/digital-craft',
   },
   {
     title: 'DTF Design Packs',
@@ -43,7 +43,7 @@ const shop = [
     image: dtfDesignPacksHero,
     cta: 'Shop Packs',
     tag: 'LIVE',
-    href: '/craft/dtf',
+    href: '/digital-craft',
   },
 ];
 

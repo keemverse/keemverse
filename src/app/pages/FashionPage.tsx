@@ -43,7 +43,7 @@ const shop = [
     href: '/fashion/finds',
   },
   {
-    title: 'Photo Editing Presets',
+    title: 'Lightroom Presets',
     description: 'Premium editing presets.',
     image: photoPresetsHero,
     cta: 'Get Presets',

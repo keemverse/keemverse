@@ -1,4 +1,5 @@
 import { useState } from "react";
+import SectionDivider from "./SectionDivider";
 
 const faqs = [
   {
@@ -35,13 +36,12 @@ export default function FashionFAQ() {
   return (
     <section className="mt-28">
       <div className="max-w-3xl mx-auto">
-        <p className="text-center uppercase tracking-[0.35em] text-xs text-stone-500 mb-2">
-          FAQ
-        </p>
 
-        <h2 className="text-center font-serif text-4xl md:text-5xl text-stone-900 mb-5">
-          Things You Might Want to Know
-        </h2>
+        <SectionDivider label="FAQ" />
+
+<h2 className="font-serif text-5xl text-center mt-8 mb-12">
+  Things You Might Want To Know
+</h2>
 
         <div className="divide-y divide-stone-200">
           {faqs.map((faq, index) => {
