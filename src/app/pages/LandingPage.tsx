@@ -12,7 +12,7 @@ const hero = [
     image: fashionPageHero,
     cta: 'enter',
     tag: 'LIVE',
-    href: '/fashion/finds',
+    href: '/fashion',
     accent: '#D98E2B',
     accentDark: '#B8741A',
     pills: [
