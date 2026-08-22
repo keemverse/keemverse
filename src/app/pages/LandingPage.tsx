@@ -64,7 +64,7 @@ function HeroCard({
       className="group flex flex-col overflow-hidden rounded-2xl md:rounded-[28px] bg-white border border-stone-200/60 shadow-sm hover:shadow-2xl transition-all duration-500 ease-[cubic-bezier(.22,1,.36,1)]"
     >
       <div className="relative aspect-square md:aspect-[4/3] overflow-hidden">
-        <div className="absolute inset-0 will-change-transform transition-all duration-[900ms] ease-[cubic-bezier(.22,1,.36,1)] group-hover:scale-[1.03]">
+        <div className="absolute -inset-px will-change-transform transition-all duration-[900ms] ease-[cubic-bezier(.22,1,.36,1)] group-hover:scale-[1.03]">
           <ImageWithFallback src={image} alt={title} className="w-full h-full object-cover" />
           <div className="absolute inset-x-0 bottom-0 h-[45%] bg-gradient-to-t from-white via-white/60 to-transparent" />
         </div>
