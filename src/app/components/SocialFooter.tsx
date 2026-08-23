@@ -16,7 +16,7 @@ export function SocialFooter() {
   ];
 
   return (
-    <footer className="mt-24 py-20 px-6 border-t border-stone-200 bg-stone-100/50">
+    <footer className="mt-24 py-20 px-6">
       <ComingSoonModal
         open={!!comingSoon}
         onClose={() => setComingSoon(null)}
