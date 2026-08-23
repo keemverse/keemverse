@@ -146,8 +146,14 @@ export function LandingPage() {
             </p>
           </section>
 
+          {/* ── TAGLINE ── */}
+          <section className="mt-10 pb-2 text-center max-w-xl mx-auto">
+            <StoryTagline />
+            <div className="mx-auto mt-6 h-px w-16 bg-stone-300" />
+          </section>
+
           {/* ── HERO CARDS + THEIR QUICK-LINK PILLS ── */}
-          <section className="mt-12">
+          <section className="mt-12 pb-10">
             <div className="grid grid-cols-2 gap-3 md:gap-8 max-w-5xl mx-auto">
               {hero.map((item, i) => (
                 <div key={item.title} className="flex flex-col">
@@ -192,12 +198,6 @@ export function LandingPage() {
                 </div>
               ))}
             </div>
-          </section>
-
-          {/* ── TAGLINE ── */}
-          <section className="mt-14 pb-10 text-center max-w-xl mx-auto">
-            <div className="mx-auto mb-6 h-px w-16 bg-stone-300" />
-            <StoryTagline />
           </section>
 
         </div>
