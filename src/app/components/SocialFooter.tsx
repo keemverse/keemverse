@@ -25,6 +25,13 @@ export function SocialFooter() {
       />
 
       <div className="max-w-2xl mx-auto flex flex-col items-center text-center gap-10">
+        <p
+          className="text-sm md:text-base tracking-[0.2em] uppercase text-stone-500"
+          style={{ fontFamily: 'Georgia, serif' }}
+        >
+          Create · Build · Inspire
+        </p>
+
         <div>
           <p className="text-xs font-bold tracking-[0.25em] uppercase opacity-40 mb-6">
             Follow Keemverse

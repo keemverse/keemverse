@@ -141,9 +141,6 @@ export function LandingPage() {
             >
               Keemverse
             </h1>
-            <p className="mt-3 text-xs font-semibold tracking-[0.25em] uppercase text-stone-500">
-              Create · Build · Inspire
-            </p>
           </section>
 
           {/* ── TAGLINE ── */}
@@ -206,10 +203,6 @@ export function LandingPage() {
       <div className="-mt-14">
         <SocialFooter />
       </div>
-
-      <p className="-mt-10 pb-10 text-center text-[10px] font-semibold uppercase tracking-[0.3em] text-stone-400">
-        © {new Date().getFullYear()} Keemverse. All rights reserved.
-      </p>
     </div>
   );
 }
