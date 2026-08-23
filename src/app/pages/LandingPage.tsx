@@ -142,7 +142,7 @@ export function LandingPage() {
               Keemverse
             </h1>
             <p className="mt-3 text-xs font-semibold tracking-[0.25em] uppercase text-stone-500">
-              Fashion Storyteller · Digital Craftsman
+              Create · Build · Inspire
             </p>
           </section>
 
@@ -208,7 +208,7 @@ export function LandingPage() {
       </div>
 
       <p className="-mt-10 pb-10 text-center text-[10px] font-semibold uppercase tracking-[0.3em] text-stone-400">
-        Visual Storytelling &amp; Digital Craft · Create · Build · Inspire
+        © {new Date().getFullYear()} Keemverse. All rights reserved.
       </p>
     </div>
   );
