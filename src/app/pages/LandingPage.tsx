@@ -7,10 +7,11 @@ import craftPageHero from '../../imports/craft-quality-hero.webp';
 
 const hero = [
   {
-    title: 'Fashion',
+    title: 'fashion',
     description: 'Curated finds, styling, and visual storytelling.',
     image: fashionPageHero,
-    cta: 'Enter',
+    cta: 'enter',
+    tag: 'LIVE',
     href: '/fashion',
     accent: '#D98E2B',
     accentDark: '#B8741A',
@@ -20,10 +21,11 @@ const hero = [
     ],
   },
   {
-    title: 'Craft',
+    title: 'craft',
     description: 'Production-ready artwork and design packs.',
     image: craftPageHero,
-    cta: 'Enter',
+    cta: 'enter',
+    tag: 'Coming Soon',
     href: '/digital-craft',
     accent: '#1FA396',
     accentDark: '#12897D',
@@ -40,8 +42,7 @@ function HeroCard({
   image,
   cta,
   href,
-  accent,
-  accentDark,
+  tag = 'LIVE',
   index = 0,
 }: {
   title: string;
@@ -49,8 +50,7 @@ function HeroCard({
   image: string;
   cta: string;
   href: string;
-  accent: string;
-  accentDark: string;
+  tag?: string;
   index?: number;
 }) {
   return (
@@ -58,42 +58,38 @@ function HeroCard({
       href={href}
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
-      whileHover={{ y: -4 }}
+      whileHover={{ y: -6 }}
       viewport={{ once: true }}
       transition={{ duration: 0.45, delay: index * 0.08 }}
-      className="group flex overflow-hidden rounded-2xl bg-white border border-stone-200/60 shadow-sm hover:shadow-xl transition-all duration-500 ease-[cubic-bezier(.22,1,.36,1)] h-28 sm:h-36 md:h-44"
+      className="group flex flex-col overflow-hidden rounded-2xl md:rounded-[28px] bg-white border border-stone-200/60 shadow-sm hover:shadow-2xl transition-all duration-500 ease-[cubic-bezier(.22,1,.36,1)]"
     >
-      <div className="flex flex-col justify-center flex-1 min-w-0 px-4 py-2 sm:px-6 sm:py-4 md:px-7 md:py-5">
+      <div className="relative aspect-square md:aspect-[4/3] overflow-hidden">
+        <div className="absolute -inset-px will-change-transform transition-all duration-[900ms] ease-[cubic-bezier(.22,1,.36,1)] group-hover:scale-[1.03]">
+          <ImageWithFallback src={image} alt={title} className="w-full h-full object-cover" />
+          <div className="absolute inset-x-0 bottom-0 h-[45%] bg-gradient-to-t from-white via-white/60 to-transparent" />
+        </div>
+        <span className="absolute top-2 left-2 md:top-4 md:left-4 rounded-full bg-white/95 text-[9px] md:text-[11px] tracking-wide font-semibold px-2 py-0.5 md:px-3 md:py-1 text-stone-900">
+          {tag}
+        </span>
+      </div>
+
+      <div className="flex flex-col flex-1 px-4 pb-5 pt-1 md:px-8 md:pb-8 -mt-4 md:-mt-10 relative z-10 text-center">
         <h3
-          className="text-base sm:text-xl md:text-[1.75rem] text-stone-900 leading-none"
+          className="text-lg md:text-[2rem] text-stone-900"
           style={{ fontFamily: 'Georgia, serif' }}
         >
           {title}
         </h3>
 
-        <p className="mt-1 sm:mt-2 text-[10px] sm:text-xs md:text-sm leading-snug sm:leading-relaxed text-stone-600 max-w-[22ch] line-clamp-2">
+        <p className="mt-1 text-xs md:text-sm leading-relaxed md:leading-7 text-stone-600 max-w-xs mx-auto">
           {description}
         </p>
 
-        <div className="mt-2 sm:mt-3 md:mt-4">
-          <span
-            className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 sm:px-4 sm:py-2 text-[10px] sm:text-[11px] md:text-xs font-semibold tracking-[0.1em] text-white transition-all duration-300 ease-[cubic-bezier(.22,1,.36,1)] group-hover:-translate-y-0.5"
-            style={{
-              backgroundColor: accent,
-              boxShadow: `0 8px 18px -6px ${accent}99`,
-            }}
-            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = accentDark)}
-            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = accent)}
-          >
+        <div className="mt-3 md:mt-6">
+          <span className="inline-flex items-center gap-1.5 md:gap-2 rounded-full border border-stone-300 bg-[#ECE5D9] px-4 py-2 md:px-7 md:py-3 text-[11px] md:text-xs font-semibold tracking-[0.15em] text-stone-900 shadow-[inset_0_1px_0_rgba(255,255,255,.9),0_8px_20px_rgba(0,0,0,.06)] transition-all duration-300 ease-[cubic-bezier(.22,1,.36,1)] group-hover:-translate-y-0.5 group-hover:bg-[#E5DDCF]">
             {cta}
             <span className="transition-transform group-hover:translate-x-1">→</span>
           </span>
-        </div>
-      </div>
-
-      <div className="relative w-2/5 shrink-0 overflow-hidden">
-        <div className="absolute -inset-px will-change-transform transition-all duration-[900ms] ease-[cubic-bezier(.22,1,.36,1)] group-hover:scale-[1.03]">
-          <ImageWithFallback src={image} alt={title} className="w-full h-full object-cover" />
         </div>
       </div>
     </motion.a>
@@ -137,15 +133,25 @@ export function LandingPage() {
       <main className="pt-8 pb-0 px-5 md:px-8">
         <div className="max-w-6xl mx-auto">
 
+          {/* ── HEADER ── */}
+          <section className="text-center">
+            <h1
+              className="tracking-[0.3em] uppercase text-stone-900"
+              style={{ fontFamily: 'Georgia, serif', fontSize: 'clamp(1.5rem, 4vw, 2.25rem)' }}
+            >
+              Keemverse
+            </h1>
+          </section>
+
           {/* ── TAGLINE ── */}
-          <section className="mt-6 md:mt-10 pb-2 text-center max-w-xl mx-auto">
+          <section className="mt-10 pb-2 text-center max-w-xl mx-auto">
             <StoryTagline />
             <div className="mx-auto mt-6 h-px w-16 bg-stone-300" />
           </section>
 
           {/* ── HERO CARDS + THEIR QUICK-LINK PILLS ── */}
           <section className="mt-12 pb-10">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 md:gap-8 max-w-5xl mx-auto">
+            <div className="grid grid-cols-2 gap-3 md:gap-8 max-w-5xl mx-auto">
               {hero.map((item, i) => (
                 <div key={item.title} className="flex flex-col">
                   <HeroCard
@@ -154,8 +160,7 @@ export function LandingPage() {
                     image={item.image}
                     cta={item.cta}
                     href={item.href}
-                    accent={item.accent}
-                    accentDark={item.accentDark}
+                    tag={item.tag}
                     index={i}
                   />
 

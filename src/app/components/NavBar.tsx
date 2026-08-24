@@ -1,91 +1,107 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { ComingSoonModal } from './ComingSoonModal';
+import { ImageWithFallback } from './figma/ImageWithFallback';
 
-const FASHION = '#D98E2B';
-const CRAFT = '#1FA396';
+import logImg from '../../imports/log.png';
+import profileImg from '../../imports/keem-profile.jpg';
 
 export function NavBar() {
   const location = useLocation();
   const navigate = useNavigate();
-  const [comingSoon, setComingSoon] = useState<string | null>(null);
 
   const isFashion =
-    location.pathname === '/' || location.pathname.startsWith('/fashion');
+  location.pathname === "/" ||
+  location.pathname.startsWith("/fashion");
 
   const handleToggle = () => {
     navigate(isFashion ? '/digital-craft' : '/fashion');
   };
 
   return (
-    <nav className="w-full px-5 md:px-8 pt-6 pb-4">
-      <ComingSoonModal
-        open={!!comingSoon}
-        onClose={() => setComingSoon(null)}
-        title={comingSoon ? `${comingSoon} — Coming Soon` : 'Coming Soon'}
-        description="This page isn't set up yet — check back soon."
-      />
+    <div className="w-full px-4 pt-5 pb-4">
+      <div className="max-w-5xl mx-auto flex items-center justify-between">
 
-      <div className="max-w-6xl mx-auto flex items-center justify-between gap-4">
-        <button
-          onClick={() => navigate('/')}
-          className="tracking-[0.25em] uppercase text-stone-900 text-sm md:text-base shrink-0"
-          style={{ fontFamily: 'Georgia, serif' }}
-          aria-label="KEEMVERSE home"
-        >
-          Keemverse
+        {/* Dynamic Identity — doubles as a Home button back to the landing page */}
+       <button
+  key={isFashion ? "fashion" : "craft"}
+  onClick={() => navigate("/")}
+  aria-label="Back to Keemverse home"
+  className="w-12 h-12 flex items-center justify-center animate-in fade-in zoom-in duration-300 cursor-pointer"
+>
+          <ImageWithFallback
+            src={isFashion ? profileImg : logImg}
+            alt={isFashion ? 'Soft Keem' : 'KEEMVERSE'}
+            className={
+              isFashion
+                ? 'h-10 w-10 rounded-full object-cover border border-white shadow-sm'
+                : 'h-10 w-auto object-contain opacity-90'
+            }
+          />
         </button>
 
-        {/* Fashion / Craft toggle */}
-        <div className="flex items-center gap-2 md:gap-3">
+        {/* Universe Switch */}
+        <div className="flex items-center gap-3">
+
           <span
-            className="text-xs md:text-sm font-medium transition-colors duration-300"
-            style={{ color: isFashion ? FASHION : '#a8a29e' }}
+            className={`text-sm sm:text-base font-medium transition-colors duration-300 ${
+              isFashion
+                ? 'text-stone-900'
+                : 'text-stone-400'
+            }`}
           >
             Fashion
           </span>
 
-          <button
-            onClick={handleToggle}
-            aria-label={isFashion ? 'Switch to Craft' : 'Switch to Fashion'}
-            className="relative w-12 h-7 rounded-full border overflow-hidden transition-colors duration-300"
-            style={{
-              borderColor: isFashion ? `${FASHION}55` : `${CRAFT}55`,
-              background: `linear-gradient(to right, ${FASHION}26, ${CRAFT}26)`,
-            }}
-          >
-            <div
-              className="absolute top-1/2 -translate-y-1/2 h-5 w-5 rounded-full shadow-[0_1px_3px_rgba(0,0,0,0.25)] transition-all duration-300"
-              style={{
-                left: isFashion ? '1px' : '23px',
-                backgroundColor: isFashion ? FASHION : CRAFT,
-              }}
-            />
-          </button>
+<button
+  onClick={handleToggle}
+  className="
+    relative
+    w-12
+    h-7
+    rounded-full
+    border
+    border-[#d8d0c8]
+    bg-gradient-to-b
+    from-[#f4efe9]
+    to-[#ddd3c8]
+    shadow-[inset_0_1px_2px_rgba(255,255,255,0.8),0_2px_6px_rgba(0,0,0,0.08)]
+    transition-all
+    duration-300
+    overflow-hidden
+  "
+>
+  <div
+    className={`
+      absolute
+      top-1/2
+      -translate-y-1/2
+      h-5
+      w-5
+      rounded-full
+      bg-gradient-to-b
+      from-[#b8ada2]
+      to-[#8f857b]
+      shadow-[0_1px_3px_rgba(0,0,0,0.18)]
+      transition-all
+      duration-300
+      ${isFashion ? "left-[1px]" : "left-[23px]"}
+    `}
+  />
+</button>
 
           <span
-            className="text-xs md:text-sm font-medium transition-colors duration-300"
-            style={{ color: !isFashion ? CRAFT : '#a8a29e' }}
+            className={`text-sm sm:text-base font-medium transition-colors duration-300 ${
+              !isFashion
+                ? 'text-stone-900'
+                : 'text-stone-400'
+            }`}
           >
             Craft
           </span>
+
         </div>
 
-        <div className="flex items-center gap-5 md:gap-6 shrink-0">
-          <button
-            onClick={() => setComingSoon('Resources')}
-            className="text-xs md:text-sm font-medium tracking-wide text-stone-600 hover:text-stone-900 transition-colors"
-          >
-            Resources
-          </button>
-          <button
-            onClick={() => setComingSoon('About')}
-            className="text-xs md:text-sm font-medium tracking-wide text-stone-600 hover:text-stone-900 transition-colors"
-          >
-            About
-          </button>
-        </div>
       </div>
-    </nav>
+    </div>
   );
 }
