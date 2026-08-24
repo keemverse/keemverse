@@ -3,7 +3,7 @@ import { ShoppingBag, Camera, Palette, Layers } from 'lucide-react';
 import { SocialFooter } from '../components/SocialFooter';
 import { ImageWithFallback } from '../components/figma/ImageWithFallback';
 import fashionPageHero from '../../imports/IMG_7304.jpeg';
-import craftPageHero from '../../imports/CRAFT QUALITY.png';
+import craftPageHero from '../../imports/craft-quality-hero.webp';
 
 const hero = [
   {
@@ -25,7 +25,7 @@ const hero = [
     description: 'Production-ready artwork and design packs.',
     image: craftPageHero,
     cta: 'enter',
-    tag: 'LIVE',
+    tag: 'Coming Soon',
     href: '/digital-craft',
     accent: '#1FA396',
     accentDark: '#12897D',
