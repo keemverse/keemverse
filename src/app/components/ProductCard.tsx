@@ -6,6 +6,7 @@ interface ProductCardProps {
   price: string;
   image: string;
   rating?: string | number;
+  affiliateLink: string;
   index?: number;
   onOpen?: () => void;
 }
@@ -15,6 +16,7 @@ export default function ProductCard({
   price,
   image,
   rating,
+  affiliateLink,
   index = 0,
   onOpen,
 }: ProductCardProps) {
@@ -49,6 +51,17 @@ export default function ProductCard({
       )}
 
       <p className="mt-1 text-sm font-medium text-stone-900">{price}</p>
+
+      <a
+        href={affiliateLink}
+        target="_blank"
+        rel="noopener noreferrer"
+        onClick={(e) => e.stopPropagation()}
+        className="mt-3 inline-flex w-full justify-center items-center gap-2 rounded-full border border-stone-300 bg-[#ECE5D9] px-4 py-2 text-[11px] font-semibold tracking-[0.1em] text-stone-900 transition-all duration-300 ease-[cubic-bezier(.22,1,.36,1)] hover:-translate-y-0.5 hover:bg-[#E5DDCF]"
+      >
+        SHOP NOW
+        <span className="transition-transform group-hover:translate-x-1">→</span>
+      </a>
     </motion.div>
   );
 }

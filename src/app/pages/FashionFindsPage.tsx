@@ -117,6 +117,7 @@ const filteredProducts = products.filter((p) => {
   price={formatPrice(product.Price)}
   image={product["Image URL"]}
   rating={product.Rating}
+  affiliateLink={product["Affiliate Link"]}
 onOpen={() => setSelected(product)}
 />
 ))}
@@ -163,6 +164,7 @@ onOpen={() => setSelected(product)}
         price={formatPrice(product.Price)}
         image={product["Image URL"]}
         rating={product.Rating}
+        affiliateLink={product["Affiliate Link"]}
 onOpen={() => setSelected(product)}
       />
     ))}
