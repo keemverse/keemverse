@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 import { NavBar } from './components/NavBar';
 import { LandingPage } from './pages/LandingPage';
@@ -8,12 +8,6 @@ import { DigitalCraftPage } from './pages/DigitalCraftPage';
 import FashionFindsPage from "./pages/FashionFindsPage";
 import LightroomPresetsPage from "./pages/LightroomPresetsPage";
 
-function ConditionalNavBar() {
-  const { pathname } = useLocation();
-  if (pathname === '/') return null;
-  return <NavBar />;
-}
-
 export default function App() {
   return (
     <BrowserRouter>
@@ -21,7 +15,7 @@ export default function App() {
         className="min-h-screen"
         style={{ backgroundColor: '#F5F2EA' }}
       >
-        <ConditionalNavBar />
+        <NavBar />
 
         <Routes>
   <Route path="/" element={<LandingPage />} />
