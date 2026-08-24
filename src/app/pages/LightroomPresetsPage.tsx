@@ -145,7 +145,7 @@ export default function LightroomPresetsPage() {
     name={preset["Preset Name"]}
     price={formatPrice(preset.Price)}
     image={preset["Preview Image"]}
-    collection={preset.Collection}
+    rating={preset.Rating}
     index={index}
     onOpen={() => setSelected(preset)}
   />
@@ -202,7 +202,7 @@ export default function LightroomPresetsPage() {
     name={preset["Preset Name"]}
     price={formatPrice(preset.Price)}
     image={preset["Preview Image"]}
-    collection={preset.Collection}
+    rating={preset.Rating}
     index={index}
     onOpen={() => setSelected(preset)}
   />

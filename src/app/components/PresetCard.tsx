@@ -5,7 +5,7 @@ interface PresetCardProps {
   name: string;
   price: string;
   image: string;
-  collection: string;
+  rating?: string | number;
   index?: number;
   onOpen?: () => void;
 }
@@ -14,51 +14,41 @@ export default function PresetCard({
   name,
   price,
   image,
-  collection,
+  rating,
   index = 0,
   onOpen,
 }: PresetCardProps) {
   return (
     <motion.article
-    onClick={onOpen}
-      initial={{ opacity: 0, y: 20 }}
+      onClick={onOpen}
+      initial={{ opacity: 0, y: 16 }}
       whileInView={{ opacity: 1, y: 0 }}
-      whileHover={{
-        y: -8,
-        scale: 1.015,
-      }}
+      whileHover={{ y: -4 }}
       viewport={{ once: true }}
-      transition={{
-        duration: 0.45,
-        delay: index * 0.08,
-      }}
-      className="group overflow-hidden rounded-[30px] bg-white border border-stone-200/70 shadow-[0_8px_30px_rgba(0,0,0,.05)] hover:shadow-[0_25px_70px_rgba(0,0,0,.12)] transition-all duration-500 ease-[cubic-bezier(.22,1,.36,1)]"
+      transition={{ duration: 0.4, delay: index * 0.06 }}
+      className="group cursor-pointer"
     >
-      <div className="relative aspect-[4/5] overflow-hidden">
-        <div className="absolute inset-0 transition-transform duration-[900ms] ease-[cubic-bezier(.22,1,.36,1)] group-hover:scale-[1.07]">
+      <div className="relative aspect-[4/5] overflow-hidden rounded-xl bg-stone-100">
+        <div className="absolute inset-0 transition-transform duration-500 ease-[cubic-bezier(.22,1,.36,1)] group-hover:scale-[1.04]">
           <ImageWithFallback
             src={image}
             alt={name}
             className="w-full h-full object-cover"
           />
-
-          <div className="absolute inset-x-0 bottom-0 h-[12%] bg-gradient-to-t from-white/80 to-transparent" />
         </div>
       </div>
 
-      <div className="p-5 md:p-6">
-        <p className="text-[11px] uppercase tracking-[0.28em] text-stone-400 font-semibold mb-3">
-          {collection}
-        </p>
+      <p className="mt-3 text-sm text-stone-800 line-clamp-2 leading-snug">
+        {name}
+      </p>
 
-        <h3 className="font-serif text-lg md:text-[26px] leading-tight text-stone-900 line-clamp-2">
-          {name}
-        </h3>
-
-        <p className="mt-3 text-lg font-semibold text-stone-900">
-          {price}
+      {rating && (
+        <p className="mt-1 text-xs text-stone-500">
+          {rating} <span aria-hidden="true">★</span>
         </p>
-      </div>
+      )}
+
+      <p className="mt-1 text-sm font-medium text-stone-900">{price}</p>
     </motion.article>
   );
 }
