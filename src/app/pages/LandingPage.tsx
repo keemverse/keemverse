@@ -203,7 +203,7 @@ function HeroHeadline() {
             viewport={{ once: true, margin: '0px 0px -80px 0px' }}
             transition={{ duration: 0.9, ease: [0.65, 0, 0.35, 1] }}
           >
-            One <span style={{ color: FASHION }}>creator,</span>
+            One <span style={{ color: FASHION }}>creator</span>
           </motion.span>
         </span>
         <span className="block overflow-hidden pb-[0.1em]">
@@ -214,7 +214,7 @@ function HeroHeadline() {
             viewport={{ once: true, margin: '0px 0px -80px 0px' }}
             transition={{ duration: 0.9, delay: 0.35, ease: [0.65, 0, 0.35, 1] }}
           >
-            two <span style={{ color: CRAFT }}>crafts.</span>
+            two <span style={{ color: CRAFT }}>crafts</span>
           </motion.span>
         </span>
       </h1>
