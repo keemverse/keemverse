@@ -5,11 +5,12 @@ import { ShoppingBag, Camera, Palette, Layers } from 'lucide-react';
 import { SocialFooter } from '../components/SocialFooter';
 import { ComingSoonModal } from '../components/ComingSoonModal';
 import { ImageWithFallback } from '../components/figma/ImageWithFallback';
+import { PillButton } from '../components/ui/PillButton';
+import { AccentPillButton } from '../components/ui/AccentPillButton';
+import { IconButton } from '../components/ui/IconButton';
+import { FASHION, FASHION_DARK, CRAFT, CRAFT_DARK } from '../lib/theme';
 import fashionPageHero from '../../imports/IMG_7304.jpeg';
 import craftPageHero from '../../imports/craft-quality-hero.webp';
-
-const FASHION = '#D98E2B';
-const CRAFT = '#1FA396';
 
 // Landing-page-only top bar: wordmark left, animated burger right.
 // The universe pages keep their own back-button/toggle nav — this is
@@ -42,11 +43,10 @@ function LandingNav() {
         Keemverse
       </span>
 
-      <button
+      <IconButton
         onClick={() => setOpen((v) => !v)}
-        aria-label={open ? 'Close menu' : 'Open menu'}
-        aria-expanded={open}
-        className="relative w-11 h-11 rounded-full border border-[#d8d0c8] bg-gradient-to-b from-[#f4efe9] to-[#ddd3c8] shadow-[inset_0_1px_2px_rgba(255,255,255,0.8),0_2px_6px_rgba(0,0,0,0.08)] flex flex-col items-center justify-center gap-[5px]"
+        ariaLabel={open ? 'Close menu' : 'Open menu'}
+        ariaExpanded={open}
       >
         <motion.span
           className="block w-4 h-[1.5px] bg-stone-700 rounded-full"
@@ -63,7 +63,7 @@ function LandingNav() {
           animate={open ? { rotate: -45, y: -6.5 } : { rotate: 0, y: 0 }}
           transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
         />
-      </button>
+      </IconButton>
 
       <AnimatePresence>
         {open && (
@@ -101,8 +101,8 @@ const hero = [
     cta: 'enter',
     tag: 'LIVE',
     href: '/fashion',
-    accent: '#D98E2B',
-    accentDark: '#B8741A',
+    accent: FASHION,
+    accentDark: FASHION_DARK,
     pills: [
       { label: 'finds', sub: 'curated fashion', icon: ShoppingBag, href: '/fashion/finds' },
       { label: 'presets', sub: 'lightroom presets', icon: Camera, href: '/fashion/presets' },
@@ -115,8 +115,8 @@ const hero = [
     cta: 'enter',
     tag: 'Coming Soon',
     href: '/digital-craft',
-    accent: '#1FA396',
-    accentDark: '#12897D',
+    accent: CRAFT,
+    accentDark: CRAFT_DARK,
     pills: [
       { label: 'graphics', sub: 'printable graphics', icon: Layers, href: '/digital-craft' },
       { label: 'DTF Designs', sub: 'dtf design packs', icon: Palette, href: '/digital-craft' },
@@ -174,10 +174,7 @@ function HeroCard({
         </p>
 
         <div className="mt-3 md:mt-6">
-          <span className="inline-flex items-center gap-1.5 md:gap-2 rounded-full border border-stone-300 bg-[#ECE5D9] px-4 py-2 md:px-7 md:py-3 text-[11px] md:text-xs font-semibold tracking-[0.15em] text-stone-900 shadow-[inset_0_1px_0_rgba(255,255,255,.9),0_8px_20px_rgba(0,0,0,.06)] transition-all duration-300 ease-[cubic-bezier(.22,1,.36,1)] group-hover:-translate-y-0.5 group-hover:bg-[#E5DDCF]">
-            {cta}
-            <span className="transition-transform group-hover:translate-x-1">→</span>
-          </span>
+          <PillButton groupHover>{cta}</PillButton>
         </div>
       </div>
     </motion.a>
@@ -265,30 +262,16 @@ export function LandingPage() {
 
                   <div className="grid grid-cols-2 gap-2 md:gap-3 mt-3 md:mt-4">
                     {item.pills.map((p, pi) => (
-                      <motion.a
+                      <AccentPillButton
                         key={p.label}
                         href={p.href}
-                        initial={{ opacity: 0, y: 12 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        whileHover={{ scale: 1.05, y: -3 }}
-                        whileTap={{ scale: 0.97 }}
-                        transition={{ duration: 0.4, delay: 0.15 + i * 0.1 + pi * 0.06 }}
-                        className="group flex flex-col items-center gap-1 rounded-full border px-3 py-4 md:px-4 md:py-5 text-center text-white transition-all duration-300 ease-[cubic-bezier(.22,1,.36,1)]"
-                        style={{
-                          backgroundColor: item.accent,
-                          borderColor: item.accentDark,
-                          boxShadow: `inset 0 1px 0 rgba(255,255,255,.35), 0 10px 24px -6px ${item.accent}99`,
-                        }}
-                        onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = item.accentDark)}
-                        onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = item.accent)}
-                      >
-                        <p.icon className="w-5 h-5 mb-1" />
-                        <span className="font-serif text-sm md:text-lg leading-none">{p.label}</span>
-                        <span className="text-[9px] md:text-[10px] uppercase tracking-wider mt-1 text-white/80">
-                          {p.sub}
-                        </span>
-                      </motion.a>
+                        icon={p.icon}
+                        label={p.label}
+                        sub={p.sub}
+                        accent={item.accent}
+                        accentDark={item.accentDark}
+                        delay={0.15 + i * 0.1 + pi * 0.06}
+                      />
                     ))}
                   </div>
                 </div>

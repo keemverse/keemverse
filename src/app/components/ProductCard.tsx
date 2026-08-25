@@ -1,5 +1,6 @@
 import { motion } from "motion/react";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
+import { PillButton } from "./ui/PillButton";
 
 interface ProductCardProps {
   name: string;
@@ -65,18 +66,14 @@ export default function ProductCard({
           {price}
         </p>
 
-        <a
+        <PillButton
           href={affiliateLink}
-          target="_blank"
-          rel="noopener noreferrer"
-          onClick={(e)=>e.stopPropagation()}
-          className="group/button mt-6 inline-flex w-full justify-center items-center gap-2 rounded-full border border-stone-300 bg-[#ECE5D9] px-4 md:px-7 py-2.5 md:py-3 text-[11px] md:text-xs font-semibold tracking-[0.1em] md:tracking-[0.15em] whitespace-nowrap shadow-[inset_0_1px_0_rgba(255,255,255,.9),0_8px_20px_rgba(0,0,0,.06)] transition-all duration-300 ease-[cubic-bezier(.22,1,.36,1)] hover:-translate-y-0.5 hover:bg-[#E5DDCF]"
+          external
+          onClick={(e) => e.stopPropagation()}
+          className="mt-6 w-full justify-center whitespace-nowrap"
         >
           {buttonText}
-          <span className="transition-transform duration-300 group-hover/button:translate-x-1">
-  →
-</span>
-        </a>
+        </PillButton>
       </div>
     </motion.div>
   );
