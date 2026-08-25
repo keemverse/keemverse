@@ -1,9 +1,97 @@
-import { motion } from 'motion/react';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { motion, AnimatePresence } from 'motion/react';
 import { ShoppingBag, Camera, Palette, Layers } from 'lucide-react';
 import { SocialFooter } from '../components/SocialFooter';
+import { ComingSoonModal } from '../components/ComingSoonModal';
 import { ImageWithFallback } from '../components/figma/ImageWithFallback';
 import fashionPageHero from '../../imports/IMG_7304.jpeg';
 import craftPageHero from '../../imports/craft-quality-hero.webp';
+
+const FASHION = '#D98E2B';
+const CRAFT = '#1FA396';
+
+// Landing-page-only top bar: wordmark left, animated burger right.
+// The universe pages keep their own back-button/toggle nav — this is
+// a separate treatment just for "/".
+function LandingNav() {
+  const navigate = useNavigate();
+  const [open, setOpen] = useState(false);
+  const [comingSoon, setComingSoon] = useState<string | null>(null);
+
+  const items = [
+    { label: 'Fashion', action: () => navigate('/fashion') },
+    { label: 'Craft', action: () => navigate('/digital-craft') },
+    { label: 'Resources', action: () => setComingSoon('Resources') },
+    { label: 'About', action: () => setComingSoon('About') },
+  ];
+
+  return (
+    <div className="flex items-center justify-between relative">
+      <ComingSoonModal
+        open={!!comingSoon}
+        onClose={() => setComingSoon(null)}
+        title={comingSoon ? `${comingSoon} — Coming Soon` : 'Coming Soon'}
+        description="This page isn't set up yet — check back soon."
+      />
+
+      <span
+        className="tracking-[0.25em] uppercase text-stone-900 text-sm md:text-base"
+        style={{ fontFamily: 'Georgia, serif' }}
+      >
+        Keemverse
+      </span>
+
+      <button
+        onClick={() => setOpen((v) => !v)}
+        aria-label={open ? 'Close menu' : 'Open menu'}
+        aria-expanded={open}
+        className="relative w-11 h-11 rounded-full border border-[#d8d0c8] bg-gradient-to-b from-[#f4efe9] to-[#ddd3c8] shadow-[inset_0_1px_2px_rgba(255,255,255,0.8),0_2px_6px_rgba(0,0,0,0.08)] flex flex-col items-center justify-center gap-[5px]"
+      >
+        <motion.span
+          className="block w-4 h-[1.5px] bg-stone-700 rounded-full"
+          animate={open ? { rotate: 45, y: 6.5 } : { rotate: 0, y: 0 }}
+          transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+        />
+        <motion.span
+          className="block w-4 h-[1.5px] bg-stone-700 rounded-full"
+          animate={open ? { opacity: 0 } : { opacity: 1 }}
+          transition={{ duration: 0.2 }}
+        />
+        <motion.span
+          className="block w-4 h-[1.5px] bg-stone-700 rounded-full"
+          animate={open ? { rotate: -45, y: -6.5 } : { rotate: 0, y: 0 }}
+          transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+        />
+      </button>
+
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ opacity: 0, y: -8, scale: 0.97 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -8, scale: 0.97 }}
+            transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
+            className="absolute right-0 top-14 z-30 w-44 rounded-2xl bg-white border border-stone-200/70 shadow-xl overflow-hidden"
+          >
+            {items.map((item) => (
+              <button
+                key={item.label}
+                onClick={() => {
+                  item.action();
+                  setOpen(false);
+                }}
+                className="block w-full text-left px-5 py-3 text-sm text-stone-700 hover:bg-stone-50 hover:text-stone-900 transition-colors"
+              >
+                {item.label}
+              </button>
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
 
 const hero = [
   {
@@ -96,34 +184,51 @@ function HeroCard({
   );
 }
 
-const taglineLines = [
-  'One creator, two crafts,',
-  'helping people build wardrobes and',
-  'helping brands build production-ready artwork.',
-];
-
-// Reveals each line left-to-right, like it's being written out, rather
-// than popping words in — one line at a time, in reading order.
-function StoryTagline() {
+// Big color-coded headline — "creator" tinted Fashion amber, "crafts"
+// tinted Craft teal, each word tied to the universe it names. Same
+// clip-path reveal language as before, just promoted to the hero
+// statement instead of a small italic line.
+function HeroHeadline() {
   return (
-    <p
-      className="leading-relaxed text-stone-800"
-      style={{ fontFamily: 'Georgia, serif', fontSize: 'clamp(1.1rem, 2.2vw, 1.4rem)' }}
-    >
-      {taglineLines.map((line, i) => (
-        <span key={line} className="block overflow-hidden pb-[0.15em]">
+    <div>
+      <h1
+        className="leading-[1.05] text-stone-900"
+        style={{ fontFamily: 'Georgia, serif', fontSize: 'clamp(2.25rem, 7vw, 3.75rem)' }}
+      >
+        <span className="block overflow-hidden pb-[0.1em]">
           <motion.span
             className="inline-block"
             initial={{ clipPath: 'inset(0 100% 0 0)' }}
             whileInView={{ clipPath: 'inset(0 0% 0 0)' }}
             viewport={{ once: true, margin: '0px 0px -80px 0px' }}
-            transition={{ duration: 0.9, delay: i * 0.55, ease: [0.65, 0, 0.35, 1] }}
+            transition={{ duration: 0.9, ease: [0.65, 0, 0.35, 1] }}
           >
-            {line}
+            One <span style={{ color: FASHION }}>creator,</span>
           </motion.span>
         </span>
-      ))}
-    </p>
+        <span className="block overflow-hidden pb-[0.1em]">
+          <motion.span
+            className="inline-block"
+            initial={{ clipPath: 'inset(0 100% 0 0)' }}
+            whileInView={{ clipPath: 'inset(0 0% 0 0)' }}
+            viewport={{ once: true, margin: '0px 0px -80px 0px' }}
+            transition={{ duration: 0.9, delay: 0.35, ease: [0.65, 0, 0.35, 1] }}
+          >
+            two <span style={{ color: CRAFT }}>crafts.</span>
+          </motion.span>
+        </span>
+      </h1>
+
+      <motion.p
+        initial={{ opacity: 0, y: 10 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.6, delay: 0.9 }}
+        className="mt-5 text-stone-600 leading-relaxed text-sm md:text-base"
+      >
+        Helping people build wardrobes and helping brands build production-ready artwork.
+      </motion.p>
+    </div>
   );
 }
 
@@ -133,20 +238,14 @@ export function LandingPage() {
       <main className="pt-8 pb-0 px-5 md:px-8">
         <div className="max-w-6xl mx-auto">
 
-          {/* ── HEADER ── */}
-          <section className="text-center">
-            <h1
-              className="tracking-[0.3em] uppercase text-stone-900"
-              style={{ fontFamily: 'Georgia, serif', fontSize: 'clamp(1.5rem, 4vw, 2.25rem)' }}
-            >
-              Keemverse
-            </h1>
+          {/* ── NAV ── */}
+          <section>
+            <LandingNav />
           </section>
 
-          {/* ── TAGLINE ── */}
-          <section className="mt-10 pb-2 text-center max-w-xl mx-auto">
-            <StoryTagline />
-            <div className="mx-auto mt-6 h-px w-16 bg-stone-300" />
+          {/* ── HEADLINE ── */}
+          <section className="mt-14 md:mt-20 pb-2 max-w-2xl">
+            <HeroHeadline />
           </section>
 
           {/* ── HERO CARDS + THEIR QUICK-LINK PILLS ── */}
