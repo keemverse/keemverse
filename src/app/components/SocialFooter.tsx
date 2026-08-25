@@ -33,9 +33,6 @@ export function SocialFooter() {
         </p>
 
         <div>
-          <p className="text-xs font-bold tracking-[0.25em] uppercase opacity-40 mb-6">
-            Follow Keemverse
-          </p>
           <div className="flex gap-4 justify-center">
             {socials.map((s) => {
               const isPending = s.href === '#';
