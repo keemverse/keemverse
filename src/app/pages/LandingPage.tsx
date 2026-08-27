@@ -10,7 +10,7 @@ import { AccentPillButton } from '../components/ui/AccentPillButton';
 import { IconButton } from '../components/ui/IconButton';
 import { FASHION, FASHION_DARK, CRAFT, CRAFT_DARK } from '../lib/theme';
 import fashionPageHero from '../../imports/IMG_7304.jpeg';
-import craftPageHero from '../../imports/craft-quality-hero.webp';
+import craftPageHero from '../../imports/craft-quality-hero_2.webp';
 
 // Landing-page-only top bar: wordmark left, animated burger right.
 // The universe pages keep their own back-button/toggle nav — this is
