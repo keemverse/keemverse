@@ -13,7 +13,7 @@ interface AccentPillButtonProps {
 
 /**
  * The solid-color circular pill used for universe quick-links
- * (finds/presets/graphics/DTF designs). Takes its color from
+ * (finds/presets/graphics/apparel designs). Takes its color from
  * whichever universe's accent is passed in — never hardcode a hex
  * value at the call site, pull from src/app/lib/theme.ts.
  */

@@ -119,7 +119,7 @@ const hero = [
     accentDark: CRAFT_DARK,
     pills: [
       { label: 'graphics', sub: 'printable graphics', icon: Layers, href: '/digital-craft' },
-      { label: 'DTF Designs', sub: 'dtf design packs', icon: Palette, href: '/digital-craft' },
+      { label: 'Apparel Designs', sub: 'apparel design packs', icon: Palette, href: '/digital-craft' },
     ],
   },
 ];

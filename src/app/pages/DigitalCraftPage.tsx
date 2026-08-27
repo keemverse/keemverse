@@ -39,8 +39,8 @@ const shop = [
     href: '#',
   },
   {
-    title: 'DTF Design Packs',
-    description: 'Premium DTF-ready artwork designed for apparel brands and print businesses.',
+    title: 'Apparel Design Packs',
+    description: 'Premium print-ready artwork designed for apparel brands and print businesses, ready for any printing method.',
     image: dtfDesignPacksHero,
     cta: 'Coming Soon',
     tag: 'PENDING',
