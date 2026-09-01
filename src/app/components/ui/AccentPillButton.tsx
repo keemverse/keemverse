@@ -26,9 +26,12 @@ export function AccentPillButton({
   accentDark,
   delay = 0,
 }: AccentPillButtonProps) {
+  const isExternal = href.startsWith('http');
   return (
     <motion.a
       href={href}
+      target={isExternal ? '_blank' : undefined}
+      rel={isExternal ? 'noopener noreferrer' : undefined}
       initial={{ opacity: 0, y: 12 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}

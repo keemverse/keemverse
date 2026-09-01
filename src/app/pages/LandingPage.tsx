@@ -104,8 +104,8 @@ const hero = [
     accent: FASHION,
     accentDark: FASHION_DARK,
     pills: [
-      { label: 'finds', sub: 'curated fashion', icon: ShoppingBag, href: '/fashion/finds' },
-      { label: 'presets', sub: 'lightroom presets', icon: Camera, href: '/fashion/presets' },
+      { label: 'fashion finds', sub: 'shop my picks', icon: ShoppingBag, href: '/fashion/finds' },
+      { label: 'presets', sub: 'lightroom presets', icon: Camera, href: 'https://keemverse.gumroad.com' },
     ],
   },
   {

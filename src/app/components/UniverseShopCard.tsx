@@ -22,10 +22,13 @@ export default function UniverseShopCard({
   onOpen,
 }: UniverseShopCardProps) {
   const isPending = href === "#";
+  const isExternal = href.startsWith("http");
 
   return (
     <motion.a
       href={href}
+      target={isExternal ? "_blank" : undefined}
+      rel={isExternal ? "noopener noreferrer" : undefined}
       onClick={
         isPending && onOpen
           ? (e) => {

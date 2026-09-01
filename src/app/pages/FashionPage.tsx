@@ -48,7 +48,7 @@ const shop = [
     image: photoPresetsHero,
     cta: 'Get Presets',
     tag: 'LIVE',
-    href: '/fashion/presets',
+    href: 'https://keemverse.gumroad.com',
   },
 ];
 
