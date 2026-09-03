@@ -60,6 +60,16 @@ export function SocialFooter() {
           </div>
         </div>
 
+        <div className="flex flex-col items-center gap-1.5 text-xs md:text-sm text-stone-500">
+          <a href="mailto:akeemtajudeen322@gmail.com" className="hover:text-stone-800 transition-colors">
+            akeemtajudeen322@gmail.com
+          </a>
+          <a href="tel:+2349167174194" className="hover:text-stone-800 transition-colors">
+            +234 916 717 4194
+          </a>
+          <span>Osogbo, Osun State, Nigeria</span>
+        </div>
+
         <div className="flex flex-col items-center gap-4 opacity-40 text-sm">
           <ImageWithFallback
             src={logImg}
