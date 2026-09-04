@@ -5,6 +5,7 @@ import SkeletonCard from "../components/SkeletonCard";
 import UniverseSearch from "../components/UniverseSearch";
 import UniverseTabs from "../components/UniverseTabs";
 import ProductCard from "../components/ProductCard";
+import TemuScrollBanner from "../components/TemuScrollBanner";
 import ProductPopup from "../components/ProductPopup";
 import { SocialFooter } from "../components/SocialFooter";
 import { getProducts } from "../lib/products";
@@ -105,6 +106,15 @@ const filteredProducts = products.filter((p) => {
   className="mb-12"
 />
 
+        {!loading && (
+          <TemuScrollBanner
+            products={products}
+            formatPrice={formatPrice}
+            onSelect={setSelected}
+            storefrontUrl="https://temu.to/k/e3d0e4ta2g4"
+          />
+        )}
+
         {featured.length > 0 && (
           <>
             <SectionDivider label="Featured Finds" />
@@ -127,6 +137,7 @@ onOpen={() => setSelected(product)}
           </>
         )}
 
+        <div id="all-finds">
         <SectionDivider label="All Finds" />
 
 {loading ? (
@@ -174,6 +185,7 @@ onOpen={() => setSelected(product)}
     ))}
   </div>
 )}
+        </div>
 
 {selected && (
  <ProductPopup

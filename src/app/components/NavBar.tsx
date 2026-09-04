@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { ImageWithFallback } from './figma/ImageWithFallback';
-import { ToggleSwitch } from './ui/ToggleSwitch';
+import { BurgerMenu } from './ui/BurgerMenu';
+import { ComingSoonModal } from './ComingSoonModal';
 
 import logImg from '../../imports/log.png';
 import profileImg from '../../imports/keem-profile.jpg';
@@ -9,17 +10,28 @@ import profileImg from '../../imports/keem-profile.jpg';
 export function NavBar() {
   const location = useLocation();
   const navigate = useNavigate();
+  const [comingSoon, setComingSoon] = useState<string | null>(null);
 
   const isFashion =
   location.pathname === "/" ||
   location.pathname.startsWith("/fashion");
 
-  const handleToggle = () => {
-    navigate(isFashion ? '/digital-craft' : '/fashion');
-  };
+  const items = [
+    { label: 'Fashion', action: () => navigate('/fashion') },
+    { label: 'Craft', action: () => navigate('/digital-craft') },
+    { label: 'Resources', action: () => setComingSoon('Resources') },
+    { label: 'About', action: () => setComingSoon('About') },
+  ];
 
   return (
     <div className="w-full px-4 pt-5 pb-4">
+      <ComingSoonModal
+        open={!!comingSoon}
+        onClose={() => setComingSoon(null)}
+        title={comingSoon ? `${comingSoon} — Coming Soon` : 'Coming Soon'}
+        description="This page isn't set up yet — check back soon."
+      />
+
       <div className="max-w-5xl mx-auto flex items-center justify-between">
 
         {/* Dynamic Identity — doubles as a Home button back to the landing page */}
@@ -40,13 +52,9 @@ export function NavBar() {
           />
         </button>
 
-        {/* Universe Switch */}
-        <ToggleSwitch
-          isLeft={isFashion}
-          onToggle={handleToggle}
-          leftLabel="Fashion"
-          rightLabel="Craft"
-        />
+        {/* Menu — replaces the old Fashion/Craft toggle now that the
+            landing page is the shared hub for both universes */}
+        <BurgerMenu items={items} />
 
       </div>
     </div>

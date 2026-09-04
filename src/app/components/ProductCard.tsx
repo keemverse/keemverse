@@ -27,25 +27,21 @@ export default function ProductCard({
 }: ProductCardProps) {
   return (
     <motion.div
-  initial={{ opacity: 0, y: 20 }}
-  whileInView={{ opacity: 1, y: 0 }}
-  whileHover={{
-    y: -8,
-    scale: 1.015,
-  }}
-  viewport={{ once: true }}
-  transition={{ duration: 0.45, delay: index * 0.08 }}
-  className="group cursor-pointer overflow-hidden rounded-[30px] bg-white border border-stone-200/70 shadow-[0_8px_30px_rgba(0,0,0,.05)] hover:shadow-[0_25px_70px_rgba(0,0,0,.12)] transition-all duration-500 ease-[cubic-bezier(.22,1,.36,1)]"
-  onClick={onOpen}
->
-      <div className="relative h-52 md:h-72 overflow-hidden">
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.45, delay: index * 0.08 }}
+      className="group cursor-pointer"
+      onClick={onOpen}
+    >
+      {/* Image alone — no card chrome (no border/bg/shadow box), just the photo */}
+      <div className="relative h-52 md:h-72 overflow-hidden rounded-[24px]">
         <div className="absolute inset-0 will-change-transform transition-all duration-[900ms] ease-[cubic-bezier(.22,1,.36,1)] group-hover:scale-[1.07]">
           <ImageWithFallback
             src={image}
             alt={name}
             className="w-full h-full object-cover"
           />
-          <div className="absolute inset-x-0 bottom-0 h-[3%] bg-gradient-to-t from-white/100 to-transparent" />
         </div>
 
         <span className="absolute top-2 right-2 rounded-full bg-white/95 backdrop-blur-md px-1 py-0.5 text-[7px] uppercase tracking-[0.22em] font-bold shadow-lg">
@@ -53,7 +49,8 @@ export default function ProductCard({
         </span>
       </div>
 
-      <div className="p-5 md:p-6">
+      {/* Details — fully isolated from the image, no shared container */}
+      <div className="pt-4">
         <p className="text-[11px] uppercase tracking-[0.28em] text-stone-400 font-semibold mb-3">
           {category}
         </p>

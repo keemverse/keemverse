@@ -6,6 +6,7 @@ import { ImageWithFallback } from '../components/figma/ImageWithFallback';
 import { SocialFooter } from '../components/SocialFooter';
 import { BookMeModal } from '../components/BookMeModal';
 import UniverseShopCard from "../components/UniverseShopCard";
+import { GeometricBackdrop } from '../components/GeometricBackdrop';
 import img1 from '../../imports/IMG_7304.jpeg';
 import img2 from '../../imports/IMG_7549.jpeg';
 import img3 from '../../imports/IMG_4929.jpeg';
@@ -74,10 +75,11 @@ export function FashionPage() {
   }, []);
 
   return (
-    <div className="min-h-screen text-stone-900" style={{ backgroundColor: '#F5F2EA' }}>
+    <div className="relative min-h-screen text-stone-900" style={{ backgroundColor: '#F5F2EA' }}>
+      <GeometricBackdrop />
       <BookMeModal open={modalOpen} onClose={() => setModalOpen(false)} />
 
-      <main className="pt-8 pb-0 px-5 md:px-8">
+      <main className="relative z-10 pt-8 pb-0 px-5 md:px-8">
         <div className="max-w-6xl mx-auto">
 
           {/* ── HERO ── */}

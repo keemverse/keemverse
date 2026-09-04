@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { motion } from 'motion/react';
-import { ImageWithFallback } from '../components/figma/ImageWithFallback';
 import { SocialFooter } from '../components/SocialFooter';
 import { ComingSoonModal } from '../components/ComingSoonModal';
+import { ImageWithFallback } from '../components/figma/ImageWithFallback';
+import { GeometricBackdrop } from '../components/GeometricBackdrop';
 import { UpworkIcon, BehanceIcon } from '../components/Icons';
 import { FileImage, Briefcase, Layers } from 'lucide-react';
-import tlogImg from '../../imports/tlog.png';
 import UniverseShopCard from "../components/UniverseShopCard";
-import heroPortrait from '../../imports/IMG_5353-Edit.jpeg';
+import craftPageHero from '../../imports/craft-quality-hero_2.webp';
 import printableGraphicsHero from '../../imports/printable-graphics-hero.jpg';
 import dtfDesignPacksHero from '../../imports/dtf-design-packs-hero.jpg';
 
@@ -68,7 +68,8 @@ export function DigitalCraftPage() {
   const [comingSoon, setComingSoon] = useState<string | null>(null);
 
   return (
-    <div className="min-h-screen text-stone-900" style={{ backgroundColor: '#F5F2EA' }}>
+    <div className="relative min-h-screen text-stone-900" style={{ backgroundColor: '#F5F2EA' }}>
+      <GeometricBackdrop />
       <ComingSoonModal
         open={!!comingSoon}
         onClose={() => setComingSoon(null)}
@@ -76,35 +77,21 @@ export function DigitalCraftPage() {
         description="This shop isn't live yet — check back soon."
       />
 
-      <main className="pt-8 pb-0 px-5 md:px-8">
+      <main className="relative z-10 pt-8 pb-0 px-5 md:px-8">
         <div className="max-w-6xl mx-auto">
 
           {/* ── HERO ── */}
           <section>
-            {/* Hero container - unified layout matching Fashion */}
+            {/* Landscape hero — matches the craft card on the main page,
+                not the prototype's own portrait framing */}
             <div
               className="relative w-full overflow-hidden rounded-3xl"
-              style={{ aspectRatio: '3/4', maxHeight: '90vh' }}
+              style={{ aspectRatio: '16/9', maxHeight: '70vh' }}
             >
-              {/* Subtle grid overlay */}
-              <svg
-                className="absolute inset-0 w-full h-full opacity-[0.04] z-10 pointer-events-none"
-                xmlns="http://www.w3.org/2000/svg"
-                preserveAspectRatio="none"
-              >
-                <defs>
-                  <pattern id="dc-hero-grid" width="40" height="40" patternUnits="userSpaceOnUse">
-                    <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#1a1a1a" strokeWidth="0.5" />
-                  </pattern>
-                </defs>
-                <rect width="100%" height="100%" fill="url(#dc-hero-grid)" />
-              </svg>
-
-              {/* Hero image */}
               <ImageWithFallback
-                src={heroPortrait}
-                alt="Digital Craft — editorial portrait"
-                className="w-full h-full object-cover object-top"
+                src={craftPageHero}
+                alt="Digital Craft — production-ready artwork"
+                className="w-full h-full object-cover"
               />
 
               {/* Bottom gradient overlay */}
