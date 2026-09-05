@@ -122,21 +122,14 @@ export function FashionPage() {
                   }}
                 >
                   <p className="text-white/50 text-xs font-bold tracking-[0.35em] uppercase mb-4">
-                    Soft Keem
+                    Fashion Storyteller
                   </p>
                   <h1
-                    className="text-white leading-tight mb-2"
-                    style={{ fontFamily: 'Georgia, serif', fontSize: 'clamp(2rem, 5vw, 3.5rem)' }}
+                    className="text-white leading-tight"
+                    style={{ fontFamily: 'Georgia, serif', fontSize: 'clamp(1.1rem, 4vw, 2.5rem)' }}
                   >
-                    Fashion Storyteller
+                    Visual identity through style, emotion, and atmosphere.
                   </h1>
-                  <p className="text-white/75 mb-5" style={{ fontSize: 'clamp(1rem, 2vw, 1.25rem)' }}>
-                    Visual Identity Explorer
-                  </p>
-                  <p className="text-white/55 text-sm md:text-base max-w-sm leading-relaxed">
-                    Helping people express identity,<br />
-                    emotion, and atmosphere through style.
-                  </p>
                 </motion.div>
               </div>
 
@@ -157,10 +150,12 @@ export function FashionPage() {
             </div>
           </section>
 
-          {/* ── ABOUT ── */}
-          <section className="mt-24">
-            <SectionDivider label="About" />
+          {/* ── INTRO ── */}
+          <section className="mt-16">
             <div className="max-w-xl mx-auto text-center">
+              <p className="text-stone-700 font-medium text-lg md:text-xl mb-4">
+                Hi, I'm Keem.
+              </p>
               <h2
                 className="mb-6 leading-snug text-stone-900"
                 style={{ fontFamily: 'Georgia, serif', fontSize: 'clamp(1.75rem, 3.5vw, 2.5rem)' }}
@@ -168,9 +163,8 @@ export function FashionPage() {
                 I believe style is visual storytelling.
               </h2>
               <p className="text-stone-600 leading-loose text-base md:text-lg">
-                I help people build wardrobes,<br />
-                campaigns, and creative worlds<br />
-                that feel unmistakably theirs.
+                I help people build wardrobes, campaigns, and creative
+                worlds that feel unmistakably theirs.
               </p>
             </div>
           </section>

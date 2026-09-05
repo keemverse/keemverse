@@ -20,7 +20,8 @@ export function NavBar() {
     { label: 'Fashion', action: () => navigate('/fashion') },
     { label: 'Craft', action: () => navigate('/digital-craft') },
     { label: 'Resources', action: () => setComingSoon('Resources') },
-    { label: 'About', action: () => setComingSoon('About') },
+    { label: 'About', action: () => navigate('/about') },
+    { label: 'Contact', action: () => navigate('/contact') },
   ];
 
   return (

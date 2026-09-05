@@ -7,6 +7,11 @@ import { FashionPage } from './pages/FashionPage';
 import { DigitalCraftPage } from './pages/DigitalCraftPage';
 import FashionFindsPage from "./pages/FashionFindsPage";
 import LightroomPresetsPage from "./pages/LightroomPresetsPage";
+import AboutPage from "./pages/AboutPage";
+import ContactPage from "./pages/ContactPage";
+import RefundPolicyPage from "./pages/RefundPolicyPage";
+import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
+import TermsPage from "./pages/TermsPage";
 
 function ConditionalNavBar() {
   const { pathname } = useLocation();
@@ -42,6 +47,12 @@ export default function App() {
   path="/digital-craft"
   element={<DigitalCraftPage />}
 />
+
+<Route path="/about" element={<AboutPage />} />
+<Route path="/contact" element={<ContactPage />} />
+<Route path="/refund-policy" element={<RefundPolicyPage />} />
+<Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
+<Route path="/terms" element={<TermsPage />} />
 </Routes>
       </div>
     </BrowserRouter>

@@ -1,19 +1,11 @@
 import React, { useState } from 'react';
-import { Instagram } from 'lucide-react';
 import { ImageWithFallback } from './figma/ImageWithFallback';
 import { ComingSoonModal } from './ComingSoonModal';
-import { TikTokIcon, PinterestIcon, BehanceIcon } from './Icons';
+import { socials } from '../lib/socials';
 import logImg from '../../imports/log.png';
 
 export function SocialFooter() {
   const [comingSoon, setComingSoon] = useState<string | null>(null);
-
-  const socials = [
-    { name: 'TikTok', icon: TikTokIcon, href: 'https://www.tiktok.com/@soft_keem' },
-    { name: 'Instagram', icon: Instagram, href: 'https://www.instagram.com/soft_keem?igsh=MXh3ajFpdzV2emlzdA%3D%3D&utm_source=qr' },
-    { name: 'Pinterest', icon: PinterestIcon, href: 'https://pin.it/78T9RCsfV' },
-    { name: 'Behance', icon: BehanceIcon, href: '#' }, // pending — Behance not decided yet
-  ];
 
   return (
     <footer className="mt-24 py-20 px-6">
@@ -60,14 +52,12 @@ export function SocialFooter() {
           </div>
         </div>
 
-        <div className="flex flex-col items-center gap-1.5 text-xs md:text-sm text-stone-500">
-          <a href="mailto:akeemtajudeen322@gmail.com" className="hover:text-stone-800 transition-colors">
-            akeemtajudeen322@gmail.com
-          </a>
-          <a href="tel:+2349167174194" className="hover:text-stone-800 transition-colors">
-            +234 916 717 4194
-          </a>
-          <span>Osogbo, Osun State, Nigeria</span>
+        <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs text-stone-400">
+          <a href="/about" className="hover:text-stone-700 transition-colors">About</a>
+          <a href="/contact" className="hover:text-stone-700 transition-colors">Contact</a>
+          <a href="/refund-policy" className="hover:text-stone-700 transition-colors">Refund Policy</a>
+          <a href="/privacy-policy" className="hover:text-stone-700 transition-colors">Privacy Policy</a>
+          <a href="/terms" className="hover:text-stone-700 transition-colors">Terms</a>
         </div>
 
         <div className="flex flex-col items-center gap-4 opacity-40 text-sm">

@@ -82,12 +82,11 @@ export function DigitalCraftPage() {
 
           {/* ── HERO ── */}
           <section>
-            {/* Landscape hero — matches the craft card on the main page,
-                not the prototype's own portrait framing */}
-            <div
-              className="relative w-full overflow-hidden rounded-3xl"
-              style={{ aspectRatio: '16/9', maxHeight: '70vh' }}
-            >
+            {/* There's dead space cushioning the product cluster on every
+                side, so a landscape crop works fine as long as it stays
+                centered — the earlier object-bottom override was what cut
+                elements off, not the source composition itself. */}
+            <div className="relative w-full overflow-hidden rounded-3xl aspect-[4/3] md:aspect-[16/9]" style={{ maxHeight: '70vh' }}>
               <ImageWithFallback
                 src={craftPageHero}
                 alt="Digital Craft — production-ready artwork"
@@ -95,7 +94,7 @@ export function DigitalCraftPage() {
               />
 
               {/* Bottom gradient overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-stone-900/85 via-stone-900/35 to-transparent pointer-events-none" />
+              <div className="absolute inset-0 bg-gradient-to-t from-stone-900/90 via-stone-900/50 to-transparent pointer-events-none" />
 
               {/* Hero copy — positioned at bottom like Fashion */}
               <div className="absolute bottom-0 left-0 right-0 p-8 md:p-14">
@@ -112,17 +111,11 @@ export function DigitalCraftPage() {
 </p>
 
 <h1
-  className="text-white leading-tight mb-3"
-  style={{ fontFamily: 'Georgia, serif', fontSize: 'clamp(2rem, 5vw, 3.5rem)' }}
+  className="text-white leading-tight whitespace-nowrap"
+  style={{ fontFamily: 'Georgia, serif', fontSize: 'clamp(0.85rem, 5vw, 3.5rem)' }}
 >
   Designing for production quality
 </h1>
-
-<p className="text-white/60 text-sm md:text-base max-w-sm leading-relaxed">
-  From concept to production
-  <br />
-  Thoughtfully designed and executed
-</p>
                 </motion.div>
               </div>
             </div>
