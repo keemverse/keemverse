@@ -223,7 +223,7 @@ export function DigitalCraftPage() {
               Curated. Created. Designed for your world.
             </p>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+            <div className="grid grid-cols-2 gap-3 md:gap-8 max-w-5xl mx-auto">
               {shop.map((item, i) => (
   <UniverseShopCard
     key={item.title}

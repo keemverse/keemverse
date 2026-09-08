@@ -172,7 +172,7 @@ export function FashionPage() {
           {/* ── WORK WITH ME ── */}
           <section className="mt-24">
             <SectionDivider label="Work With Me" />
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+            <div className="grid grid-cols-2 gap-3 md:gap-5">
               {services.map((svc, i) => (
                 <motion.div
                   key={i}
@@ -180,20 +180,20 @@ export function FashionPage() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.4, delay: i * 0.07 }}
-                  className="flex flex-col justify-between rounded-3xl p-7 md:p-8 transition-all border border-stone-200/60"
+                  className="flex flex-col justify-between rounded-2xl md:rounded-3xl p-4 md:p-8 transition-all border border-stone-200/60"
                   style={{
                     backgroundColor: i % 2 === 0 ? '#FFFFFF' : '#F9F7F2'
                   }}
                 >
                   <div>
-                    <h3 className="font-bold mb-3 text-stone-900" style={{ fontSize: '1.05rem' }}>
+                    <h3 className="font-bold mb-1.5 md:mb-3 text-stone-900 text-sm md:text-[1.05rem] leading-snug">
                       {svc.title}
                     </h3>
-                    <p className="text-stone-600 text-sm leading-relaxed">{svc.desc}</p>
+                    <p className="text-stone-600 text-xs md:text-sm leading-relaxed">{svc.desc}</p>
                   </div>
                   <button
                     onClick={() => setModalOpen(true)}
-                    className="mt-6 inline-flex items-center self-start px-6 py-2.5 rounded-full text-white text-xs font-bold tracking-wide transition-all duration-300 hover:-translate-y-0.5 hover:bg-stone-200"
+                    className="mt-3 md:mt-6 inline-flex items-center self-start px-3.5 py-2 md:px-6 md:py-2.5 rounded-full text-white text-[10px] md:text-xs font-bold tracking-wide transition-all duration-300 hover:-translate-y-0.5 hover:bg-stone-200"
                     style={{ backgroundColor: '#ECE5D9', color:'#1D1C19', boxShadow:'inset 0 1px 0 rgba(255,255,255,.8), 0 8px 20px rgba(0,0,0,.05)' }}
                   >
                     BOOK ME
@@ -206,7 +206,7 @@ export function FashionPage() {
           {/* ── SHOP ── */}
           <section className="mt-24">
             <SectionDivider label="Shop" />
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+            <div className="grid grid-cols-2 gap-3 md:gap-8 max-w-5xl mx-auto">
               {shop.map((item, i) => (
   <UniverseShopCard
     key={item.title}
