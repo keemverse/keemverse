@@ -8,8 +8,8 @@ import { UpworkIcon, BehanceIcon } from '../components/Icons';
 import { FileImage, Briefcase, Layers } from 'lucide-react';
 import UniverseShopCard from "../components/UniverseShopCard";
 import craftPageHero from '../../imports/craft-quality-hero_2.webp';
-import printableGraphicsHero from '../../imports/printable-graphics-hero.jpg';
-import dtfDesignPacksHero from '../../imports/dtf-design-packs-hero.jpg';
+import printableGraphicsHero from '../../imports/printable-graphics-hero.webp';
+import dtfDesignPacksHero from '../../imports/dtf-design-packs-hero.webp';
 
 const services = [
   {

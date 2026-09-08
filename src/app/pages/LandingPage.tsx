@@ -10,7 +10,7 @@ import { AccentPillButton } from '../components/ui/AccentPillButton';
 import { BurgerMenu } from '../components/ui/BurgerMenu';
 import { GeometricBackdrop } from '../components/GeometricBackdrop';
 import { FASHION, FASHION_DARK, CRAFT, CRAFT_DARK } from '../lib/theme';
-import fashionPageHero from '../../imports/IMG_7304.jpeg';
+import fashionPageHero from '../../imports/IMG_7304.webp';
 import craftPageHero from '../../imports/craft-quality-hero_2.webp';
 
 // Landing-page-only top bar: wordmark left, animated burger right.

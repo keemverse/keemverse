@@ -1,11 +1,22 @@
 import { motion, AnimatePresence } from "motion/react";
+import { useNavigate } from "react-router-dom";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
+
+// Turns the sheet's raw Price value ("$12", "12000", "₦12,000") into a
+// numeric amount + currency Flutterwave can charge directly.
+function parseRawPrice(raw: any): { amount: number; currency: "NGN" | "USD" } {
+  const str = String(raw ?? "").trim();
+  const amount = parseFloat(str.replace(/[^0-9.]/g, "")) || 0;
+  const currency = str.startsWith("$") ? "USD" : "NGN";
+  return { amount, currency };
+}
 
 interface PresetPopupProps {
   open: boolean;
   onClose: () => void;
   name: string;
   price: string;
+  rawPrice?: any;
   previewImage: string;
   beforeImage?: string;
   afterImage?: string;
@@ -25,6 +36,7 @@ export default function PresetPopup({
   onClose,
   name,
   price,
+  rawPrice,
   previewImage,
   beforeImage,
   afterImage,
@@ -38,6 +50,19 @@ export default function PresetPopup({
   rating,
   purchaseLink,
 }: PresetPopupProps) {
+  const navigate = useNavigate();
+  const { amount, currency } = parseRawPrice(rawPrice);
+
+  const handleBuyNow = () => {
+    navigate("/checkout", {
+      state: {
+        item: { id: name, name, amount, currency },
+        image: previewImage,
+        collection,
+      },
+    });
+  };
+
   return (
     <AnimatePresence>
       {open && (
@@ -277,18 +302,28 @@ export default function PresetPopup({
 
                 <div className="sticky bottom-0 bg-[#F5F2EA] border-t border-stone-200/70 p-5 md:p-6">
 
-                  <a
-                    href={purchaseLink || "#"}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="group inline-flex w-full justify-center items-center gap-2 rounded-full bg-stone-900 px-7 py-3.5 text-sm font-semibold tracking-[0.12em] text-white shadow-xl transition-all duration-300 hover:-translate-y-1 hover:bg-black"
+                  <button
+                    onClick={handleBuyNow}
+                    disabled={amount <= 0}
+                    className="group inline-flex w-full justify-center items-center gap-2 rounded-full bg-stone-900 px-7 py-3.5 text-sm font-semibold tracking-[0.12em] text-white shadow-xl transition-all duration-300 hover:-translate-y-1 hover:bg-black disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0"
                   >
-                    GET THE PRESET
+                    BUY NOW — {price}
 
                     <span className="transition-transform duration-300 group-hover:translate-x-1">
                       →
                     </span>
-                  </a>
+                  </button>
+
+                  {purchaseLink && (
+                    <a
+                      href={purchaseLink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mt-3 block text-center text-xs text-stone-500 hover:text-stone-800 transition-colors underline underline-offset-4"
+                    >
+                      Having trouble paying? Get it via Gumroad instead
+                    </a>
+                  )}
 
                 </div>
 

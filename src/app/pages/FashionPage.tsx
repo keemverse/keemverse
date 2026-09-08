@@ -1,5 +1,5 @@
-import fashionFindsHero from '../../imports/fashion-finds-hero.jpg';
-import photoPresetsHero from '../../imports/photo-presets-hero.jpg';
+import fashionFindsHero from '../../imports/fashion-finds-hero.webp';
+import photoPresetsHero from '../../imports/photo-presets-hero.webp';
 import React, { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import { ImageWithFallback } from '../components/figma/ImageWithFallback';
@@ -7,11 +7,11 @@ import { SocialFooter } from '../components/SocialFooter';
 import { BookMeModal } from '../components/BookMeModal';
 import UniverseShopCard from "../components/UniverseShopCard";
 import { GeometricBackdrop } from '../components/GeometricBackdrop';
-import img1 from '../../imports/IMG_7304.jpeg';
-import img2 from '../../imports/IMG_7549.jpeg';
-import img3 from '../../imports/IMG_4929.jpeg';
-import img4 from '../../imports/IMG_6867_Original.jpeg';
-import img5 from '../../imports/IMG_8935.jpeg';
+import img1 from '../../imports/IMG_7304.webp';
+import img2 from '../../imports/IMG_7549.webp';
+import img3 from '../../imports/IMG_4929.webp';
+import img4 from '../../imports/IMG_6867_Original.webp';
+import img5 from '../../imports/IMG_8935.webp';
 
 const carouselImages = [img1, img2, img3, img4, img5];
 

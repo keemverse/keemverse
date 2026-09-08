@@ -231,6 +231,7 @@ export default function LightroomPresetsPage() {
             onClose={() => setSelected(null)}
             name={selected["Preset Name"]}
             price={formatPrice(selected.Price)}
+            rawPrice={selected.Price}
             previewImage={selected["Preview Image"]}
             beforeImage={selected["Before Image"]}
             afterImage={selected["After Image"]}

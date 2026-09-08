@@ -20,6 +20,12 @@ export default function PrivacyPolicyPage() {
         fulfill orders and bookings, and improve our products and services.
         We do not sell your information to third parties.
       </p>
+      <p>
+        At checkout, you can choose to opt in to promotional emails about
+        new drops and offers. We only send these if you've actively
+        checked that box — it's never assumed — and you can unsubscribe
+        at any time.
+      </p>
 
       <h2 className="font-serif text-xl text-stone-900 mt-8 mb-2">Third-party services</h2>
       <p>

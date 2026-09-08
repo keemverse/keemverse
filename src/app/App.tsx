@@ -12,6 +12,8 @@ import ContactPage from "./pages/ContactPage";
 import RefundPolicyPage from "./pages/RefundPolicyPage";
 import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
 import TermsPage from "./pages/TermsPage";
+import CheckoutPage from "./pages/CheckoutPage";
+import CheckoutSuccessPage from "./pages/CheckoutSuccessPage";
 
 function ConditionalNavBar() {
   const { pathname } = useLocation();
@@ -53,6 +55,9 @@ export default function App() {
 <Route path="/refund-policy" element={<RefundPolicyPage />} />
 <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
 <Route path="/terms" element={<TermsPage />} />
+
+<Route path="/checkout" element={<CheckoutPage />} />
+<Route path="/checkout/success" element={<CheckoutSuccessPage />} />
 </Routes>
       </div>
     </BrowserRouter>
