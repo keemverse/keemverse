@@ -12,6 +12,7 @@ import { GeometricBackdrop } from '../components/GeometricBackdrop';
 import { FASHION, FASHION_DARK, CRAFT, CRAFT_DARK } from '../lib/theme';
 import fashionPageHero from '../../imports/IMG_7304.webp';
 import craftPageHero from '../../imports/craft-quality-hero_2.webp';
+import keemverseWordmark from '../../imports/keemverse-wordmark.svg';
 
 // Landing-page-only top bar: wordmark left, animated burger right.
 // The universe pages keep their own back-button/toggle nav — this is
@@ -37,12 +38,11 @@ function LandingNav() {
         description="This page isn't set up yet — check back soon."
       />
 
-      <span
-        className="tracking-[0.25em] uppercase text-stone-900 text-sm md:text-base"
-        style={{ fontFamily: 'Georgia, serif' }}
-      >
-        Keemverse
-      </span>
+      <img
+        src={keemverseWordmark}
+        alt="Keemverse"
+        className="h-[11px] md:h-[18px] w-auto object-contain"
+      />
 
       <BurgerMenu items={items} />
     </div>
