@@ -22,3 +22,23 @@ export async function getPresets() {
 
   return response.json();
 }
+
+export async function getMediaKit() {
+  const response = await fetch(`${API_URL}?sheet=Media%20Kit`);
+
+  if (!response.ok) {
+    throw new Error("Failed to load media kit stats");
+  }
+
+  return response.json();
+}
+
+export async function getRateCard() {
+  const response = await fetch(`${API_URL}?sheet=Rate%20Card`);
+
+  if (!response.ok) {
+    throw new Error("Failed to load rate card");
+  }
+
+  return response.json();
+}

@@ -172,6 +172,8 @@ export function FashionPage() {
           {/* ── WORK WITH ME ── */}
           <section className="mt-24">
             <SectionDivider label="Work With Me" />
+            {/* Media kit link removed while /fashion/media-kit is held in
+                draft — add back once that page is routed live again. */}
             <div className="grid grid-cols-2 gap-3 md:gap-5">
               {services.map((svc, i) => (
                 <motion.div
