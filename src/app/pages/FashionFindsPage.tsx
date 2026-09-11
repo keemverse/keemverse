@@ -93,18 +93,18 @@ const filteredProducts = products.filter((p) => {
   </p>
 </motion.section>
 
-        <UniverseSearch
-  value={query}
-  onChange={setQuery}
-  className="mb-8"
-/>
+        <div className="flex items-stretch gap-3 max-w-[520px] mx-auto mb-12">
+          <UniverseSearch
+            value={query}
+            onChange={setQuery}
+          />
 
-<UniverseTabs
-  tabs={categories}
-  activeTab={activeTab}
-  onChange={setActiveTab}
-  className="mb-12"
-/>
+          <UniverseTabs
+            tabs={categories}
+            activeTab={activeTab}
+            onChange={setActiveTab}
+          />
+        </div>
 
         {!loading && (
           <TemuScrollBanner

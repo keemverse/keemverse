@@ -14,7 +14,7 @@ export default function UniverseSearch({
   className = "",
 }: UniverseSearchProps) {
   return (
-    <div className={`relative w-full max-w-[520px] mx-auto ${className}`}>
+    <div className={`relative min-w-0 flex-1 ${className}`}>
       <div className="flex items-center rounded-full border border-stone-300/70 bg-[#F8F5EF] px-5 py-3 shadow-[inset_0_1px_0_rgba(255,255,255,.9),0_8px_20px_rgba(0,0,0,.04)] transition-all duration-300 ease-[cubic-bezier(.22,1,.36,1)] focus-within:-translate-y-0.5 focus-within:shadow-[inset_0_1px_0_rgba(255,255,255,.95),0_12px_28px_rgba(0,0,0,.08)] focus-within:border-stone-400/60">
         <svg
           className="w-5 h-5 text-stone-500 mr-3 shrink-0"

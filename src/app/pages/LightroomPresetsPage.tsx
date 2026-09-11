@@ -107,29 +107,26 @@ export default function LightroomPresetsPage() {
             Lightroom Presets
           </p>
 
-          <h1 className="font-serif text-3xl md:text-5xl text-stone-900 leading-tight">
+          <h1 className="font-serif text-2xl md:text-5xl text-stone-900 leading-tight">
             Create timeless photographs
           </h1>
         </motion.section>
 
-        {/* ---------- Search ---------- */}
+        {/* ---------- Search + Collections ---------- */}
 
-        <section className="mb-8">
-          <UniverseSearch
-            value={query}
-            onChange={setQuery}
-            placeholder="Search presets..."
-          />
-        </section>
-
-        {/* ---------- Collections ---------- */}
-
-        <section className="mb-20">
-          <UniverseTabs
-            tabs={categories}
-            activeTab={activeTab}
-            onChange={setActiveTab}
-          />
+        <section className="mb-12">
+          <div className="flex items-stretch gap-3 max-w-[520px] mx-auto">
+            <UniverseSearch
+              value={query}
+              onChange={setQuery}
+              placeholder="Search presets..."
+            />
+            <UniverseTabs
+              tabs={categories}
+              activeTab={activeTab}
+              onChange={setActiveTab}
+            />
+          </div>
         </section>
 
         {/* ---------- Featured ---------- */}
