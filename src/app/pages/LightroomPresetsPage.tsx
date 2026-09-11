@@ -144,7 +144,7 @@ export default function LightroomPresetsPage() {
     key={`${preset["Preset Name"]}-${index}`}
     name={preset["Preset Name"]}
     price={formatPrice(preset.Price)}
-    image={preset["Preview Image"]}
+    image={preset["Thumbnail"]}
     collection={preset.Collection}
     index={index}
     onOpen={() => setSelected(preset)}
@@ -201,7 +201,7 @@ export default function LightroomPresetsPage() {
     key={`${preset["Preset Name"]}-${index}`}
     name={preset["Preset Name"]}
     price={formatPrice(preset.Price)}
-    image={preset["Preview Image"]}
+    image={preset["Thumbnail"]}
     collection={preset.Collection}
     index={index}
     onOpen={() => setSelected(preset)}
@@ -232,9 +232,8 @@ export default function LightroomPresetsPage() {
             name={selected["Preset Name"]}
             price={formatPrice(selected.Price)}
             rawPrice={selected.Price}
-            previewImage={selected["Preview Image"]}
-            beforeImage={selected["Before Image"]}
-            afterImage={selected["After Image"]}
+            previewImage={selected["Thumbnail"]}
+            banner={selected["Banner"]}
             collection={selected.Collection}
             description={selected.Description}
             whyCreated={selected["Why I Created It"]}

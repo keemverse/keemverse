@@ -55,7 +55,7 @@ export function SocialFooter() {
         <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs text-stone-400">
           <a href="/about" className="hover:text-stone-700 transition-colors">About</a>
           <a href="/contact" className="hover:text-stone-700 transition-colors">Contact</a>
-          <a href="/refund-policy" className="hover:text-stone-700 transition-colors">Refund Policy</a>
+          <a href="/refund-policy" className="hover:text-stone-700 transition-colors">Refund &amp; Delivery</a>
           <a href="/privacy-policy" className="hover:text-stone-700 transition-colors">Privacy Policy</a>
           <a href="/terms" className="hover:text-stone-700 transition-colors">Terms</a>
         </div>

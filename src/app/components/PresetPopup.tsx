@@ -18,8 +18,7 @@ interface PresetPopupProps {
   price: string;
   rawPrice?: any;
   previewImage: string;
-  beforeImage?: string;
-  afterImage?: string;
+  banner?: string;
   collection: string;
   description?: string;
   whyCreated?: string;
@@ -38,8 +37,7 @@ export default function PresetPopup({
   price,
   rawPrice,
   previewImage,
-  beforeImage,
-  afterImage,
+  banner,
   collection,
   description,
   whyCreated,
@@ -159,49 +157,21 @@ export default function PresetPopup({
                     </div>
                   </div>
 
-                  {/* ---------- Before / After ---------- */}
+                  {/* ---------- Banner (tier comparison / look overview) ---------- */}
 
-                  {(beforeImage || afterImage) && (
+                  {banner && (
                     <section className="mt-10">
 
                       <h3 className="text-sm font-semibold tracking-[.15em] uppercase text-stone-500">
-                        Before & After
+                        See all three tiers
                       </h3>
 
-                      <div className="mt-4 grid grid-cols-2 gap-3">
-
-                        {beforeImage && (
-                          <div>
-                            <div className="relative aspect-[4/5] overflow-hidden rounded-2xl">
-                              <ImageWithFallback
-                                src={beforeImage}
-                                alt={`${name} before`}
-                                className="w-full h-full object-cover"
-                              />
-                            </div>
-
-                            <p className="mt-2 text-[10px] uppercase tracking-[0.2em] text-stone-400">
-                              Before
-                            </p>
-                          </div>
-                        )}
-
-                        {afterImage && (
-                          <div>
-                            <div className="relative aspect-[4/5] overflow-hidden rounded-2xl">
-                              <ImageWithFallback
-                                src={afterImage}
-                                alt={`${name} after`}
-                                className="w-full h-full object-cover"
-                              />
-                            </div>
-
-                            <p className="mt-2 text-[10px] uppercase tracking-[0.2em] text-stone-400">
-                              After
-                            </p>
-                          </div>
-                        )}
-
+                      <div className="mt-4 relative aspect-video overflow-hidden rounded-2xl">
+                        <ImageWithFallback
+                          src={banner}
+                          alt={`${name} — tier comparison`}
+                          className="w-full h-full object-cover"
+                        />
                       </div>
 
                     </section>

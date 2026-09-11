@@ -4,10 +4,10 @@
 // server-side, in the Apps Script project, used only to verify a
 // transaction after payment (see verifyAndUnlock below).
 //
-// TODO: replace with the real public key once the Flutterwave account
-// is verified (test keys work fine for building/testing before then —
-// Settings → API on the Flutterwave dashboard).
-export const FLUTTERWAVE_PUBLIC_KEY = "FLWPUBK_TEST-REPLACE-ME";
+// TEST public key — safe to ship client-side (that's what public keys are
+// for). Swap to the LIVE key (FLWPUBK-…) at go-live: Settings → API Keys on
+// the Flutterwave dashboard, Live mode.
+export const FLUTTERWAVE_PUBLIC_KEY = "FLWPUBK_TEST-fc285646f4cf8c4e749021d0fae37e87-X";
 
 // TODO: same Apps Script Web App already serving getProducts()/getPresets()
 // (see lib/products.ts), extended with a doPost handler that verifies a

@@ -2,8 +2,8 @@ import { InfoPage } from '../components/InfoPage';
 
 export default function RefundPolicyPage() {
   return (
-    <InfoPage eyebrow="Policy" title="Refund Policy">
-      <p className="text-sm text-stone-400">Last updated: September 5, 2026</p>
+    <InfoPage eyebrow="Policy" title="Refund & Delivery Policy">
+      <p className="text-sm text-stone-400">Last updated: September 10, 2026</p>
 
       <h2 className="font-serif text-xl text-stone-900 mt-8 mb-2">Digital products</h2>
       <p>
@@ -16,6 +16,26 @@ export default function RefundPolicyPage() {
         If a file is corrupted, missing, or genuinely not what was
         described in the listing, contact us within 7 days of purchase and
         we'll fix it or issue a refund.
+      </p>
+
+      <h2 className="font-serif text-xl text-stone-900 mt-8 mb-2">Delivery</h2>
+      <p>
+        Digital products are delivered electronically — there is no
+        physical shipment. As soon as your payment is confirmed, a
+        download link is shown on the confirmation screen and sent to the
+        email address used at checkout, normally within a few minutes.
+      </p>
+      <p>
+        If your download hasn't arrived within 1 hour, check your spam
+        folder, then email us at{' '}
+        <a href="mailto:akeemtajudeen322@gmail.com" className="text-stone-900 underline underline-offset-4">
+          akeemtajudeen322@gmail.com
+        </a>{' '}
+        with your order details and we'll re-send it within 1 business day.
+      </p>
+      <p>
+        For styling, brand collaboration, and creative direction work,
+        delivery timelines are agreed in writing at the time of booking.
       </p>
 
       <h2 className="font-serif text-xl text-stone-900 mt-8 mb-2">Purchases via third-party platforms</h2>
@@ -39,7 +59,8 @@ export default function RefundPolicyPage() {
         <a href="mailto:akeemtajudeen322@gmail.com" className="text-stone-900 underline underline-offset-4">
           akeemtajudeen322@gmail.com
         </a>{' '}
-        with your order details. We aim to respond within 5 business days.
+        with your order details. We respond to all customer enquiries
+        within 1 business day.
       </p>
     </InfoPage>
   );

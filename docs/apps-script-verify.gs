@@ -1,160 +1,271 @@
 /**
- * KEEMVERSE — Flutterwave verification handler
- * ==============================================
- * This is NOT wired into your live Apps Script yet — it's a snippet to
- * splice into the existing project (the same one already serving
- * getProducts()/getPresets() to the site). It does not run standalone.
+ * KEEMVERSE — checkout verification + gated download (Google Drive delivery)
+ * =========================================================================
+ * Splice this into the SAME Apps Script project that already serves
+ * getProducts()/getPresets() to the site. It does not run standalone.
  *
- * WHAT IT DOES
- * When the checkout success page calls:
- *   GET {your existing web app URL}?action=verify&tx_ref=...&item_id=...
- * this:
- *   1. Confirms the transaction is genuinely paid, by asking Flutterwave
- *      directly (server-side, using the SECRET key — never trust the
- *      browser's own "payment succeeded" callback alone, it can be faked).
- *   2. Looks up the real download link for that preset by name.
- *   3. Logs the order to an "Orders" tab in the same spreadsheet —
- *      including whether the buyer opted in to marketing emails, read
- *      from Flutterwave's own verified transaction metadata (not a
- *      client-side value, so it can't be tampered with after checkout).
- *   4. Emails the buyer their download link directly (making good on
- *      what the success page already tells them happens).
- *   5. Returns { ok: true, downloadUrl } — or { ok: false, error } if
- *      anything doesn't check out.
+ * WHY THIS SHAPE
+ * The buyer never receives a shareable file link. Files live in a PRIVATE
+ * Drive folder with no sharing at all. After a verified payment this:
+ *   1. Confirms the payment straight from Flutterwave (server-side, with the
+ *      SECRET key — the browser's own "success" callback can be faked).
+ *   2. Mints a random token, logs it to a "Downloads" index tab (with an
+ *      expiry, a download cap, and a Revoked flag you can flip by hand).
+ *   3. Emails the buyer a tokenised URL that points back at THIS script,
+ *      not at the file.
+ *   4. When that URL is opened, re-checks the token, reads the master ZIP
+ *      from Drive, injects a per-buyer LICENSE.txt (so any leaked copy is
+ *      traceable), repackages, and streams it to the browser as an
+ *      automatic download. No public URL is ever produced.
  *
  * SETUP BEFORE THIS WORKS
- * 1. In the Apps Script editor: Project Settings → Script Properties →
- *    add FLUTTERWAVE_SECRET_KEY = <your secret key, test key is fine to
- *    start>. Never paste the secret key into the script source itself —
- *    Script Properties keeps it out of any code you might ever share.
- * 2. Add an "Orders" tab to the same Google Sheet the Presets/Products
- *    tabs live in, with header row:
- *    Timestamp | Email | Preset | Amount | Currency | Tx Ref | Status | Marketing Opt-in
- * 3. Splice the block below into your EXISTING doGet(e) function, as the
- *    FIRST check — before whatever logic currently reads `e.parameter.sheet`
- *    — so a `?action=verify` request short-circuits into this instead of
- *    falling through to the existing product-list logic:
- *
- *      function doGet(e) {
- *        if (e.parameter.action === 'verify') {
- *          return handleVerify(e);
- *        }
- *        // ...your existing doGet logic continues here, unchanged...
- *      }
- *
- *    Then add the two functions below anywhere else in the project.
+ * 1. Apps Script editor -> Project Settings -> Script Properties, add:
+ *      FLUTTERWAVE_SECRET_KEY = <secret key; the TEST key is fine to start>
+ *      WEBAPP_URL             = <this web app's own /exec URL>
+ *    Never put the secret key in the source itself.
+ * 2. "Lightroom Presets" tab was rebuilt (11-Sep-2026) for this native-
+ *    checkout method — Gumroad-era columns (Purchase Link, Why I Created
+ *    It, Rating, the old Preview/Before/After Image split) are gone.
+ *    Current column order, A to O:
+ *      Preset Name | Collection | Price | Status | Featured |
+ *      Display Order | Drive File Id | Thumbnail | Banner | Description |
+ *      What's Included | Installation | Compatible With | Tags | Date Added
+ *    handleVerify/handleDownload below find fields by HEADER NAME
+ *    (headers.indexOf(...)), so they don't care what order the columns are
+ *    in. But the live script's SHEET_CONFIG["Lightroom Presets"].columns
+ *    block uses FIXED COLUMN NUMBERS for autoSortProducts() — that block
+ *    must be kept in sync with this layout by hand (FEATURED=5, NAME=1,
+ *    DISPLAY_ORDER=6, STATUS=4, DATE=15; RATING no longer exists as a
+ *    column, point it at 0 so it ties out harmlessly). If the "Lightroom
+ *    Presets" columns are ever reordered again, update that config block
+ *    or sorting silently reads the wrong cells.
+ * 3. Add a "Downloads" tab. Paste as row 1 (A1):
+ *      Token	Order Ref	Item	Buyer Email	Issued	Expires	Downloads	Max Downloads	Revoked
+ * 4. Add an "Orders" tab. Paste as row 1 (A1):
+ *      Timestamp	Email	Preset	Amount	Currency	Tx Ref	Status	Marketing Opt-in
+ *    DO NOT add "Downloads" or "Orders" to SHEET_CONFIG — leaving them off
+ *    the allowlist is what keeps them off the public ?sheet= endpoint.
+ * 5. At the TOP of your existing doGet(e), before the sheet logic:
+ *      if (e.parameter.action === 'verify')   return handleVerify(e);
+ *      if (e.parameter.action === 'download') return handleDownload(e);
+ * 4. Paste the functions below anywhere in the project. If the project
+ *    already has a jsonResponse(), reuse it — don't paste a second copy.
+ * 5. Deploy -> Manage deployments -> Edit -> New version -> Deploy. The
+ *    /exec URL does not change.
  */
 
+var DOWNLOAD_EXPIRY_HOURS = 72;   // how long an issued link stays valid
+var MAX_DOWNLOADS = 3;            // pulls allowed per issued link
+var MAX_PACK_BYTES = 20 * 1024 * 1024; // safety ceiling for streamed delivery
+
 function handleVerify(e) {
-  const txRef = e.parameter.tx_ref;
-  const itemId = e.parameter.item_id; // this is the Preset Name, per CheckoutPage
+  var txRef  = e.parameter.tx_ref;
+  var itemId = e.parameter.item_id; // the Preset Name, per CheckoutPage
 
   if (!txRef || !itemId) {
-    return jsonResponse({ ok: false, error: "Missing tx_ref or item_id." });
+    return jsonResponse({ ok: false, error: 'Missing tx_ref or item_id.' });
   }
 
-  const secretKey = PropertiesService.getScriptProperties().getProperty("FLUTTERWAVE_SECRET_KEY");
-  if (!secretKey) {
-    return jsonResponse({ ok: false, error: "Server not configured yet." });
+  var props     = PropertiesService.getScriptProperties();
+  var secretKey = props.getProperty('FLUTTERWAVE_SECRET_KEY');
+  var webAppUrl = props.getProperty('WEBAPP_URL');
+  if (!secretKey || !webAppUrl) {
+    return jsonResponse({ ok: false, error: 'Server not configured yet.' });
   }
 
-  // 1. Ask Flutterwave directly whether this transaction really succeeded.
-  const verifyUrl =
-    "https://api.flutterwave.com/v3/transactions/verify_by_reference?tx_ref=" +
+  // 1. Confirm the payment directly with Flutterwave.
+  var verifyUrl =
+    'https://api.flutterwave.com/v3/transactions/verify_by_reference?tx_ref=' +
     encodeURIComponent(txRef);
-
-  const response = UrlFetchApp.fetch(verifyUrl, {
-    method: "get",
-    headers: { Authorization: "Bearer " + secretKey },
+  var res = UrlFetchApp.fetch(verifyUrl, {
+    method: 'get',
+    headers: { Authorization: 'Bearer ' + secretKey },
     muteHttpExceptions: true,
   });
-
-  const result = JSON.parse(response.getContentText());
-
-  if (result.status !== "success" || !result.data || result.data.status !== "successful") {
-    return jsonResponse({ ok: false, error: "Payment not confirmed." });
+  var result = JSON.parse(res.getContentText());
+  if (result.status !== 'success' || !result.data || result.data.status !== 'successful') {
+    return jsonResponse({ ok: false, error: 'Payment not confirmed.' });
   }
 
-  const paidAmount = result.data.amount;
-  const paidCurrency = result.data.currency;
-  const buyerEmail = result.data.customer && result.data.customer.email;
-  const buyerName = result.data.customer && result.data.customer.name;
-  // Read from Flutterwave's own verified record, not anything the
-  // client sent at verify-time — this is the transaction's real
-  // metadata, set when the payment was initiated, so it can't be
-  // edited after the fact by messing with the success-page URL.
-  const marketingOptIn = result.data.meta && result.data.meta.marketing_opt_in === "yes";
+  var paid       = result.data.amount;
+  var currency   = result.data.currency;
+  var buyerEmail = result.data.customer && result.data.customer.email;
+  var buyerName  = result.data.customer && result.data.customer.name;
+  // Read from Flutterwave's own verified record, set when payment was
+  // initiated — not anything the client sends at verify-time.
+  var optIn = result.data.meta && result.data.meta.marketing_opt_in === 'yes';
 
-  // 2. Look up the preset by name in the same sheet getPresets() reads,
-  // to get its real price (to double check against what was paid) and
-  // its real download link.
-  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Lightroom Presets");
-  const rows = sheet.getDataRange().getValues();
-  const headers = rows[0];
-  const nameCol = headers.indexOf("Preset Name");
-  const priceCol = headers.indexOf("Price");
-  const linkCol = headers.indexOf("Download Link"); // add this column if it doesn't exist yet
+  // 2. Look the preset up in the same sheet getPresets() reads.
+  var ss   = SpreadsheetApp.getActiveSpreadsheet();
+  var rows = ss.getSheetByName('Lightroom Presets').getDataRange().getValues();
+  var h    = rows[0];
+  var cName  = h.indexOf('Preset Name');
+  var cPrice = h.indexOf('Price');
+  var cFile  = h.indexOf('Drive File Id');
 
-  let matchedRow = null;
-  for (let i = 1; i < rows.length; i++) {
-    if (rows[i][nameCol] === itemId) {
-      matchedRow = rows[i];
-      break;
-    }
+  var row = null;
+  for (var i = 1; i < rows.length; i++) {
+    if (rows[i][cName] === itemId) { row = rows[i]; break; }
+  }
+  if (!row) return jsonResponse({ ok: false, error: 'Unknown item.' });
+
+  var expected = parseFloat(String(row[cPrice]).replace(/[^0-9.]/g, ''));
+  if (Math.abs(paid - expected) > 1) {
+    return jsonResponse({ ok: false, error: 'Amount mismatch.' });
+  }
+  if (!row[cFile]) {
+    return jsonResponse({ ok: false, error: 'No file configured for this preset yet.' });
   }
 
-  if (!matchedRow) {
-    return jsonResponse({ ok: false, error: "Unknown item." });
-  }
+  // 3. Mint a token and log it to the Downloads index.
+  var token   = Utilities.getUuid();
+  var now     = new Date();
+  var expires = new Date(now.getTime() + DOWNLOAD_EXPIRY_HOURS * 3600 * 1000);
+  ss.getSheetByName('Downloads').appendRow([
+    token, txRef, itemId, buyerEmail || '', now, expires, 0, MAX_DOWNLOADS, 'FALSE',
+  ]);
 
-  const expectedAmount = parseFloat(String(matchedRow[priceCol]).replace(/[^0-9.]/g, ""));
-  if (Math.abs(paidAmount - expectedAmount) > 1) {
-    // Amount paid doesn't match the listed price — don't unlock.
-    return jsonResponse({ ok: false, error: "Amount mismatch." });
-  }
-
-  const downloadUrl = matchedRow[linkCol];
-  if (!downloadUrl) {
-    return jsonResponse({ ok: false, error: "No download link configured for this preset yet." });
-  }
-
-  // 3. Log the order.
-  const ordersSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Orders");
-  if (ordersSheet) {
-    ordersSheet.appendRow([
-      new Date(),
-      buyerEmail || "",
-      itemId,
-      paidAmount,
-      paidCurrency,
-      txRef,
-      "Paid",
-      marketingOptIn ? "Yes" : "No",
+  // 4. Log the order.
+  var orders = ss.getSheetByName('Orders');
+  if (orders) {
+    orders.appendRow([
+      now, buyerEmail || '', itemId, paid, currency, txRef, 'Paid', optIn ? 'Yes' : 'No',
     ]);
   }
 
-  // 4. Email the buyer their download link directly.
+  var downloadUrl = webAppUrl + '?action=download&token=' + token;
+
+  // 5. Email the buyer the tokenised link (also expiry/cap controlled).
   if (buyerEmail) {
     try {
       MailApp.sendEmail({
         to: buyerEmail,
-        subject: "Your " + itemId + " download — KEEMVERSE",
+        subject: 'Your ' + itemId + ' download — KEEMVERSE',
         body:
-          "Hi " + (buyerName || "there") + ",\n\n" +
-          "Thanks for your purchase! Here's your download link:\n\n" +
-          downloadUrl +
-          "\n\n" +
-          "If the link ever stops working or you lose it, just reply to this email with your order reference and we'll sort it out.\n\n" +
-          "Order reference: " + txRef + "\n\n" +
-          "— KEEMVERSE",
+          'Hi ' + (buyerName || 'there') + ',\n\n' +
+          'Thanks for your purchase! Download your files here:\n\n' +
+          downloadUrl + '\n\n' +
+          'This link works for ' + DOWNLOAD_EXPIRY_HOURS + ' hours and up to ' +
+          MAX_DOWNLOADS + ' downloads. If it expires or you lose your files, ' +
+          'reply to this email with your order reference and we\'ll re-send.\n\n' +
+          'Order reference: ' + txRef + '\n\n— KEEMVERSE',
       });
     } catch (mailErr) {
-      // Don't fail the whole request just because the email didn't send —
-      // the buyer still gets the link directly on the success page.
+      // Non-fatal — the success page still shows the same link.
     }
   }
 
   return jsonResponse({ ok: true, downloadUrl: downloadUrl });
+}
+
+function handleDownload(e) {
+  var token = e.parameter.token;
+  if (!token) return htmlMessage('Invalid link', 'This download link is missing its token.');
+
+  var ss    = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = ss.getSheetByName('Downloads');
+  var data  = sheet.getDataRange().getValues();
+  var h     = data[0];
+  var cTok = h.indexOf('Token'),   cItem = h.indexOf('Item'),
+      cEmail = h.indexOf('Buyer Email'), cRef = h.indexOf('Order Ref'),
+      cExp = h.indexOf('Expires'), cCnt = h.indexOf('Downloads'),
+      cMax = h.indexOf('Max Downloads'), cRev = h.indexOf('Revoked');
+
+  var r = -1;
+  for (var i = 1; i < data.length; i++) {
+    if (String(data[i][cTok]) === token) { r = i; break; }
+  }
+  if (r === -1) {
+    return htmlMessage('Invalid link',
+      'We could not find this download. Contact support with your order reference.');
+  }
+
+  var rec = data[r];
+  if (String(rec[cRev]).toUpperCase() === 'TRUE') {
+    return htmlMessage('Link disabled', 'This link has been disabled. Contact support.');
+  }
+  if (new Date() > new Date(rec[cExp])) {
+    return htmlMessage('Link expired',
+      'This link has expired. Reply to your order email and we\'ll re-send it.');
+  }
+  if (Number(rec[cCnt]) >= Number(rec[cMax])) {
+    return htmlMessage('Limit reached',
+      'This link has hit its download limit. Contact support to re-issue it.');
+  }
+
+  // Find the master file for this item.
+  var pRows = ss.getSheetByName('Lightroom Presets').getDataRange().getValues();
+  var pH = pRows[0];
+  var pcName = pH.indexOf('Preset Name'), pcFile = pH.indexOf('Drive File Id');
+  var fileId = null;
+  for (var j = 1; j < pRows.length; j++) {
+    if (pRows[j][pcName] === rec[cItem]) { fileId = pRows[j][pcFile]; break; }
+  }
+  if (!fileId) return htmlMessage('Not available', 'This item has no file configured. Contact support.');
+
+  var bytes;
+  try {
+    bytes = DriveApp.getFileById(fileId).getBlob().getBytes();
+  } catch (err) {
+    return htmlMessage('Not available',
+      'We could not open the file. Contact support with your order reference.');
+  }
+  if (bytes.length > MAX_PACK_BYTES) {
+    return htmlMessage('Manual delivery needed',
+      'This pack is too large for automatic delivery. Contact support and we\'ll send it directly.');
+  }
+
+  // Repackage with a per-buyer licence stamp.
+  var out;
+  try {
+    var parts = Utilities.unzip(Utilities.newBlob(bytes, 'application/zip', 'master.zip'));
+    var lic =
+      'KEEMVERSE — personal licence\n\n' +
+      'Licensed to: ' + rec[cEmail] + '\n' +
+      'Order reference: ' + rec[cRef] + '\n' +
+      'Issued: ' + new Date().toISOString() + '\n\n' +
+      'This copy is personally licensed and traceable to the email above.\n' +
+      'Please do not share or resell it.\n';
+    parts.push(Utilities.newBlob(lic, 'text/plain', 'LICENSE.txt'));
+    out = Utilities.zip(parts, String(rec[cItem]).replace(/[^\w\-]+/g, '_') + '.zip');
+  } catch (err) {
+    return htmlMessage('File problem',
+      'The download could not be prepared. Contact support with your order reference.');
+  }
+
+  // Count this pull.
+  sheet.getRange(r + 1, cCnt + 1).setValue(Number(rec[cCnt]) + 1);
+
+  var b64   = Utilities.base64Encode(out.getBytes());
+  var fname = out.getName();
+  var html =
+    '<!doctype html><meta charset="utf-8"><title>Your download</title>' +
+    '<body style="font:16px/1.5 system-ui,-apple-system,sans-serif;margin:0;padding:48px 24px;' +
+    'text-align:center;background:#F5F2EA;color:#1D1C19">' +
+    '<h2 style="font-family:Georgia,serif;font-weight:600">Your download is starting…</h2>' +
+    '<p>If it doesn\'t start on its own, use the button below.</p>' +
+    '<p style="margin-top:16px"><a id="dl" download="' + fname + '" ' +
+    'href="data:application/zip;base64,' + b64 + '" ' +
+    'style="display:inline-block;padding:14px 28px;border-radius:999px;background:#1D1C19;' +
+    'color:#fff;text-decoration:none;font-weight:600">Download ' + fname + '</a></p>' +
+    '<p style="color:#8a8580;font-size:14px;margin-top:28px">' +
+    'You can close this tab once the file has saved.</p>' +
+    '<script>setTimeout(function(){document.getElementById("dl").click();},400);</script>' +
+    '</body>';
+  return HtmlService.createHtmlOutput(html)
+    .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
+}
+
+function htmlMessage(title, msg) {
+  var html =
+    '<!doctype html><meta charset="utf-8"><title>' + title + '</title>' +
+    '<body style="font:16px/1.5 system-ui,-apple-system,sans-serif;margin:0;padding:48px 24px;' +
+    'text-align:center;background:#F5F2EA;color:#1D1C19">' +
+    '<h2 style="font-family:Georgia,serif;font-weight:600">' + title + '</h2>' +
+    '<p>' + msg + '</p>' +
+    '<p style="color:#8a8580;font-size:14px;margin-top:24px">akeemtajudeen322@gmail.com</p>' +
+    '</body>';
+  return HtmlService.createHtmlOutput(html);
 }
 
 function jsonResponse(obj) {

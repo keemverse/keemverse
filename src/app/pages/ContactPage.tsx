@@ -6,6 +6,7 @@ import { socials } from '../lib/socials';
 // Email and WhatsApp are already covered by the brief form above (and
 // the footer) — only list what isn't offered anywhere else on this page.
 const details = [
+  { icon: Mail, label: 'Email', value: 'akeemtajudeen322@gmail.com', href: 'mailto:akeemtajudeen322@gmail.com' },
   { icon: Phone, label: 'Phone', value: '+234 916 717 4194', href: 'tel:+2349167174194' },
   { icon: MapPin, label: 'Business Address', value: 'Osogbo, Osun State, Nigeria', href: undefined },
 ];
@@ -135,7 +136,8 @@ export default function ContactPage() {
     <InfoPage eyebrow="Get in touch" title="Contact us">
       <p className="text-center">
         Have a question, a collaboration idea, or need support with an
-        order? Send a brief below, or reach out directly.
+        order? Send a brief below, or reach out directly. We respond to
+        all customer enquiries within 1 business day.
       </p>
 
       <div className="mt-6">
