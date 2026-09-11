@@ -9,6 +9,7 @@ import UniverseTabs from "../components/UniverseTabs";
 import SectionDivider from "../components/SectionDivider";
 import { getPresets } from "../lib/products";
 import PresetPopup from "../components/PresetPopup";
+import RestoreDownloadForm from "../components/RestoreDownloadForm";
 
 const categories = [
   "All",
@@ -211,6 +212,13 @@ export default function LightroomPresetsPage() {
             </div>
           )}
 
+        </section>
+
+        {/* ---------- Restore Download ---------- */}
+
+        <section className="mb-24">
+          <SectionDivider label="Already Purchased?" />
+          <RestoreDownloadForm />
         </section>
 
         {/* ---------- FAQ ---------- */}

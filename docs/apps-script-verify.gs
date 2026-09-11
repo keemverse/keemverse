@@ -48,6 +48,7 @@
  * 5. At the TOP of your existing doGet(e), before the sheet logic:
  *      if (e.parameter.action === 'verify')   return handleVerify(e);
  *      if (e.parameter.action === 'download') return handleDownload(e);
+ *      if (e.parameter.action === 'restore')  return handleRestore(e);
  * 4. Paste the functions below anywhere in the project. If the project
  *    already has a jsonResponse(), reuse it — don't paste a second copy.
  * 5. Deploy -> Manage deployments -> Edit -> New version -> Deploy. The
@@ -260,6 +261,79 @@ function handleDownload(e) {
     '</body>';
   return HtmlService.createHtmlOutput(html)
     .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
+}
+
+/**
+ * Self-serve "lost your download?" — no accounts, just email + the Orders
+ * log. Mints a fresh token for every item that email has a Paid order for
+ * and emails all the links in one message. Always returns the same generic
+ * { ok: true } response regardless of whether a match was found, so this
+ * can't be used to check whether a given email has ever bought anything.
+ */
+function handleRestore(e) {
+  var email = String(e.parameter.email || '').trim().toLowerCase();
+  var generic = { ok: true, message: 'If that email has a purchase with us, we\'ve sent the download link(s) to it.' };
+  if (!email) return jsonResponse(generic);
+
+  var props     = PropertiesService.getScriptProperties();
+  var webAppUrl = props.getProperty('WEBAPP_URL');
+  if (!webAppUrl) return jsonResponse(generic);
+
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var ordersSheet = ss.getSheetByName('Orders');
+  var downloadsSheet = ss.getSheetByName('Downloads');
+  if (!ordersSheet || !downloadsSheet) return jsonResponse(generic);
+
+  var rows = ordersSheet.getDataRange().getValues();
+  var h = rows[0];
+  var cEmail = h.indexOf('Email'), cPreset = h.indexOf('Preset'),
+      cStatus = h.indexOf('Status'), cRef = h.indexOf('Tx Ref');
+
+  // Distinct paid items for this email -> most recent tx ref per item.
+  var items = {};
+  for (var i = 1; i < rows.length; i++) {
+    var rowEmail = String(rows[i][cEmail] || '').trim().toLowerCase();
+    if (rowEmail === email && String(rows[i][cStatus]) === 'Paid') {
+      items[rows[i][cPreset]] = rows[i][cRef];
+    }
+  }
+  var itemNames = Object.keys(items);
+  if (itemNames.length === 0) return jsonResponse(generic);
+
+  var pRows = ss.getSheetByName('Lightroom Presets').getDataRange().getValues();
+  var pH = pRows[0];
+  var pcName = pH.indexOf('Preset Name'), pcFile = pH.indexOf('Drive File Id');
+
+  var now     = new Date();
+  var expires = new Date(now.getTime() + DOWNLOAD_EXPIRY_HOURS * 3600 * 1000);
+  var links = [];
+
+  itemNames.forEach(function (itemName) {
+    var fileId = null;
+    for (var j = 1; j < pRows.length; j++) {
+      if (pRows[j][pcName] === itemName) { fileId = pRows[j][pcFile]; break; }
+    }
+    if (!fileId) return; // no file configured for this item — skip it
+
+    var token = Utilities.getUuid();
+    downloadsSheet.appendRow([
+      token, items[itemName], itemName, email, now, expires, 0, MAX_DOWNLOADS, 'FALSE',
+    ]);
+    links.push({ name: itemName, url: webAppUrl + '?action=download&token=' + token });
+  });
+
+  if (links.length > 0) {
+    var body = 'Hi,\n\nHere ' + (links.length === 1 ? 'is your download link' : 'are your download links') +
+      ', refreshed and ready:\n\n';
+    links.forEach(function (l) { body += l.name + ':\n' + l.url + '\n\n'; });
+    body += 'Each link works for ' + DOWNLOAD_EXPIRY_HOURS + ' hours and up to ' + MAX_DOWNLOADS +
+      ' downloads. Reply to this email if you need anything else.\n\n— KEEMVERSE';
+    try {
+      MailApp.sendEmail({ to: email, subject: 'Your KEEMVERSE downloads', body: body });
+    } catch (mailErr) {}
+  }
+
+  return jsonResponse(generic);
 }
 
 function htmlMessage(title, msg) {

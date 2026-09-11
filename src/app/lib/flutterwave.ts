@@ -118,3 +118,22 @@ export async function verifyAndUnlock(txRef: string, itemId: string): Promise<Ve
     return { ok: false, error: "Could not reach the verification service. Contact support with your transaction reference." };
   }
 }
+
+/**
+ * Self-serve "lost your download?" — no accounts, just email lookup
+ * against the Orders log. Always resolves the same generic message
+ * regardless of whether a match was found server-side (so this can't be
+ * used to probe whether a given email has ever purchased anything); if a
+ * match exists, fresh download link(s) are emailed to that address.
+ */
+export async function restoreDownload(email: string): Promise<{ message: string }> {
+  const fallback = "If that email has a purchase with us, we've sent the download link(s) to it.";
+  try {
+    const response = await fetch(`${VERIFY_API_URL}?action=restore&email=${encodeURIComponent(email)}`);
+    if (!response.ok) throw new Error("Restore request failed");
+    const data = await response.json();
+    return { message: data.message || fallback };
+  } catch (err) {
+    return { message: fallback };
+  }
+}
