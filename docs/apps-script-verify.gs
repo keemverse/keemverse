@@ -83,7 +83,13 @@ function handleVerify(e) {
     muteHttpExceptions: true,
   });
   var result = JSON.parse(res.getContentText());
-  if (result.status !== 'success' || !result.data || result.data.status !== 'successful') {
+  // Accept both statuses Flutterwave can return for a genuinely successful
+  // payment -- the client-side callback in flutterwave.ts already treats
+  // "successful" and "completed" as equivalent (bank transfers in
+  // particular can come back as "completed"); the server check must match
+  // or it silently rejects a real payment.
+  var okStatus = result.data && (result.data.status === 'successful' || result.data.status === 'completed');
+  if (result.status !== 'success' || !okStatus) {
     return jsonResponse({ ok: false, error: 'Payment not confirmed.' });
   }
 
