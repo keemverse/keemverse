@@ -109,8 +109,8 @@ function HeroCard({
     >
       <div className="relative aspect-square md:aspect-[4/3] overflow-hidden">
         <div className="absolute -inset-px will-change-transform transition-all duration-[900ms] ease-[cubic-bezier(.22,1,.36,1)] group-hover:scale-[1.03]">
-          <ImageWithFallback src={image} alt={title} className="w-full h-full object-cover" />
-          <div className="absolute inset-x-0 bottom-0 h-[45%] bg-gradient-to-t from-white via-white/60 to-transparent" />
+          <ImageWithFallback src={image} alt={title} className="w-full h-full object-cover object-[center_25%] md:object-center" />
+          <div className="absolute inset-x-0 bottom-0 h-[55%] bg-gradient-to-t from-white via-white/80 to-transparent" />
         </div>
         <span className="absolute top-2 left-2 md:top-4 md:left-4 rounded-full bg-white/95 text-[9px] md:text-[11px] tracking-wide font-semibold px-2 py-0.5 md:px-3 md:py-1 text-stone-900">
           {tag}
@@ -187,7 +187,7 @@ function HeroHeadline() {
 
 export function LandingPage() {
   return (
-    <div className="relative min-h-screen text-stone-900" style={{ backgroundColor: '#F5F2EA' }}>
+    <div className="relative min-h-screen text-stone-900" style={{ backgroundColor: '#FBFAF7' }}>
       <GeometricBackdrop />
       <main className="relative z-10 pt-8 pb-0 px-5 md:px-8">
         <div className="max-w-6xl mx-auto">

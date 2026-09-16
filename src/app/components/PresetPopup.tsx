@@ -85,7 +85,7 @@ export default function PresetPopup({
             }}
             className="fixed inset-0 z-50 flex items-center justify-center p-4"
           >
-            <div className="w-full max-w-5xl max-h-[92vh] overflow-hidden rounded-[32px] bg-[#F5F2EA] shadow-2xl">
+            <div className="w-full max-w-5xl max-h-[92vh] overflow-hidden rounded-[32px] bg-[#FBFAF7] shadow-2xl">
 
               <div className="max-h-[92vh] overflow-y-auto">
 
@@ -270,7 +270,7 @@ export default function PresetPopup({
 
                 {/* ---------- Purchase ---------- */}
 
-                <div className="sticky bottom-0 bg-[#F5F2EA] border-t border-stone-200/70 p-5 md:p-6">
+                <div className="sticky bottom-0 bg-[#FBFAF7] border-t border-stone-200/70 p-5 md:p-6">
 
                   <button
                     onClick={handleBuyNow}

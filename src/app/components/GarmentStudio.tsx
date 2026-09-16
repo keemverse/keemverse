@@ -146,7 +146,7 @@ export function GarmentStudio({ designs }: { designs: StudioDesign[] }) {
   if (!design) return null;
 
   return (
-    <div className="rounded-[28px] border border-stone-200/60 bg-white p-6 md:p-10 shadow-sm">
+    <div className="rounded-[28px] border border-stone-200/60 bg-[#F2ECDD] p-6 md:p-10 shadow-sm">
       <div className="grid grid-cols-1 md:grid-cols-[1fr,1.1fr] gap-8 items-center">
         {/* Preview */}
         <div className="max-w-[260px] mx-auto w-full">

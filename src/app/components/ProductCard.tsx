@@ -1,6 +1,7 @@
 import { motion } from "motion/react";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
 import { PillButton } from "./ui/PillButton";
+import { FASHION, FASHION_DARK } from "../lib/theme";
 
 interface ProductCardProps {
   name: string;
@@ -68,6 +69,8 @@ export default function ProductCard({
           external
           onClick={(e) => e.stopPropagation()}
           className="mt-6 w-full justify-center whitespace-nowrap"
+          accent={FASHION}
+          accentDark={FASHION_DARK}
         >
           {buttonText}
         </PillButton>

@@ -16,7 +16,7 @@ interface InfoPageProps {
  */
 export function InfoPage({ eyebrow, title, children }: InfoPageProps) {
   return (
-    <div className="min-h-screen text-stone-900" style={{ backgroundColor: '#F5F2EA' }}>
+    <div className="min-h-screen text-stone-900" style={{ backgroundColor: '#FBFAF7' }}>
       <main className="max-w-2xl mx-auto px-5 md:px-8 pt-10 pb-24">
         <motion.section
           initial={{ opacity: 0, y: 12 }}

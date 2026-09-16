@@ -29,7 +29,7 @@ export default function App() {
     <BrowserRouter>
       <div
         className="min-h-screen"
-        style={{ backgroundColor: '#F5F2EA' }}
+        style={{ backgroundColor: '#FBFAF7' }}
       >
         <ConditionalNavBar />
 

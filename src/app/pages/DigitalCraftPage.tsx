@@ -7,6 +7,7 @@ import { GeometricBackdrop } from '../components/GeometricBackdrop';
 import { UpworkIcon, BehanceIcon } from '../components/Icons';
 import { FileImage, Briefcase, Layers } from 'lucide-react';
 import UniverseShopCard from "../components/UniverseShopCard";
+import { CRAFT, CRAFT_DARK } from '../lib/theme';
 import craftPageHero from '../../imports/craft-quality-hero_2.webp';
 import printableGraphicsHero from '../../imports/printable-graphics-hero.webp';
 import dtfDesignPacksHero from '../../imports/dtf-design-packs-hero.webp';
@@ -68,7 +69,7 @@ export function DigitalCraftPage() {
   const [comingSoon, setComingSoon] = useState<string | null>(null);
 
   return (
-    <div className="relative min-h-screen text-stone-900" style={{ backgroundColor: '#F5F2EA' }}>
+    <div className="relative min-h-screen text-stone-900" style={{ backgroundColor: '#FBFAF7' }}>
       <GeometricBackdrop />
       <ComingSoonModal
         open={!!comingSoon}
@@ -147,20 +148,19 @@ export function DigitalCraftPage() {
 
             </div>
 
-{/* Stats below — separated for clarity */}
-            <div className="mt-16 grid grid-cols-3 gap-4 max-w-md mx-auto">
-              {stats.map((s) => (
-                <div
-                  key={s.label}
-                  className="flex flex-col items-center text-center p-5 rounded-2xl border border-stone-200/60"
-                  style={{ backgroundColor: '#FFFFFF' }}
-                >
-                  <span className="font-bold text-stone-900 mb-1" style={{ fontSize: 'clamp(1.25rem, 2.5vw, 1.6rem)' }}>
-                    {s.value}
-                  </span>
-                  <span className="text-xs text-stone-500 uppercase tracking-wider leading-tight">
-                    {s.label}
-                  </span>
+{/* Stats below — quiet supporting row, not a competing card block */}
+            <div className="mt-10 flex items-start justify-center gap-6 md:gap-10 max-w-md mx-auto">
+              {stats.map((s, i) => (
+                <div key={s.label} className="flex items-center gap-6 md:gap-10">
+                  {i > 0 && <div className="h-8 w-px bg-stone-300/70" />}
+                  <div className="flex flex-col items-center text-center">
+                    <span className="font-bold text-stone-900 text-base md:text-lg">
+                      {s.value}
+                    </span>
+                    <span className="text-[10px] md:text-xs text-stone-400 uppercase tracking-wider leading-tight mt-0.5">
+                      {s.label}
+                    </span>
+                  </div>
                 </div>
               ))}
             </div>
@@ -171,7 +171,7 @@ export function DigitalCraftPage() {
           {/* ── WORK WITH ME ── */}
   <section className="mt-20">
             <SectionDivider label="Work With Me" />
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 md:gap-5">
               {services.map((svc, i) => (
                 <motion.div
                   key={i}
@@ -179,18 +179,22 @@ export function DigitalCraftPage() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.4, delay: i * 0.08 }}
-                  className="rounded-3xl p-7 md:p-8 transition-all border border-stone-200/60"
+                  className={`rounded-2xl md:rounded-3xl p-4 md:p-8 transition-all border border-stone-200/60 ${
+                    services.length % 2 !== 0 && i === services.length - 1
+                      ? 'col-span-2 max-w-[calc(50%-6px)] mx-auto lg:col-span-1 lg:max-w-none lg:mx-0'
+                      : ''
+                  }`}
                   style={{
-                    backgroundColor: i % 2 === 0 ? '#FFFFFF' : '#F9F7F2'
+                    backgroundColor: i % 2 === 0 ? '#F2ECDD' : '#F8F2E6'
                   }}
                 >
-                  <div className="w-11 h-11 rounded-2xl flex items-center justify-center mb-5" style={{ backgroundColor: '#F5F2EC' }}>
-                    <svc.icon className="w-5 h-5" style={{ color: '#1D1C19' }} />
+                  <div className="w-9 h-9 md:w-11 md:h-11 rounded-xl md:rounded-2xl flex items-center justify-center mb-3 md:mb-5" style={{ backgroundColor: '#FFFFFF' }}>
+                    <svc.icon className="w-4 h-4 md:w-5 md:h-5" style={{ color: '#1D1C19' }} />
                   </div>
-                  <h3 className="font-bold mb-3 text-stone-900 leading-snug" style={{ fontSize: '1.05rem' }}>
+                  <h3 className="font-bold mb-1.5 md:mb-3 text-stone-900 text-sm md:text-[1.05rem] leading-snug">
                     {svc.title}
                   </h3>
-                  <p className="text-stone-600 text-sm leading-relaxed">{svc.desc}</p>
+                  <p className="text-stone-600 text-xs md:text-sm leading-relaxed">{svc.desc}</p>
                 </motion.div>
               ))}
             </div>
@@ -235,6 +239,8 @@ export function DigitalCraftPage() {
     tag={item.tag}
     index={i}
     onOpen={() => setComingSoon(item.title)}
+    accent={CRAFT}
+    accentDark={CRAFT_DARK}
   />
 ))}
             </div>

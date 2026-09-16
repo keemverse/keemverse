@@ -6,7 +6,9 @@ import { ImageWithFallback } from '../components/figma/ImageWithFallback';
 import { SocialFooter } from '../components/SocialFooter';
 import { BookMeModal } from '../components/BookMeModal';
 import UniverseShopCard from "../components/UniverseShopCard";
+import { PillButton } from '../components/ui/PillButton';
 import { GeometricBackdrop } from '../components/GeometricBackdrop';
+import { FASHION, FASHION_DARK } from '../lib/theme';
 import img1 from '../../imports/IMG_7304.webp';
 import img2 from '../../imports/IMG_7549.webp';
 import img3 from '../../imports/IMG_4929.webp';
@@ -75,7 +77,7 @@ export function FashionPage() {
   }, []);
 
   return (
-    <div className="relative min-h-screen text-stone-900" style={{ backgroundColor: '#F5F2EA' }}>
+    <div className="relative min-h-screen text-stone-900" style={{ backgroundColor: '#FBFAF7' }}>
       <GeometricBackdrop />
       <BookMeModal open={modalOpen} onClose={() => setModalOpen(false)} />
 
@@ -184,7 +186,7 @@ export function FashionPage() {
                   transition={{ duration: 0.4, delay: i * 0.07 }}
                   className="flex flex-col justify-between rounded-2xl md:rounded-3xl p-4 md:p-8 transition-all border border-stone-200/60"
                   style={{
-                    backgroundColor: i % 2 === 0 ? '#FFFFFF' : '#F9F7F2'
+                    backgroundColor: i % 2 === 0 ? '#F2ECDD' : '#F8F2E6'
                   }}
                 >
                   <div>
@@ -193,13 +195,15 @@ export function FashionPage() {
                     </h3>
                     <p className="text-stone-600 text-xs md:text-sm leading-relaxed">{svc.desc}</p>
                   </div>
-                  <button
+                  <PillButton
                     onClick={() => setModalOpen(true)}
-                    className="mt-3 md:mt-6 inline-flex items-center self-start px-3.5 py-2 md:px-6 md:py-2.5 rounded-full text-white text-[10px] md:text-xs font-bold tracking-wide transition-all duration-300 hover:-translate-y-0.5 hover:bg-stone-200"
-                    style={{ backgroundColor: '#ECE5D9', color:'#1D1C19', boxShadow:'inset 0 1px 0 rgba(255,255,255,.8), 0 8px 20px rgba(0,0,0,.05)' }}
+                    accent={FASHION}
+                    accentDark={FASHION_DARK}
+                    arrow={false}
+                    className="mt-3 md:mt-6 self-start"
                   >
                     BOOK ME
-                  </button>
+                  </PillButton>
                 </motion.div>
               ))}
             </div>
@@ -219,6 +223,8 @@ export function FashionPage() {
     href={item.href}
     tag={item.tag}
     index={i}
+    accent={FASHION}
+    accentDark={FASHION_DARK}
   />
 ))}
             </div>

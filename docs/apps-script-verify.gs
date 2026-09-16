@@ -1,6 +1,12 @@
 /**
  * KEEMVERSE — checkout verification + gated download (Google Drive delivery)
  * =========================================================================
+ * LIVE as of 16-Sep-2026 — running on production Flutterwave keys, proven
+ * end-to-end with a real paid transaction (payment -> server-side verify
+ * against Flutterwave's live API -> download streamed -> delivery email
+ * reached the buyer's real inbox). This file mirrors the deployed Apps
+ * Script; keep it in sync by hand when the live script changes.
+ *
  * Splice this into the SAME Apps Script project that already serves
  * getProducts()/getPresets() to the site. It does not run standalone.
  *
@@ -20,9 +26,12 @@
  *
  * SETUP BEFORE THIS WORKS
  * 1. Apps Script editor -> Project Settings -> Script Properties, add:
- *      FLUTTERWAVE_SECRET_KEY = <secret key; the TEST key is fine to start>
+ *      FLUTTERWAVE_SECRET_KEY = <secret key; use the LIVE key for real
+ *                                launches, a TEST key is fine while building>
  *      WEBAPP_URL             = <this web app's own /exec URL>
- *    Never put the secret key in the source itself.
+ *    Never put the secret key in the source itself. Currently set to the
+ *    live secret key — the matching live public key lives in
+ *    src/app/lib/flutterwave.ts (FLUTTERWAVE_PUBLIC_KEY).
  * 2. "Lightroom Presets" tab was rebuilt (11-Sep-2026) for this native-
  *    checkout method — Gumroad-era columns (Purchase Link, Why I Created
  *    It, Rating, the old Preview/Before/After Image split) are gone.

@@ -23,7 +23,7 @@ export default function RestoreDownloadForm() {
   };
 
   return (
-    <div className="max-w-md mx-auto rounded-2xl border border-stone-200/60 bg-white p-6 md:p-8 text-center">
+    <div className="max-w-md mx-auto rounded-2xl border border-stone-200/60 bg-[#F2ECDD] p-6 md:p-8 text-center">
       <h3 className="font-serif text-xl text-stone-900 mb-2">Already purchased?</h3>
       <p className="text-stone-500 text-sm mb-5">
         Lost your download link? Enter the email you paid with and we'll send it again.

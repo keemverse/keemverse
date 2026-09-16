@@ -27,7 +27,7 @@ export default function CheckoutPage() {
 
   if (!state?.item) {
     return (
-      <div className="min-h-screen flex items-center justify-center text-center px-6" style={{ backgroundColor: "#F5F2EA" }}>
+      <div className="min-h-screen flex items-center justify-center text-center px-6" style={{ backgroundColor: "#FBFAF7" }}>
         <div>
           <p className="font-serif text-2xl text-stone-900 mb-3">Nothing to check out</p>
           <p className="text-stone-500 mb-6">Head back and pick something from the presets shop.</p>
@@ -68,7 +68,7 @@ export default function CheckoutPage() {
   };
 
   return (
-    <div className="min-h-screen text-stone-900" style={{ backgroundColor: "#F5F2EA" }}>
+    <div className="min-h-screen text-stone-900" style={{ backgroundColor: "#FBFAF7" }}>
       <main className="max-w-lg mx-auto px-5 md:px-8 pt-10 pb-24">
         <motion.section
           initial={{ opacity: 0, y: 12 }}

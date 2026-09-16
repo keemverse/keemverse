@@ -48,7 +48,7 @@ export default function ProductPopup({
             transition={{duration:.55, ease:[0.22,1,0.36,1]}}
             className="fixed inset-0 z-50 flex items-center justify-center p-4"
           >
-            <div className="w-full max-w-4xl max-h-[92vh] overflow-hidden rounded-[32px] bg-[#F5F2EA] shadow-2xl">
+            <div className="w-full max-w-4xl max-h-[92vh] overflow-hidden rounded-[32px] bg-[#FBFAF7] shadow-2xl">
               <div className="grid lg:grid-cols-2 overflow-y-auto max-h-[92vh] pb-28">
                 <div className="relative h-[320px] lg:h-auto lg:aspect-[4/5] overflow-hidden rounded-t-[32px] lg:rounded-l-[32px] lg:rounded-tr-none">
                 
@@ -125,7 +125,7 @@ export default function ProductPopup({
                 </div>
               </div>
 
-              <div className="sticky bottom-0 bg-[#F5F2EA] p-6">
+              <div className="sticky bottom-0 bg-[#FBFAF7] p-6">
                 <a
   href={affiliateLink}
   target="_blank"

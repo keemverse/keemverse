@@ -127,7 +127,7 @@ export default function MediaKitPage() {
   const lastUpdated = rows.find((r) => r['Last Updated'])?.['Last Updated'];
 
   return (
-    <div className="min-h-screen text-stone-900" style={{ backgroundColor: '#F5F2EA' }}>
+    <div className="min-h-screen text-stone-900" style={{ backgroundColor: '#FBFAF7' }}>
       <main className="max-w-4xl mx-auto px-5 md:px-8 pt-10 pb-24">
         <motion.section
           initial={{ opacity: 0, y: 12 }}

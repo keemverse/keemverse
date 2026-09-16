@@ -93,8 +93,8 @@ export default function TemuScrollBanner({
 
       <div className="relative">
         {/* Edge fades so the track doesn't hard-cut at the container edge */}
-        <div className="pointer-events-none absolute inset-y-0 left-0 w-10 z-10 bg-gradient-to-r from-[#F5F2EA] to-transparent" />
-        <div className="pointer-events-none absolute inset-y-0 right-0 w-10 z-10 bg-gradient-to-l from-[#F5F2EA] to-transparent" />
+        <div className="pointer-events-none absolute inset-y-0 left-0 w-10 z-10 bg-gradient-to-r from-[#FBFAF7] to-transparent" />
+        <div className="pointer-events-none absolute inset-y-0 right-0 w-10 z-10 bg-gradient-to-l from-[#FBFAF7] to-transparent" />
 
         <div
           ref={trackRef}

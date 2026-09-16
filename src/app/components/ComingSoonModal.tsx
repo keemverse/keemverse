@@ -51,7 +51,7 @@ export function ComingSoonModal({
                 <X className="w-4 h-4" />
               </button>
 
-              <div className="w-14 h-14 mx-auto rounded-2xl flex items-center justify-center mb-5" style={{ backgroundColor: '#F5F2EC' }}>
+              <div className="w-14 h-14 mx-auto rounded-2xl flex items-center justify-center mb-5" style={{ backgroundColor: '#F2ECDD' }}>
                 <Sparkles className="w-6 h-6" style={{ color: '#1D1C19' }} />
               </div>
 

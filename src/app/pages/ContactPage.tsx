@@ -148,9 +148,9 @@ export default function ContactPage() {
         {details.map((d) => (
           <div
             key={d.label}
-            className="flex items-start gap-4 rounded-2xl border border-stone-200/60 bg-white p-5"
+            className="flex items-start gap-4 rounded-2xl border border-stone-200/60 bg-[#F2ECDD] p-5"
           >
-            <div className="w-10 h-10 shrink-0 rounded-xl flex items-center justify-center" style={{ backgroundColor: '#F5F2EC' }}>
+            <div className="w-10 h-10 shrink-0 rounded-xl flex items-center justify-center" style={{ backgroundColor: '#FFFFFF' }}>
               <d.icon className="w-5 h-5 text-stone-900" />
             </div>
             <div>

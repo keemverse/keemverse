@@ -1,5 +1,6 @@
 import { motion } from "motion/react";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
+import { PillButton } from "./ui/PillButton";
 interface UniverseShopCardProps {
   title: string;
   description: string;
@@ -9,6 +10,10 @@ interface UniverseShopCardProps {
   tag?: string;
   index?: number;
   onOpen?: () => void;
+  /** This universe's accent + accentDark (from lib/theme.ts) — colors
+   * the CTA pill instead of leaving it the neutral beige default. */
+  accent?: string;
+  accentDark?: string;
 }
 
 export default function UniverseShopCard({
@@ -20,6 +25,8 @@ export default function UniverseShopCard({
   tag = "LIVE",
   index = 0,
   onOpen,
+  accent,
+  accentDark,
 }: UniverseShopCardProps) {
   const isPending = href === "#";
   const isExternal = href.startsWith("http");
@@ -72,10 +79,9 @@ export default function UniverseShopCard({
         </p>
 
         <div className="mt-auto pt-3 md:pt-5">
-          <span className="inline-flex items-center gap-1 md:gap-2 rounded-full border border-stone-300 bg-[#ECE5D9] px-4 py-2 md:px-7 md:py-3 text-[10px] md:text-xs font-semibold tracking-[0.1em] md:tracking-[0.15em] text-stone-900 shadow-[inset_0_1px_0_rgba(255,255,255,.9),0_8px_20px_rgba(0,0,0,.06)] transition-all duration-300 ease-[cubic-bezier(.22,1,.36,1)] group-hover:-translate-y-0.5 group-hover:bg-[#E5DDCF]">
+          <PillButton groupHover accent={accent} accentDark={accentDark}>
             {cta}
-            <span className="transition-transform group-hover:translate-x-1">→</span>
-          </span>
+          </PillButton>
         </div>
       </div>
     </motion.a>

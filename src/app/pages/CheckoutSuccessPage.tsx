@@ -34,7 +34,7 @@ export default function CheckoutSuccessPage() {
 
   if (!state?.txRef) {
     return (
-      <div className="min-h-screen flex items-center justify-center text-center px-6" style={{ backgroundColor: "#F5F2EA" }}>
+      <div className="min-h-screen flex items-center justify-center text-center px-6" style={{ backgroundColor: "#FBFAF7" }}>
         <div>
           <p className="font-serif text-2xl text-stone-900 mb-3">No order to show</p>
           <button
@@ -49,7 +49,7 @@ export default function CheckoutSuccessPage() {
   }
 
   return (
-    <div className="min-h-screen text-stone-900" style={{ backgroundColor: "#F5F2EA" }}>
+    <div className="min-h-screen text-stone-900" style={{ backgroundColor: "#FBFAF7" }}>
       <main className="max-w-lg mx-auto px-5 md:px-8 pt-16 pb-24 text-center">
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.45 }}>
           {status === "verifying" && (

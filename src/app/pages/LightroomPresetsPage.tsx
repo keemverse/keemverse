@@ -91,7 +91,7 @@ export default function LightroomPresetsPage() {
   return (
     <div
       className="min-h-screen text-stone-900"
-      style={{ backgroundColor: "#F5F2EA" }}
+      style={{ backgroundColor: "#FBFAF7" }}
     >
       <main className="max-w-6xl mx-auto px-5 md:px-8 pt-10 pb-0">
 

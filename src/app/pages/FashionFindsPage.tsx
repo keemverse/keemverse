@@ -76,7 +76,7 @@ const filteredProducts = products.filter((p) => {
   return (
     <div
       className="min-h-screen text-stone-900"
-      style={{ backgroundColor: "#F5F2EA" }}
+      style={{ backgroundColor: "#FBFAF7" }}
     >
       <main className="max-w-7xl mx-auto px-5 md:px-8 py-12">
         <motion.section
