@@ -10,6 +10,7 @@ import SectionDivider from "../components/SectionDivider";
 import { getPresets } from "../lib/products";
 import PresetPopup from "../components/PresetPopup";
 import RestoreDownloadForm from "../components/RestoreDownloadForm";
+import PresetFAQ from "../components/PresetFAQ";
 
 const categories = [
   "All",
@@ -220,13 +221,7 @@ export default function LightroomPresetsPage() {
 
         {/* ---------- FAQ ---------- */}
 
-        <section className="mb-24">
-
-          <SectionDivider label="FAQ" />
-
-          {/* FAQ will be added in the product-detail phase */}
-
-                </section>
+        <PresetFAQ />
 
         {/* ---------- Preset Popup ---------- */}
 

@@ -5,26 +5,22 @@ import { ComingSoonModal } from '../components/ComingSoonModal';
 import { ImageWithFallback } from '../components/figma/ImageWithFallback';
 import { GeometricBackdrop } from '../components/GeometricBackdrop';
 import { UpworkIcon, BehanceIcon } from '../components/Icons';
-import { FileImage, Briefcase, Layers } from 'lucide-react';
 import UniverseShopCard from "../components/UniverseShopCard";
 import { CRAFT, CRAFT_DARK } from '../lib/theme';
 import craftPageHero from '../../imports/craft-quality-hero_2.webp';
 import printableGraphicsHero from '../../imports/printable-graphics-hero.webp';
 import dtfDesignPacksHero from '../../imports/dtf-design-packs-hero.webp';
+import artistPaletteIcon from '../../imports/icons3d/artist-palette-3d.png';
+import briefcaseIcon from '../../imports/icons3d/briefcase-3d.png';
 
 const services = [
   {
-    icon: Layers,
+    icon: artistPaletteIcon,
     title: 'Graphics & Print Asset Creation',
-    desc: 'From concept to production-ready artwork.',
+    desc: 'From concept to production-ready artwork — including cleanup and optimization of low-quality files.',
   },
   {
-    icon: FileImage,
-    title: 'Print File Cleanup & Optimization',
-    desc: 'Fix low-quality files, improve output quality, and prepare for production.',
-  },
-  {
-    icon: Briefcase,
+    icon: briefcaseIcon,
     title: 'Creative Consultation & Support',
     desc: 'Professional guidance for apparel, print, and creative projects.',
   },
@@ -171,7 +167,7 @@ export function DigitalCraftPage() {
           {/* ── WORK WITH ME ── */}
   <section className="mt-20">
             <SectionDivider label="Work With Me" />
-            <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 md:gap-5">
+            <div className="grid grid-cols-2 gap-x-5 gap-y-9 md:gap-x-10 max-w-xl mx-auto">
               {services.map((svc, i) => (
                 <motion.div
                   key={i}
@@ -179,19 +175,15 @@ export function DigitalCraftPage() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.4, delay: i * 0.08 }}
-                  className={`rounded-2xl md:rounded-3xl p-4 md:p-8 transition-all border border-stone-200/60 ${
-                    services.length % 2 !== 0 && i === services.length - 1
-                      ? 'col-span-2 max-w-[calc(50%-6px)] mx-auto lg:col-span-1 lg:max-w-none lg:mx-0'
-                      : ''
-                  }`}
-                  style={{
-                    backgroundColor: i % 2 === 0 ? '#F2ECDD' : '#F8F2E6'
-                  }}
+                  className="flex flex-col"
                 >
-                  <div className="w-9 h-9 md:w-11 md:h-11 rounded-xl md:rounded-2xl flex items-center justify-center mb-3 md:mb-5" style={{ backgroundColor: '#FFFFFF' }}>
-                    <svc.icon className="w-4 h-4 md:w-5 md:h-5" style={{ color: '#1D1C19' }} />
-                  </div>
-                  <h3 className="font-bold mb-1.5 md:mb-3 text-stone-900 text-sm md:text-[1.05rem] leading-snug">
+                  <img
+                    src={svc.icon}
+                    alt=""
+                    className="w-7 h-7 mb-3"
+                    style={{ filter: 'sepia(0.65) saturate(1.3) hue-rotate(-8deg) brightness(0.92)' }}
+                  />
+                  <h3 className="font-bold mb-1.5 md:mb-2 text-stone-900 text-sm md:text-base leading-snug">
                     {svc.title}
                   </h3>
                   <p className="text-stone-600 text-xs md:text-sm leading-relaxed">{svc.desc}</p>
@@ -204,14 +196,14 @@ export function DigitalCraftPage() {
                 href="https://www.upwork.com/freelancers/~0106ded5c187eb05c8?mp_source=share"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-2.5 px-8 py-4 rounded-full bg-[#14A800] text-white font-bold text-sm hover:bg-[#0f8c00] transition-colors shadow-lg shadow-[#14A800]/20"
+                className="flex items-center gap-2.5 px-8 py-4 rounded-full border border-stone-300 bg-[#ECE5D9] text-stone-900 font-bold text-sm shadow-[inset_0_1px_0_rgba(255,255,255,.9),0_8px_20px_rgba(0,0,0,.06)] hover:bg-[#E5DDCF] hover:-translate-y-0.5 transition-all"
               >
                 <UpworkIcon className="w-5 h-5" />
                 Hire on Upwork
               </a>
               <button
                 onClick={() => setComingSoon('Behance')}
-                className="flex items-center gap-2.5 px-8 py-4 rounded-full bg-[#1769FF] text-white font-bold text-sm hover:bg-[#0d55d9] transition-colors shadow-lg shadow-[#1769FF]/20"
+                className="flex items-center gap-2.5 px-8 py-4 rounded-full border border-stone-300 bg-[#ECE5D9] text-stone-900 font-bold text-sm shadow-[inset_0_1px_0_rgba(255,255,255,.9),0_8px_20px_rgba(0,0,0,.06)] hover:bg-[#E5DDCF] hover:-translate-y-0.5 transition-all"
               >
                 <BehanceIcon className="w-5 h-5" />
                 View Behance

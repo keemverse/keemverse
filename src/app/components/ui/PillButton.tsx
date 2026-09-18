@@ -16,15 +16,21 @@ interface PillButtonProps {
    * instead of the neutral beige default. Omit for the neutral style. */
   accent?: string;
   accentDark?: string;
+  /** With `accent`: render a quiet accent-outlined pill (transparent
+   * fill, accent text/border) that fills solid on hover, instead of
+   * the loud solid-fill default. Use for secondary actions that
+   * shouldn't compete with the page's one real CTA. */
+  ghost?: boolean;
 }
 
 /**
  * The site's CTA pill — neutral beige by default (the exact recipe
  * behind "enter" on the hero cards and "shop now" on product cards),
- * or a solid universe-accent fill when `accent`/`accentDark` are
- * passed. Renders as an <a> when `href` is given, a <button> when
- * `onClick` is given, or a plain <span> when it's just decorative
- * inside an already-clickable parent (the hero cards work this way).
+ * a solid universe-accent fill when `accent`/`accentDark` are passed,
+ * or a quiet accent-outlined pill when `ghost` is added on top.
+ * Renders as an <a> when `href` is given, a <button> when `onClick`
+ * is given, or a plain <span> when it's just decorative inside an
+ * already-clickable parent (the hero cards work this way).
  */
 export function PillButton({
   children,
@@ -36,26 +42,45 @@ export function PillButton({
   className = '',
   accent,
   accentDark,
+  ghost = false,
 }: PillButtonProps) {
   const isAccent = Boolean(accent);
+  const isGhost = isAccent && ghost;
 
   const translateHover = groupHover ? 'group-hover:-translate-y-0.5' : 'hover:-translate-y-0.5';
   const neutralHover = groupHover ? 'group-hover:bg-[#E5DDCF]' : 'hover:bg-[#E5DDCF]';
 
   const base = `inline-flex items-center gap-1.5 md:gap-2 rounded-full border px-4 py-2 md:px-7 md:py-3 text-[11px] md:text-xs font-semibold tracking-[0.15em] transition-all duration-300 ease-[cubic-bezier(.22,1,.36,1)] ${translateHover} ${
-    isAccent
+    isGhost
+      ? 'bg-transparent'
+      : isAccent
       ? 'text-white border-transparent'
       : `border-stone-300 bg-[#ECE5D9] text-stone-900 shadow-[inset_0_1px_0_rgba(255,255,255,.9),0_8px_20px_rgba(0,0,0,.06)] ${neutralHover}`
   } ${className}`;
 
-  const accentStyle = isAccent
+  const accentStyle = isGhost
+    ? { borderColor: accent, color: accent }
+    : isAccent
     ? {
         backgroundColor: accent,
         boxShadow: `inset 0 1px 0 rgba(255,255,255,.25), 0 8px 20px -4px ${accent}80`,
       }
     : undefined;
 
-  const accentHoverHandlers = isAccent
+  const accentHoverHandlers = isGhost
+    ? {
+        onMouseEnter: (e: MouseEvent<HTMLElement>) => {
+          const el = e.currentTarget as HTMLElement;
+          el.style.backgroundColor = accent!;
+          el.style.color = '#fff';
+        },
+        onMouseLeave: (e: MouseEvent<HTMLElement>) => {
+          const el = e.currentTarget as HTMLElement;
+          el.style.backgroundColor = 'transparent';
+          el.style.color = accent!;
+        },
+      }
+    : isAccent
     ? {
         onMouseEnter: (e: MouseEvent<HTMLElement>) => {
           (e.currentTarget as HTMLElement).style.backgroundColor = accentDark || accent!;

@@ -176,7 +176,7 @@ export function FashionPage() {
             <SectionDivider label="Work With Me" />
             {/* Media kit link removed while /fashion/media-kit is held in
                 draft — add back once that page is routed live again. */}
-            <div className="grid grid-cols-2 gap-3 md:gap-5">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-x-5 gap-y-9 md:gap-x-8">
               {services.map((svc, i) => (
                 <motion.div
                   key={i}
@@ -184,23 +184,19 @@ export function FashionPage() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.4, delay: i * 0.07 }}
-                  className="flex flex-col justify-between rounded-2xl md:rounded-3xl p-4 md:p-8 transition-all border border-stone-200/60"
-                  style={{
-                    backgroundColor: i % 2 === 0 ? '#F2ECDD' : '#F8F2E6'
-                  }}
+                  className="flex flex-col"
                 >
-                  <div>
-                    <h3 className="font-bold mb-1.5 md:mb-3 text-stone-900 text-sm md:text-[1.05rem] leading-snug">
-                      {svc.title}
-                    </h3>
-                    <p className="text-stone-600 text-xs md:text-sm leading-relaxed">{svc.desc}</p>
-                  </div>
+                  <h3 className="font-bold mb-1.5 md:mb-2 text-stone-900 text-sm md:text-base leading-snug">
+                    {svc.title}
+                  </h3>
+                  <p className="text-stone-600 text-xs md:text-sm leading-relaxed mb-4">{svc.desc}</p>
                   <PillButton
                     onClick={() => setModalOpen(true)}
                     accent={FASHION}
                     accentDark={FASHION_DARK}
+                    ghost
                     arrow={false}
-                    className="mt-3 md:mt-6 self-start"
+                    className="mt-auto self-start"
                   >
                     BOOK ME
                   </PillButton>

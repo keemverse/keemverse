@@ -26,7 +26,7 @@ export function IconButton({
       onClick={onClick}
       aria-label={ariaLabel}
       aria-expanded={ariaExpanded}
-      className={`relative w-11 h-11 rounded-full border border-[#d8d0c8] bg-gradient-to-b from-[#f4efe9] to-[#ddd3c8] shadow-[inset_0_1px_2px_rgba(255,255,255,0.8),0_2px_6px_rgba(0,0,0,0.08)] flex flex-col items-center justify-center gap-[5px] ${className}`}
+      className={`relative w-11 h-11 rounded-2xl border border-[#d8d0c8] bg-gradient-to-b from-[#f4efe9] to-[#ddd3c8] shadow-[inset_0_1px_2px_rgba(255,255,255,0.8),0_2px_6px_rgba(0,0,0,0.08)] flex flex-col items-center justify-center gap-[5px] ${className}`}
     >
       {children}
     </button>

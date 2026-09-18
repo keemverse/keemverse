@@ -23,6 +23,8 @@ function LandingNav() {
 
   const items = [
     { label: 'Fashion', action: () => navigate('/fashion') },
+    { label: 'Fashion Finds', action: () => navigate('/fashion/finds') },
+    { label: 'Lightroom Presets', action: () => navigate('/fashion/presets') },
     { label: 'Craft', action: () => navigate('/digital-craft') },
     { label: 'Resources', action: () => setComingSoon('Resources') },
     { label: 'About', action: () => navigate('/about') },
