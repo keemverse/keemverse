@@ -28,16 +28,16 @@ const services = [
 
 const shop = [
   {
-    title: 'Printable Graphics',
-    description: 'Production-ready artwork for apparel, decals, stickers, cups, posters, and creative projects.',
+    title: 'Design Packs',
+    description: 'Print-ready artwork for apparel, decals, stickers, cups, posters, and more — for creators, print shops, and brands worldwide.',
     image: printableGraphicsHero,
     cta: 'Coming Soon',
     tag: 'PENDING',
     href: '#',
   },
   {
-    title: 'Apparel Design Packs',
-    description: 'Premium print-ready artwork designed for apparel brands and print businesses, ready for any printing method.',
+    title: 'Wears',
+    description: 'KEEMVERSE-designed apparel, printed and shipped worldwide.',
     image: dtfDesignPacksHero,
     cta: 'Coming Soon',
     tag: 'PENDING',
@@ -192,15 +192,13 @@ export function DigitalCraftPage() {
             </div>
 
             <div className="flex flex-wrap justify-center gap-4 mt-10">
-              <a
-                href="https://www.upwork.com/freelancers/~0106ded5c187eb05c8?mp_source=share"
-                target="_blank"
-                rel="noopener noreferrer"
+              <button
+                onClick={() => setComingSoon('Upwork')}
                 className="flex items-center gap-2.5 px-8 py-4 rounded-full border border-stone-300 bg-[#ECE5D9] text-stone-900 font-bold text-sm shadow-[inset_0_1px_0_rgba(255,255,255,.9),0_8px_20px_rgba(0,0,0,.06)] hover:bg-[#E5DDCF] hover:-translate-y-0.5 transition-all"
               >
                 <UpworkIcon className="w-5 h-5" />
                 Hire on Upwork
-              </a>
+              </button>
               <button
                 onClick={() => setComingSoon('Behance')}
                 className="flex items-center gap-2.5 px-8 py-4 rounded-full border border-stone-300 bg-[#ECE5D9] text-stone-900 font-bold text-sm shadow-[inset_0_1px_0_rgba(255,255,255,.9),0_8px_20px_rgba(0,0,0,.06)] hover:bg-[#E5DDCF] hover:-translate-y-0.5 transition-all"
