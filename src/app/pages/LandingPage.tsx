@@ -147,7 +147,7 @@ function HeroHeadline() {
   return (
     <div>
       <h1
-        className="leading-[1.05] text-stone-900"
+        className="leading-[1.05] text-foreground"
         style={{ fontFamily: 'Georgia, serif', fontSize: 'clamp(2.25rem, 7vw, 3.75rem)' }}
       >
         <span className="block overflow-hidden pb-[0.1em]">
@@ -179,7 +179,7 @@ function HeroHeadline() {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.6, delay: 0.9 }}
-        className="mt-5 text-stone-600 leading-relaxed text-sm md:text-base"
+        className="mt-5 text-muted-foreground leading-relaxed text-sm md:text-base"
       >
         Helping people build wardrobes and helping brands build production-ready artwork.
       </motion.p>
@@ -189,7 +189,7 @@ function HeroHeadline() {
 
 export function LandingPage() {
   return (
-    <div className="relative min-h-screen text-stone-900" style={{ backgroundColor: '#FBFAF7' }}>
+    <div className="relative min-h-screen bg-background text-foreground">
       <GeometricBackdrop />
       <main className="relative z-10 pt-8 pb-0 px-5 md:px-8">
         <div className="max-w-6xl mx-auto">

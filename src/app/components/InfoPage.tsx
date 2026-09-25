@@ -16,7 +16,7 @@ interface InfoPageProps {
  */
 export function InfoPage({ eyebrow, title, children }: InfoPageProps) {
   return (
-    <div className="min-h-screen text-stone-900" style={{ backgroundColor: '#FBFAF7' }}>
+    <div className="min-h-screen bg-background text-foreground">
       <main className="max-w-2xl mx-auto px-5 md:px-8 pt-10 pb-24">
         <motion.section
           initial={{ opacity: 0, y: 12 }}
@@ -24,15 +24,15 @@ export function InfoPage({ eyebrow, title, children }: InfoPageProps) {
           transition={{ duration: 0.45 }}
           className="text-center mb-14"
         >
-          <p className="uppercase tracking-[0.35em] text-xs text-stone-500 mb-4">
+          <p className="uppercase tracking-[0.35em] text-xs text-muted-foreground mb-4">
             {eyebrow}
           </p>
-          <h1 className="font-serif text-3xl md:text-5xl text-stone-900 leading-tight">
+          <h1 className="font-serif text-3xl md:text-5xl text-foreground leading-tight">
             {title}
           </h1>
         </motion.section>
 
-        <div className="prose-content text-stone-600 leading-relaxed space-y-6">
+        <div className="prose-content text-muted-foreground leading-relaxed space-y-6">
           {children}
         </div>
       </main>

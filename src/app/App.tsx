@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 
 import { NavBar } from './components/NavBar';
+import { useTheme } from './lib/useTheme';
 import { LandingPage } from './pages/LandingPage';
 import { FashionPage } from './pages/FashionPage';
 import { DigitalCraftPage } from './pages/DigitalCraftPage';
@@ -25,12 +26,11 @@ function ConditionalNavBar() {
 }
 
 export default function App() {
+  useTheme();
+
   return (
     <BrowserRouter>
-      <div
-        className="min-h-screen"
-        style={{ backgroundColor: '#FBFAF7' }}
-      >
+      <div className="min-h-screen bg-background text-foreground">
         <ConditionalNavBar />
 
         <Routes>

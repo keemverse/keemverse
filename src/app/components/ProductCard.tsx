@@ -45,22 +45,22 @@ export default function ProductCard({
           />
         </div>
 
-        <span className="absolute top-2 right-2 rounded-full bg-white/95 backdrop-blur-md px-1 py-0.5 text-[7px] uppercase tracking-[0.22em] font-bold shadow-lg">
+        <span className="absolute top-2 right-2 rounded-full bg-white/95 backdrop-blur-md px-1 py-0.5 text-[7px] uppercase tracking-[0.22em] font-bold shadow-lg text-stone-900">
           {source}
         </span>
       </div>
 
       {/* Details — fully isolated from the image, no shared container */}
       <div className="pt-4">
-        <p className="text-[11px] uppercase tracking-[0.28em] text-stone-400 font-semibold mb-3">
+        <p className="text-[11px] uppercase tracking-[0.28em] text-muted-foreground font-semibold mb-3">
           {category}
         </p>
 
-        <h3 className="font-serif text-lg md:text-[26px] leading-tight text-stone-900 line-clamp-2">
+        <h3 className="font-serif text-lg md:text-[26px] leading-tight text-foreground line-clamp-2">
           {name}
         </h3>
 
-        <p className="mt-3 text-lg font-semibold text-stone-900">
+        <p className="mt-3 text-lg font-semibold text-foreground">
           {price}
         </p>
 

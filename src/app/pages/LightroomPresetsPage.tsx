@@ -91,8 +91,7 @@ export default function LightroomPresetsPage() {
 
   return (
     <div
-      className="min-h-screen text-stone-900"
-      style={{ backgroundColor: "#FBFAF7" }}
+      className="min-h-screen bg-background text-foreground"
     >
       <main className="max-w-6xl mx-auto px-5 md:px-8 pt-10 pb-0">
 
@@ -104,11 +103,11 @@ export default function LightroomPresetsPage() {
           transition={{ duration: 0.45 }}
           className="text-center mb-14"
         >
-          <p className="uppercase tracking-[0.35em] text-xs text-stone-500 mb-4">
+          <p className="uppercase tracking-[0.35em] text-xs text-muted-foreground mb-4">
             Lightroom Presets
           </p>
 
-          <h1 className="font-serif text-2xl md:text-5xl text-stone-900 leading-tight">
+          <h1 className="font-serif text-2xl md:text-5xl text-foreground leading-tight">
             Create timeless photographs
           </h1>
         </motion.section>
@@ -173,11 +172,11 @@ export default function LightroomPresetsPage() {
                 🔍
               </div>
 
-              <h3 className="font-serif text-3xl text-stone-900">
+              <h3 className="font-serif text-3xl text-foreground">
                 No presets found
               </h3>
 
-              <p className="mt-3 text-stone-500">
+              <p className="mt-3 text-muted-foreground">
                 Try another search or browse another collection.
               </p>
 
@@ -186,7 +185,7 @@ export default function LightroomPresetsPage() {
                   setQuery("");
                   setActiveTab("All");
                 }}
-                className="mt-8 rounded-full bg-stone-900 px-6 py-3 text-sm uppercase tracking-[0.18em] text-white hover:bg-black transition"
+                className="mt-8 rounded-full bg-foreground px-6 py-3 text-sm uppercase tracking-[0.18em] text-background hover:opacity-90 transition"
               >
                 Clear Search
               </button>

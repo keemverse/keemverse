@@ -58,9 +58,9 @@ const shop = [
 function SectionDivider({ label }: { label: string }) {
   return (
     <div className="flex items-center gap-4 mb-14">
-      <div className="h-px flex-1 bg-stone-300" />
-      <span className="text-xs font-bold tracking-[0.2em] uppercase text-stone-400">{label}</span>
-      <div className="h-px flex-1 bg-stone-300" />
+      <div className="h-px flex-1 bg-border" />
+      <span className="text-xs font-bold tracking-[0.2em] uppercase text-muted-foreground">{label}</span>
+      <div className="h-px flex-1 bg-border" />
     </div>
   );
 }
@@ -77,7 +77,7 @@ export function FashionPage() {
   }, []);
 
   return (
-    <div className="relative min-h-screen text-stone-900" style={{ backgroundColor: '#FBFAF7' }}>
+    <div className="relative min-h-screen bg-background text-foreground">
       <GeometricBackdrop />
       <BookMeModal open={modalOpen} onClose={() => setModalOpen(false)} />
 
@@ -155,16 +155,16 @@ export function FashionPage() {
           {/* ── INTRO ── */}
           <section className="mt-16">
             <div className="max-w-xl mx-auto text-center">
-              <p className="text-stone-700 font-medium text-lg md:text-xl mb-4">
+              <p className="text-foreground/80 font-medium text-lg md:text-xl mb-4">
                 Hi, I'm Keem.
               </p>
               <h2
-                className="mb-6 leading-snug text-stone-900"
+                className="mb-6 leading-snug text-foreground"
                 style={{ fontFamily: 'Georgia, serif', fontSize: 'clamp(1.75rem, 3.5vw, 2.5rem)' }}
               >
                 I believe style is visual storytelling.
               </h2>
-              <p className="text-stone-600 leading-loose text-base md:text-lg">
+              <p className="text-muted-foreground leading-loose text-base md:text-lg">
                 I help people build wardrobes, campaigns, and creative
                 worlds that feel unmistakably theirs.
               </p>
@@ -186,10 +186,10 @@ export function FashionPage() {
                   transition={{ duration: 0.4, delay: i * 0.07 }}
                   className="flex flex-col"
                 >
-                  <h3 className="font-bold mb-1.5 md:mb-2 text-stone-900 text-sm md:text-base leading-snug">
+                  <h3 className="font-bold mb-1.5 md:mb-2 text-foreground text-sm md:text-base leading-snug">
                     {svc.title}
                   </h3>
-                  <p className="text-stone-600 text-xs md:text-sm leading-relaxed mb-4">{svc.desc}</p>
+                  <p className="text-muted-foreground text-xs md:text-sm leading-relaxed mb-4">{svc.desc}</p>
                   <PillButton
                     onClick={() => setModalOpen(true)}
                     accent={FASHION}

@@ -56,22 +56,22 @@ export function BookMeModal({ open, onClose }: BookMeModalProps) {
             className="fixed inset-0 z-50 flex items-center justify-center px-5 pointer-events-none"
           >
             <div
-              className="w-full max-w-sm bg-white rounded-3xl shadow-2xl p-8 pointer-events-auto"
+              className="w-full max-w-sm bg-card rounded-3xl shadow-2xl p-8 pointer-events-auto"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Header */}
               <div className="flex items-start justify-between mb-6">
                 <div>
-                  <h2 className="font-bold text-stone-900" style={{ fontSize: '1.25rem' }}>
+                  <h2 className="font-bold text-foreground" style={{ fontSize: '1.25rem' }}>
                     Book Me
                   </h2>
-                  <p className="text-stone-500 text-sm mt-1">
+                  <p className="text-muted-foreground text-sm mt-1">
                     Reach out through your preferred platform.
                   </p>
                 </div>
                 <button
                   onClick={onClose}
-                  className="w-8 h-8 rounded-full flex items-center justify-center text-stone-400 hover:text-stone-700 hover:bg-stone-100 transition-colors"
+                  className="w-8 h-8 rounded-full flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -105,7 +105,7 @@ export function BookMeModal({ open, onClose }: BookMeModalProps) {
                 ))}
               </div>
 
-              <p className="text-center text-stone-400 text-xs mt-6">
+              <p className="text-center text-muted-foreground text-xs mt-6">
                 Looking forward to connecting.
               </p>
             </div>

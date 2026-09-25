@@ -85,7 +85,7 @@ export default function PresetPopup({
             }}
             className="fixed inset-0 z-50 flex items-center justify-center p-4"
           >
-            <div className="w-full max-w-5xl max-h-[92vh] overflow-hidden rounded-[32px] bg-[#FBFAF7] shadow-2xl">
+            <div className="w-full max-w-5xl max-h-[92vh] overflow-hidden rounded-[32px] bg-background shadow-2xl">
 
               <div className="max-h-[92vh] overflow-y-auto">
 
@@ -115,7 +115,7 @@ export default function PresetPopup({
 
                   {/* Collection */}
 
-                  <span className="absolute top-5 right-5 rounded-full bg-white/95 backdrop-blur-md px-5 py-2 text-[10px] tracking-[0.25em] uppercase font-bold shadow-lg">
+                  <span className="absolute top-5 right-5 rounded-full bg-white/95 backdrop-blur-md px-5 py-2 text-[10px] tracking-[0.25em] uppercase font-bold shadow-lg text-stone-900">
                     {collection}
                   </span>
 
@@ -134,17 +134,17 @@ export default function PresetPopup({
                   {/* Title */}
 
                   <div>
-                    <p className="text-[11px] uppercase tracking-[0.28em] text-stone-400 font-semibold">
+                    <p className="text-[11px] uppercase tracking-[0.28em] text-muted-foreground font-semibold">
                       {collection}
                     </p>
 
-                    <h2 className="mt-2 text-3xl md:text-5xl leading-tight font-serif text-stone-900">
+                    <h2 className="mt-2 text-3xl md:text-5xl leading-tight font-serif text-foreground">
                       {name}
                     </h2>
 
-                    <div className="mt-4 flex flex-wrap items-center gap-3 text-stone-600">
+                    <div className="mt-4 flex flex-wrap items-center gap-3 text-muted-foreground">
 
-                      <span className="rounded-full bg-stone-900 text-white px-4 py-1 text-sm font-semibold">
+                      <span className="rounded-full bg-foreground text-background px-4 py-1 text-sm font-semibold">
                         {price}
                       </span>
 
@@ -162,7 +162,7 @@ export default function PresetPopup({
                   {banner && (
                     <section className="mt-10">
 
-                      <h3 className="text-sm font-semibold tracking-[.15em] uppercase text-stone-500">
+                      <h3 className="text-sm font-semibold tracking-[.15em] uppercase text-muted-foreground">
                         See all three tiers
                       </h3>
 
@@ -182,11 +182,11 @@ export default function PresetPopup({
                   {description && (
                     <section className="mt-10">
 
-                      <h3 className="text-sm font-semibold tracking-[.15em] uppercase text-stone-500">
+                      <h3 className="text-sm font-semibold tracking-[.15em] uppercase text-muted-foreground">
                         About this preset
                       </h3>
 
-                      <p className="mt-3 text-[15px] leading-7 md:text-[16px] md:leading-8 text-stone-600">
+                      <p className="mt-3 text-[15px] leading-7 md:text-[16px] md:leading-8 text-muted-foreground">
                         {description}
                       </p>
 
@@ -198,11 +198,11 @@ export default function PresetPopup({
                   {whyCreated && (
                     <section className="mt-8">
 
-                      <h3 className="text-sm font-semibold tracking-[.15em] uppercase text-stone-500">
+                      <h3 className="text-sm font-semibold tracking-[.15em] uppercase text-muted-foreground">
                         Why I created it
                       </h3>
 
-                      <p className="mt-3 text-[15px] leading-7 md:text-[16px] md:leading-8 text-stone-600">
+                      <p className="mt-3 text-[15px] leading-7 md:text-[16px] md:leading-8 text-muted-foreground">
                         {whyCreated}
                       </p>
 
@@ -215,11 +215,11 @@ export default function PresetPopup({
 
                     {whatsIncluded && (
                       <section>
-                        <h3 className="text-sm font-semibold tracking-[.15em] uppercase text-stone-500">
+                        <h3 className="text-sm font-semibold tracking-[.15em] uppercase text-muted-foreground">
                           What's included
                         </h3>
 
-                        <p className="mt-3 whitespace-pre-line text-[15px] leading-7 text-stone-600">
+                        <p className="mt-3 whitespace-pre-line text-[15px] leading-7 text-muted-foreground">
                           {whatsIncluded}
                         </p>
                       </section>
@@ -227,11 +227,11 @@ export default function PresetPopup({
 
                     {installation && (
                       <section>
-                        <h3 className="text-sm font-semibold tracking-[.15em] uppercase text-stone-500">
+                        <h3 className="text-sm font-semibold tracking-[.15em] uppercase text-muted-foreground">
                           Installation
                         </h3>
 
-                        <p className="mt-3 whitespace-pre-line text-[15px] leading-7 text-stone-600">
+                        <p className="mt-3 whitespace-pre-line text-[15px] leading-7 text-muted-foreground">
                           {installation}
                         </p>
                       </section>
@@ -239,11 +239,11 @@ export default function PresetPopup({
 
                     {compatibleWith && (
                       <section>
-                        <h3 className="text-sm font-semibold tracking-[.15em] uppercase text-stone-500">
+                        <h3 className="text-sm font-semibold tracking-[.15em] uppercase text-muted-foreground">
                           Compatible with
                         </h3>
 
-                        <p className="mt-3 text-[15px] leading-7 text-stone-600">
+                        <p className="mt-3 text-[15px] leading-7 text-muted-foreground">
                           {compatibleWith}
                         </p>
                       </section>
@@ -258,7 +258,7 @@ export default function PresetPopup({
                       {tags.map((tag) => (
                         <span
                           key={tag}
-                          className="rounded-full bg-white shadow-sm border border-stone-200 px-3 py-1 text-xs text-stone-700"
+                          className="rounded-full bg-card shadow-sm border border-border px-3 py-1 text-xs text-foreground/80"
                         >
                           {tag}
                         </span>
@@ -270,12 +270,12 @@ export default function PresetPopup({
 
                 {/* ---------- Purchase ---------- */}
 
-                <div className="sticky bottom-0 bg-[#FBFAF7] border-t border-stone-200/70 p-5 md:p-6">
+                <div className="sticky bottom-0 bg-background border-t border-border p-5 md:p-6">
 
                   <button
                     onClick={handleBuyNow}
                     disabled={amount <= 0}
-                    className="group inline-flex w-full justify-center items-center gap-2 rounded-full bg-stone-900 px-7 py-3.5 text-sm font-semibold tracking-[0.12em] text-white shadow-xl transition-all duration-300 hover:-translate-y-1 hover:bg-black disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0"
+                    className="group inline-flex w-full justify-center items-center gap-2 rounded-full bg-foreground px-7 py-3.5 text-sm font-semibold tracking-[0.12em] text-background shadow-xl transition-all duration-300 hover:-translate-y-1 hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0"
                   >
                     BUY NOW — {price}
 
@@ -289,7 +289,7 @@ export default function PresetPopup({
                       href={purchaseLink}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="mt-3 block text-center text-xs text-stone-500 hover:text-stone-800 transition-colors underline underline-offset-4"
+                      className="mt-3 block text-center text-xs text-muted-foreground hover:text-foreground transition-colors underline underline-offset-4"
                     >
                       Having trouble paying? Get it via Gumroad instead
                     </a>

@@ -48,7 +48,7 @@ export default function ProductPopup({
             transition={{duration:.55, ease:[0.22,1,0.36,1]}}
             className="fixed inset-0 z-50 flex items-center justify-center p-4"
           >
-            <div className="w-full max-w-4xl max-h-[92vh] overflow-hidden rounded-[32px] bg-[#FBFAF7] shadow-2xl">
+            <div className="w-full max-w-4xl max-h-[92vh] overflow-hidden rounded-[32px] bg-background shadow-2xl">
               <div className="grid lg:grid-cols-2 overflow-y-auto max-h-[92vh] pb-28">
                 <div className="relative h-[320px] lg:h-auto lg:aspect-[4/5] overflow-hidden rounded-t-[32px] lg:rounded-l-[32px] lg:rounded-tr-none">
                 
@@ -69,7 +69,7 @@ export default function ProductPopup({
   </button>
 
 <span
-  className="absolute top-5 right-5 rounded-full bg-white/95 backdrop-blur-md px-5 py-2 text-[10px] tracking-[0.25em] uppercase font-bold shadow-lg"
+  className="absolute top-5 right-5 rounded-full bg-white/95 backdrop-blur-md px-5 py-2 text-[10px] tracking-[0.25em] uppercase font-bold shadow-lg text-stone-900"
 >
   {source}
 </span>
@@ -80,17 +80,17 @@ export default function ProductPopup({
 </div>
 
 <div className="p-6 lg:p-12 flex flex-col justify-center">
-  <h2 className="text-3xl lg:text-5xl leading-tight font-serif text-stone-900">
+  <h2 className="text-3xl lg:text-5xl leading-tight font-serif text-foreground">
     {name}
   </h2>
 
-<div className="mt-3 flex flex-wrap items-center gap-3 text-stone-600">
+<div className="mt-3 flex flex-wrap items-center gap-3 text-muted-foreground">
 
   <span>{category}</span>
 
   <span>•</span>
 
-  <span className="rounded-full bg-stone-900 text-white px-4 py-1 text-sm font-semibold">
+  <span className="rounded-full bg-foreground text-background px-4 py-1 text-sm font-semibold">
     {price}
   </span>
 
@@ -107,30 +107,30 @@ export default function ProductPopup({
 </div>
   
 
-                  <p className="mt-6 text-[15px] leading-7 lg:text-[16px] lg:leading-8 text-stone-600">{description}</p>
+                  <p className="mt-6 text-[15px] leading-7 lg:text-[16px] lg:leading-8 text-muted-foreground">{description}</p>
 
 
                   {whyPicked && (
                     <>
-                      <h3 className="mt-8 text-sm font-semibold tracking-[.15em] uppercase text-stone-500">Why I picked it</h3>
-                      <p className="mt-2 text-[15px] leading-7 lg:text-[16px] lg:leading-8 text-stone-600">{whyPicked}</p>
+                      <h3 className="mt-8 text-sm font-semibold tracking-[.15em] uppercase text-muted-foreground">Why I picked it</h3>
+                      <p className="mt-2 text-[15px] leading-7 lg:text-[16px] lg:leading-8 text-muted-foreground">{whyPicked}</p>
                     </>
                   )}
 
                   <div className="mt-8 flex flex-wrap gap-2">
                     {tags.map(tag=>(
-                      <span key={tag} className="rounded-full bg-white shadow-sm border border-stone-200 px-3 py-1 text-xs text-stone-700">{tag}</span>
+                      <span key={tag} className="rounded-full bg-card shadow-sm border border-border px-3 py-1 text-xs text-foreground/80">{tag}</span>
                     ))}
                   </div>
                 </div>
               </div>
 
-              <div className="sticky bottom-0 bg-[#FBFAF7] p-6">
+              <div className="sticky bottom-0 bg-background p-6">
                 <a
   href={affiliateLink}
   target="_blank"
   rel="noreferrer"
-  className="group inline-flex w-full justify-center items-center gap-2 rounded-full bg-stone-900 px-7 py-3.5 text-sm font-semibold tracking-[0.12em] text-white shadow-xl transition-all duration-300 hover:-translate-y-1 hover:bg-black"
+  className="group inline-flex w-full justify-center items-center gap-2 rounded-full bg-foreground px-7 py-3.5 text-sm font-semibold tracking-[0.12em] text-background shadow-xl transition-all duration-300 hover:-translate-y-1 hover:opacity-90"
 >
   SHOP ON {source.toUpperCase()}
   <span className="transition-transform duration-300 group-hover:translate-x-1">

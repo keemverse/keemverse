@@ -18,7 +18,7 @@ export function SocialFooter() {
 
       <div className="max-w-2xl mx-auto flex flex-col items-center text-center gap-10">
         <p
-          className="text-sm md:text-base tracking-[0.2em] uppercase text-stone-500"
+          className="text-sm md:text-base tracking-[0.2em] uppercase text-muted-foreground"
           style={{ fontFamily: 'Georgia, serif' }}
         >
           Create · Build · Inspire
@@ -43,7 +43,7 @@ export function SocialFooter() {
                       : undefined
                   }
                   aria-label={s.name}
-                  className="w-14 h-14 rounded-2xl flex items-center justify-center border border-stone-200 bg-white text-stone-800 hover:bg-stone-50 hover:border-stone-300 transition-all"
+                  className="w-14 h-14 rounded-2xl flex items-center justify-center border border-border bg-card text-foreground/80 hover:bg-muted hover:text-foreground transition-all"
                 >
                   <s.icon className="w-5 h-5" />
                 </a>
@@ -52,12 +52,12 @@ export function SocialFooter() {
           </div>
         </div>
 
-        <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs text-stone-400">
-          <a href="/about" className="hover:text-stone-700 transition-colors">About</a>
-          <a href="/contact" className="hover:text-stone-700 transition-colors">Contact</a>
-          <a href="/refund-policy" className="hover:text-stone-700 transition-colors">Refund &amp; Delivery</a>
-          <a href="/privacy-policy" className="hover:text-stone-700 transition-colors">Privacy Policy</a>
-          <a href="/terms" className="hover:text-stone-700 transition-colors">Terms</a>
+        <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs text-muted-foreground">
+          <a href="/about" className="hover:text-foreground transition-colors">About</a>
+          <a href="/contact" className="hover:text-foreground transition-colors">Contact</a>
+          <a href="/refund-policy" className="hover:text-foreground transition-colors">Refund &amp; Delivery</a>
+          <a href="/privacy-policy" className="hover:text-foreground transition-colors">Privacy Policy</a>
+          <a href="/terms" className="hover:text-foreground transition-colors">Terms</a>
         </div>
 
         <div className="flex flex-col items-center gap-4 opacity-40 text-sm">

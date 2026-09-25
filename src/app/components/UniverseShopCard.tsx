@@ -70,11 +70,11 @@ export default function UniverseShopCard({
           container. flex-1 + the CTA's mt-auto keeps the button pinned to
           the same height across a row regardless of description length. */}
       <div className="flex flex-col flex-1 pt-3 md:pt-5 px-1 text-center">
-        <h3 className="text-lg md:text-[1.6rem] font-serif text-stone-900">
+        <h3 className="text-lg md:text-[1.6rem] font-serif text-foreground">
           {title}
         </h3>
 
-        <p className="mt-1 md:mt-1.5 text-xs md:text-sm leading-relaxed md:leading-6 text-stone-600 max-w-xs mx-auto">
+        <p className="mt-1 md:mt-1.5 text-xs md:text-sm leading-relaxed md:leading-6 text-muted-foreground max-w-xs mx-auto">
           {description}
         </p>
 

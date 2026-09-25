@@ -8,7 +8,7 @@ export default function AboutPage() {
         across two universes — Fashion and Digital Craft.
       </p>
 
-      <h2 className="font-serif text-xl text-stone-900 mt-8 mb-2">Fashion</h2>
+      <h2 className="font-serif text-xl text-foreground mt-8 mb-2">Fashion</h2>
       <p>
         Hi, I'm Keem. I believe style is visual storytelling. I help people
         build wardrobes, campaigns, and creative worlds that feel
@@ -18,7 +18,7 @@ export default function AboutPage() {
         creators who want a consistent, editorial look.
       </p>
 
-      <h2 className="font-serif text-xl text-stone-900 mt-8 mb-2">Digital Craft</h2>
+      <h2 className="font-serif text-xl text-foreground mt-8 mb-2">Digital Craft</h2>
       <p>
         On the Digital Craft side, I help creators, apparel brands, and
         print businesses solve design and production problems. From custom
@@ -35,7 +35,7 @@ export default function AboutPage() {
       <p>
         For business inquiries, collaborations, or questions about any of
         our products, visit our{' '}
-        <a href="/contact" className="text-stone-900 underline underline-offset-4">
+        <a href="/contact" className="text-foreground underline underline-offset-4">
           Contact page
         </a>.
       </p>

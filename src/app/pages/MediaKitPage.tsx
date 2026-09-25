@@ -56,7 +56,7 @@ function StatCard({ row, index }: { row: any; index: number }) {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.4, delay: index * 0.08 }}
-      className="rounded-3xl border border-stone-200/60 bg-white p-6 md:p-8"
+      className="rounded-3xl border border-border bg-card p-6 md:p-8"
     >
       <div className="flex items-center gap-3 mb-6">
         <div
@@ -66,32 +66,32 @@ function StatCard({ row, index }: { row: any; index: number }) {
           <Icon className="w-5 h-5 text-white" />
         </div>
         <div>
-          <p className="font-bold text-stone-900 text-sm">{row.Platform}</p>
-          <p className="text-stone-500 text-xs">{row.Handle}</p>
+          <p className="font-bold text-foreground text-sm">{row.Platform}</p>
+          <p className="text-muted-foreground text-xs">{row.Handle}</p>
         </div>
       </div>
 
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <p className="flex items-center gap-1.5 text-[10px] uppercase tracking-[0.15em] text-stone-400 font-semibold mb-1">
+          <p className="flex items-center gap-1.5 text-[10px] uppercase tracking-[0.15em] text-muted-foreground font-semibold mb-1">
             <Users className="w-3 h-3" /> Followers
           </p>
-          <p className="font-serif text-2xl text-stone-900">{formatFollowers(row.Followers)}</p>
+          <p className="font-serif text-2xl text-foreground">{formatFollowers(row.Followers)}</p>
         </div>
         <div>
-          <p className="flex items-center gap-1.5 text-[10px] uppercase tracking-[0.15em] text-stone-400 font-semibold mb-1">
+          <p className="flex items-center gap-1.5 text-[10px] uppercase tracking-[0.15em] text-muted-foreground font-semibold mb-1">
             <TrendingUp className="w-3 h-3" /> Engagement
           </p>
-          <p className="font-serif text-2xl text-stone-900">{formatEngagement(row['Engagement Rate'])}</p>
+          <p className="font-serif text-2xl text-foreground">{formatEngagement(row['Engagement Rate'])}</p>
         </div>
       </div>
 
       {(row['Top Audience Age'] || row['Top Audience Gender'] || row['Top Audience Location']) && (
-        <div className="mt-5 pt-5 border-t border-stone-100">
-          <p className="flex items-center gap-1.5 text-[10px] uppercase tracking-[0.15em] text-stone-400 font-semibold mb-1.5">
+        <div className="mt-5 pt-5 border-t border-border">
+          <p className="flex items-center gap-1.5 text-[10px] uppercase tracking-[0.15em] text-muted-foreground font-semibold mb-1.5">
             <MapPin className="w-3 h-3" /> Audience
           </p>
-          <p className="text-sm text-stone-600">
+          <p className="text-sm text-muted-foreground">
             {[row['Top Audience Age'], row['Top Audience Gender'], row['Top Audience Location']]
               .filter(Boolean)
               .join(' · ')}
@@ -127,7 +127,7 @@ export default function MediaKitPage() {
   const lastUpdated = rows.find((r) => r['Last Updated'])?.['Last Updated'];
 
   return (
-    <div className="min-h-screen text-stone-900" style={{ backgroundColor: '#FBFAF7' }}>
+    <div className="min-h-screen bg-background text-foreground">
       <main className="max-w-4xl mx-auto px-5 md:px-8 pt-10 pb-24">
         <motion.section
           initial={{ opacity: 0, y: 12 }}
@@ -140,29 +140,29 @@ export default function MediaKitPage() {
             alt="Soft Keem"
             className="w-20 h-20 rounded-full object-cover mx-auto mb-5 border-2 border-white shadow-sm"
           />
-          <p className="uppercase tracking-[0.35em] text-xs text-stone-500 mb-4">Media Kit</p>
-          <h1 className="font-serif text-3xl md:text-5xl text-stone-900 leading-tight mb-4">
+          <p className="uppercase tracking-[0.35em] text-xs text-muted-foreground mb-4">Media Kit</p>
+          <h1 className="font-serif text-3xl md:text-5xl text-foreground leading-tight mb-4">
             Soft Keem
           </h1>
-          <p className="text-stone-600 max-w-md mx-auto leading-relaxed">
+          <p className="text-muted-foreground max-w-md mx-auto leading-relaxed">
             Fashion storyteller and creator — helping people express identity,
             emotion, and atmosphere through style, and helping brands reach an
             engaged, style-forward audience.
           </p>
           {lastUpdated && (
-            <p className="text-xs text-stone-400 mt-5">Stats last updated {formatDate(lastUpdated)}</p>
+            <p className="text-xs text-muted-foreground mt-5">Stats last updated {formatDate(lastUpdated)}</p>
           )}
         </motion.section>
 
         {loading ? (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {Array.from({ length: 3 }).map((_, i) => (
-              <div key={i} className="rounded-3xl border border-stone-200/60 bg-white h-56 animate-pulse" />
+              <div key={i} className="rounded-3xl border border-border bg-card h-56 animate-pulse" />
             ))}
           </div>
         ) : rows.length === 0 ? (
           <div className="text-center py-16">
-            <p className="text-stone-500">Stats are being put together — check back soon.</p>
+            <p className="text-muted-foreground">Stats are being put together — check back soon.</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -183,19 +183,19 @@ export default function MediaKitPage() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.4, delay: i * 0.06 }}
-                  className="flex flex-col rounded-2xl border border-stone-200/60 bg-white p-4 md:p-6 text-center"
+                  className="flex flex-col rounded-2xl border border-border bg-card p-4 md:p-6 text-center"
                 >
-                  <p className="font-semibold text-stone-900 text-sm md:text-base">{rate.Service}</p>
+                  <p className="font-semibold text-foreground text-sm md:text-base">{rate.Service}</p>
                   {rate.Description && (
-                    <p className="text-stone-500 text-xs mt-1">{rate.Description}</p>
+                    <p className="text-muted-foreground text-xs mt-1">{rate.Description}</p>
                   )}
-                  <p className="font-serif text-xl md:text-2xl text-stone-900 mt-auto pt-3">
+                  <p className="font-serif text-xl md:text-2xl text-foreground mt-auto pt-3">
                     {formatPrice(rate.Price, rate.Currency)}
                   </p>
                 </motion.div>
               ))}
             </div>
-            <p className="text-center text-xs text-stone-400 mt-6">
+            <p className="text-center text-xs text-muted-foreground mt-6">
               Custom packages available — let's talk about what fits your campaign.
             </p>
           </section>
@@ -204,7 +204,7 @@ export default function MediaKitPage() {
         <div className="text-center mt-16">
           <a
             href="/contact"
-            className="inline-flex items-center gap-2 rounded-full bg-stone-900 px-8 py-3.5 text-sm font-semibold tracking-[0.12em] text-white hover:bg-black hover:-translate-y-0.5 transition-all"
+            className="inline-flex items-center gap-2 rounded-full bg-foreground px-8 py-3.5 text-sm font-semibold tracking-[0.12em] text-background hover:opacity-90 hover:-translate-y-0.5 transition-all"
           >
             LET'S WORK TOGETHER →
           </a>

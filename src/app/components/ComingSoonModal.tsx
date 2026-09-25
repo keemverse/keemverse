@@ -40,31 +40,31 @@ export function ComingSoonModal({
             className="fixed inset-0 z-50 flex items-center justify-center px-5 pointer-events-none"
           >
             <div
-              className="w-full max-w-sm bg-white rounded-3xl shadow-2xl p-8 pointer-events-auto text-center relative"
+              className="w-full max-w-sm bg-card rounded-3xl shadow-2xl p-8 pointer-events-auto text-center relative"
               onClick={(e) => e.stopPropagation()}
             >
               <button
                 onClick={onClose}
-                className="absolute top-4 right-4 w-8 h-8 rounded-full flex items-center justify-center text-stone-400 hover:text-stone-700 hover:bg-stone-100 transition-colors"
+                className="absolute top-4 right-4 w-8 h-8 rounded-full flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
                 aria-label="Close"
               >
                 <X className="w-4 h-4" />
               </button>
 
-              <div className="w-14 h-14 mx-auto rounded-2xl flex items-center justify-center mb-5" style={{ backgroundColor: '#F2ECDD' }}>
-                <Sparkles className="w-6 h-6" style={{ color: '#1D1C19' }} />
+              <div className="w-14 h-14 mx-auto rounded-2xl flex items-center justify-center mb-5 bg-muted">
+                <Sparkles className="w-6 h-6 text-foreground" />
               </div>
 
-              <h2 className="font-bold text-stone-900" style={{ fontSize: '1.25rem' }}>
+              <h2 className="font-bold text-foreground" style={{ fontSize: '1.25rem' }}>
                 {title}
               </h2>
-              <p className="text-stone-500 text-sm mt-2 leading-relaxed">
+              <p className="text-muted-foreground text-sm mt-2 leading-relaxed">
                 {description}
               </p>
 
               <button
                 onClick={onClose}
-                className="mt-7 inline-flex items-center justify-center px-7 py-3 rounded-full bg-stone-900 text-white text-xs font-semibold tracking-[0.15em] uppercase hover:bg-black transition-colors"
+                className="mt-7 inline-flex items-center justify-center px-7 py-3 rounded-full bg-foreground text-background text-xs font-semibold tracking-[0.15em] uppercase hover:opacity-90 transition-opacity"
               >
                 Got it
               </button>

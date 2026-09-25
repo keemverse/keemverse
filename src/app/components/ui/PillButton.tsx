@@ -48,14 +48,14 @@ export function PillButton({
   const isGhost = isAccent && ghost;
 
   const translateHover = groupHover ? 'group-hover:-translate-y-0.5' : 'hover:-translate-y-0.5';
-  const neutralHover = groupHover ? 'group-hover:bg-[#E5DDCF]' : 'hover:bg-[#E5DDCF]';
+  const neutralHover = groupHover ? 'group-hover:brightness-95' : 'hover:brightness-95';
 
   const base = `inline-flex items-center gap-1.5 md:gap-2 rounded-full border px-4 py-2 md:px-7 md:py-3 text-[11px] md:text-xs font-semibold tracking-[0.15em] transition-all duration-300 ease-[cubic-bezier(.22,1,.36,1)] ${translateHover} ${
     isGhost
       ? 'bg-transparent'
       : isAccent
       ? 'text-white border-transparent'
-      : `border-stone-300 bg-[#ECE5D9] text-stone-900 shadow-[inset_0_1px_0_rgba(255,255,255,.9),0_8px_20px_rgba(0,0,0,.06)] ${neutralHover}`
+      : `border-border bg-primary text-primary-foreground shadow-[inset_0_1px_0_rgba(255,255,255,.9),0_8px_20px_rgba(0,0,0,.06)] dark:shadow-[inset_0_1px_0_rgba(255,255,255,.06),0_8px_20px_rgba(0,0,0,.3)] ${neutralHover}`
   } ${className}`;
 
   const accentStyle = isGhost

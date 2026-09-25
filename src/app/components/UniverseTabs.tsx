@@ -23,7 +23,7 @@ export default function UniverseTabs({
         value={activeTab}
         onChange={(e) => onChange(e.target.value)}
         aria-label="Filter by category"
-        className="w-full appearance-none rounded-full border border-stone-300/60 bg-[#F2ECDD] px-4 md:px-5 py-3 pr-8 md:pr-10 text-sm font-medium text-stone-700 outline-none transition-all duration-300 ease-[cubic-bezier(.22,1,.36,1)] focus:-translate-y-0.5 focus:border-stone-400/60 cursor-pointer"
+        className="w-full appearance-none rounded-full border border-border bg-card px-4 md:px-5 py-3 pr-8 md:pr-10 text-sm font-medium text-foreground/80 outline-none transition-all duration-300 ease-[cubic-bezier(.22,1,.36,1)] focus:-translate-y-0.5 focus:border-foreground/30 cursor-pointer"
       >
         {tabs.map((tab) => (
           <option key={tab} value={tab}>
@@ -33,7 +33,7 @@ export default function UniverseTabs({
       </select>
 
       <svg
-        className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-500"
+        className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground"
         viewBox="0 0 24 24"
         fill="none"
         stroke="currentColor"

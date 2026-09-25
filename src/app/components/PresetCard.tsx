@@ -41,15 +41,15 @@ export default function PresetCard({
 
       {/* Details — fully isolated from the image, no shared container */}
       <div className="pt-4">
-        <p className="text-[11px] uppercase tracking-[0.28em] text-stone-400 font-semibold mb-3">
+        <p className="text-[11px] uppercase tracking-[0.28em] text-muted-foreground font-semibold mb-3">
           {collection}
         </p>
 
-        <h3 className="font-serif text-lg md:text-[26px] leading-tight text-stone-900 line-clamp-2">
+        <h3 className="font-serif text-lg md:text-[26px] leading-tight text-foreground line-clamp-2">
           {name}
         </h3>
 
-        <p className="mt-3 text-lg font-semibold text-stone-900">
+        <p className="mt-3 text-lg font-semibold text-foreground">
           {price}
         </p>
       </div>

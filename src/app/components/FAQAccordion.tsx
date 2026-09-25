@@ -25,7 +25,7 @@ export default function FAQAccordion({ label, heading, faqs }: FAQAccordionProps
           {heading}
         </h2>
 
-        <div className="divide-y divide-stone-200">
+        <div className="divide-y divide-border">
           {faqs.map((faq, index) => {
             const isOpen = openIndex === index;
 
@@ -37,17 +37,17 @@ export default function FAQAccordion({ label, heading, faqs }: FAQAccordionProps
                   }
                   className="w-full flex items-start justify-between gap-6 text-left"
                 >
-                  <h3 className="font-serif text-xl md:text-2xl text-stone-900">
+                  <h3 className="font-serif text-xl md:text-2xl text-foreground">
                     {faq.question}
                   </h3>
 
-                  <span className="text-3xl leading-none text-stone-500">
+                  <span className="text-3xl leading-none text-muted-foreground">
                     {isOpen ? "−" : "⌄"}
                   </span>
                 </button>
 
                 {isOpen && (
-                  <p className="mt-5 pr-8 text-stone-600 leading-8">
+                  <p className="mt-5 pr-8 text-muted-foreground leading-8">
                     {faq.answer}
                   </p>
                 )}

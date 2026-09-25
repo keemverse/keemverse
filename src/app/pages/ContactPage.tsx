@@ -40,40 +40,40 @@ function BriefForm() {
     : undefined;
 
   return (
-    <div className="rounded-2xl border border-stone-200/60 bg-white p-6 md:p-8">
-      <p className="text-xs font-bold tracking-[0.15em] uppercase text-stone-400 mb-5">
+    <div className="rounded-2xl border border-border bg-card p-6 md:p-8">
+      <p className="text-xs font-bold tracking-[0.15em] uppercase text-muted-foreground mb-5">
         Send a brief
       </p>
 
       <div className="flex flex-col gap-4">
         <div>
-          <label className="text-xs text-stone-500 mb-1.5 block">Your name</label>
+          <label className="text-xs text-muted-foreground mb-1.5 block">Your name</label>
           <input
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="Your name"
-            className="w-full rounded-xl border border-stone-200 px-4 py-3 text-sm text-stone-900 outline-none focus:border-stone-400 transition-colors"
+            className="w-full rounded-xl border border-border bg-input-background px-4 py-3 text-sm text-foreground outline-none focus:border-foreground/40 transition-colors"
           />
         </div>
 
         <div>
-          <label className="text-xs text-stone-500 mb-1.5 block">
+          <label className="text-xs text-muted-foreground mb-1.5 block">
             Email or WhatsApp number (so I can reply)
           </label>
           <input
             value={contact}
             onChange={(e) => setContact(e.target.value)}
             placeholder="How should I reach you back?"
-            className="w-full rounded-xl border border-stone-200 px-4 py-3 text-sm text-stone-900 outline-none focus:border-stone-400 transition-colors"
+            className="w-full rounded-xl border border-border bg-input-background px-4 py-3 text-sm text-foreground outline-none focus:border-foreground/40 transition-colors"
           />
         </div>
 
         <div>
-          <label className="text-xs text-stone-500 mb-1.5 block">What's this about?</label>
+          <label className="text-xs text-muted-foreground mb-1.5 block">What's this about?</label>
           <select
             value={projectType}
             onChange={(e) => setProjectType(e.target.value)}
-            className="w-full rounded-xl border border-stone-200 px-4 py-3 text-sm text-stone-900 outline-none focus:border-stone-400 transition-colors bg-white"
+            className="w-full rounded-xl border border-border px-4 py-3 text-sm text-foreground outline-none focus:border-foreground/40 transition-colors bg-input-background"
           >
             {projectTypes.map((t) => (
               <option key={t} value={t}>{t}</option>
@@ -82,13 +82,13 @@ function BriefForm() {
         </div>
 
         <div>
-          <label className="text-xs text-stone-500 mb-1.5 block">Your brief</label>
+          <label className="text-xs text-muted-foreground mb-1.5 block">Your brief</label>
           <textarea
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             placeholder="Tell me what you have in mind — timeline, budget, references, anything useful."
             rows={5}
-            className="w-full rounded-xl border border-stone-200 px-4 py-3 text-sm text-stone-900 outline-none focus:border-stone-400 transition-colors resize-none"
+            className="w-full rounded-xl border border-border bg-input-background px-4 py-3 text-sm text-foreground outline-none focus:border-foreground/40 transition-colors resize-none"
           />
         </div>
 
@@ -99,8 +99,8 @@ function BriefForm() {
             rel={whatsappHref ? 'noopener noreferrer' : undefined}
             aria-disabled={!canSend}
             onClick={(e) => { if (!canSend) e.preventDefault(); }}
-            className={`flex-1 inline-flex items-center justify-center gap-2 rounded-full px-6 py-3.5 text-sm font-semibold text-white transition-all ${
-              canSend ? 'bg-[#25D366] hover:-translate-y-0.5' : 'bg-stone-300 cursor-not-allowed'
+            className={`flex-1 inline-flex items-center justify-center gap-2 rounded-full px-6 py-3.5 text-sm font-semibold transition-all ${
+              canSend ? 'bg-[#25D366] text-white hover:-translate-y-0.5' : 'bg-muted text-muted-foreground cursor-not-allowed'
             }`}
           >
             <MessageCircle className="w-4 h-4" />
@@ -113,8 +113,8 @@ function BriefForm() {
             onClick={(e) => { if (!canSend) e.preventDefault(); }}
             className={`flex-1 inline-flex items-center justify-center gap-2 rounded-full px-6 py-3.5 text-sm font-semibold transition-all ${
               canSend
-                ? 'bg-[#ECE5D9] text-stone-900 hover:-translate-y-0.5'
-                : 'bg-stone-100 text-stone-400 cursor-not-allowed'
+                ? 'bg-primary text-primary-foreground hover:-translate-y-0.5'
+                : 'bg-muted text-muted-foreground cursor-not-allowed'
             }`}
           >
             <Mail className="w-4 h-4" />
@@ -122,7 +122,7 @@ function BriefForm() {
           </a>
         </div>
 
-        <p className="text-xs text-stone-400 text-center mt-1">
+        <p className="text-xs text-muted-foreground text-center mt-1">
           Fill in your name and brief, then send it however works for you —
           both open with everything already written in.
         </p>
@@ -148,13 +148,13 @@ export default function ContactPage() {
         {details.map((d) => (
           <div
             key={d.label}
-            className="flex items-start gap-4 rounded-2xl border border-stone-200/60 bg-[#F2ECDD] p-5"
+            className="flex items-start gap-4 rounded-2xl border border-border bg-card p-5"
           >
-            <div className="w-10 h-10 shrink-0 rounded-xl flex items-center justify-center" style={{ backgroundColor: '#FFFFFF' }}>
-              <d.icon className="w-5 h-5 text-stone-900" />
+            <div className="w-10 h-10 shrink-0 rounded-xl flex items-center justify-center bg-background">
+              <d.icon className="w-5 h-5 text-foreground" />
             </div>
             <div>
-              <p className="text-xs font-bold tracking-[0.15em] uppercase text-stone-400 mb-1">
+              <p className="text-xs font-bold tracking-[0.15em] uppercase text-muted-foreground mb-1">
                 {d.label}
               </p>
               {d.href ? (
@@ -162,14 +162,14 @@ export default function ContactPage() {
                   href={d.href}
                   target={d.href.startsWith('http') ? '_blank' : undefined}
                   rel={d.href.startsWith('http') ? 'noopener noreferrer' : undefined}
-                  className="text-stone-900 font-medium hover:underline"
+                  className="text-foreground font-medium hover:underline"
                 >
                   {d.value}
                 </a>
               ) : (
                 <>
-                  <p className="text-stone-900 font-medium">{d.value}</p>
-                  <p className="text-stone-500 text-sm mt-1.5 leading-relaxed">
+                  <p className="text-foreground font-medium">{d.value}</p>
+                  <p className="text-muted-foreground text-sm mt-1.5 leading-relaxed">
                     Digital work is handled remotely. For fashion PR
                     packages and brand collaborations, exact location is
                     discussed first — and yes, we travel for paid campaigns
@@ -183,7 +183,7 @@ export default function ContactPage() {
       </div>
 
       <div className="mt-10 text-center">
-        <p className="text-xs font-bold tracking-[0.15em] uppercase text-stone-400 mb-4">
+        <p className="text-xs font-bold tracking-[0.15em] uppercase text-muted-foreground mb-4">
           See the work
         </p>
         <div className="flex gap-3 justify-center">
@@ -194,7 +194,7 @@ export default function ContactPage() {
               target="_blank"
               rel="noopener noreferrer"
               aria-label={s.name}
-              className="w-12 h-12 rounded-2xl flex items-center justify-center border border-stone-200 bg-white text-stone-800 hover:bg-stone-50 hover:border-stone-300 transition-all"
+              className="w-12 h-12 rounded-2xl flex items-center justify-center border border-border bg-card text-foreground/80 hover:bg-muted hover:text-foreground transition-all"
             >
               <s.icon className="w-5 h-5" />
             </a>

@@ -87,14 +87,14 @@ export default function TemuScrollBanner({
 
   return (
     <section className="mb-16">
-      <p className="text-xs font-bold tracking-[0.2em] uppercase text-stone-400 text-center mb-5">
+      <p className="text-xs font-bold tracking-[0.2em] uppercase text-muted-foreground text-center mb-5">
         Temu Finds
       </p>
 
       <div className="relative">
         {/* Edge fades so the track doesn't hard-cut at the container edge */}
-        <div className="pointer-events-none absolute inset-y-0 left-0 w-10 z-10 bg-gradient-to-r from-[#FBFAF7] to-transparent" />
-        <div className="pointer-events-none absolute inset-y-0 right-0 w-10 z-10 bg-gradient-to-l from-[#FBFAF7] to-transparent" />
+        <div className="pointer-events-none absolute inset-y-0 left-0 w-10 z-10 bg-gradient-to-r from-[var(--background)] to-transparent" />
+        <div className="pointer-events-none absolute inset-y-0 right-0 w-10 z-10 bg-gradient-to-l from-[var(--background)] to-transparent" />
 
         <div
           ref={trackRef}
@@ -118,14 +118,14 @@ export default function TemuScrollBanner({
                   alt={product["Product Name"]}
                   className="w-full h-full object-cover"
                 />
-                <span className="absolute top-2 right-2 rounded-full bg-white/95 backdrop-blur-md px-1.5 py-0.5 text-[7px] uppercase tracking-[0.22em] font-bold shadow-lg">
+                <span className="absolute top-2 right-2 rounded-full bg-white/95 backdrop-blur-md px-1.5 py-0.5 text-[7px] uppercase tracking-[0.22em] font-bold shadow-lg text-stone-900">
                   Temu
                 </span>
               </div>
-              <p className="mt-2 text-xs text-stone-700 leading-snug line-clamp-2">
+              <p className="mt-2 text-xs text-foreground/80 leading-snug line-clamp-2">
                 {product["Product Name"]}
               </p>
-              <p className="text-xs font-semibold text-stone-900 mt-0.5">
+              <p className="text-xs font-semibold text-foreground mt-0.5">
                 {formatPrice(product.Price)}
               </p>
             </button>

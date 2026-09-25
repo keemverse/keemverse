@@ -23,14 +23,14 @@ export default function RestoreDownloadForm() {
   };
 
   return (
-    <div className="max-w-md mx-auto rounded-2xl border border-stone-200/60 bg-[#F2ECDD] p-6 md:p-8 text-center">
-      <h3 className="font-serif text-xl text-stone-900 mb-2">Already purchased?</h3>
-      <p className="text-stone-500 text-sm mb-5">
+    <div className="max-w-md mx-auto rounded-2xl border border-border bg-card p-6 md:p-8 text-center">
+      <h3 className="font-serif text-xl text-foreground mb-2">Already purchased?</h3>
+      <p className="text-muted-foreground text-sm mb-5">
         Lost your download link? Enter the email you paid with and we'll send it again.
       </p>
 
       {status === "sent" ? (
-        <p className="text-stone-700 text-sm">{message}</p>
+        <p className="text-foreground/80 text-sm">{message}</p>
       ) : (
         <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3">
           <input
@@ -39,12 +39,12 @@ export default function RestoreDownloadForm() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="you@example.com"
-            className="flex-1 rounded-xl border border-stone-200 px-4 py-3 text-sm text-stone-900 outline-none focus:border-stone-400 transition-colors"
+            className="flex-1 rounded-xl border border-border bg-input-background px-4 py-3 text-sm text-foreground outline-none focus:border-foreground/40 transition-colors"
           />
           <button
             type="submit"
             disabled={status === "sending"}
-            className="rounded-full bg-stone-900 px-6 py-3 text-sm font-semibold tracking-[0.1em] text-white transition-all hover:-translate-y-0.5 hover:bg-black disabled:opacity-50 disabled:hover:translate-y-0"
+            className="rounded-full bg-foreground px-6 py-3 text-sm font-semibold tracking-[0.1em] text-background transition-all hover:-translate-y-0.5 hover:opacity-90 disabled:opacity-50 disabled:hover:translate-y-0"
           >
             {status === "sending" ? "Sending…" : "Send my link"}
           </button>

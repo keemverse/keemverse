@@ -54,9 +54,9 @@ const stats = [
 function SectionDivider({ label }: { label: string }) {
   return (
     <div className="flex items-center gap-4 mb-14">
-      <div className="h-px flex-1 bg-stone-300" />
-      <span className="text-xs font-bold tracking-[0.2em] uppercase text-stone-400">{label}</span>
-      <div className="h-px flex-1 bg-stone-300" />
+      <div className="h-px flex-1 bg-border" />
+      <span className="text-xs font-bold tracking-[0.2em] uppercase text-muted-foreground">{label}</span>
+      <div className="h-px flex-1 bg-border" />
     </div>
   );
 }
@@ -65,7 +65,7 @@ export function DigitalCraftPage() {
   const [comingSoon, setComingSoon] = useState<string | null>(null);
 
   return (
-    <div className="relative min-h-screen text-stone-900" style={{ backgroundColor: '#FBFAF7' }}>
+    <div className="relative min-h-screen bg-background text-foreground">
       <GeometricBackdrop />
       <ComingSoonModal
         open={!!comingSoon}
@@ -120,13 +120,13 @@ export function DigitalCraftPage() {
           <section className="mt-16">
             <div className="max-w-xl mx-auto text-center">
 {/* Introduction */}
-<p className="text-stone-700 font-medium text-lg md:text-xl mb-4">
+<p className="text-foreground/80 font-medium text-lg md:text-xl mb-4">
   Hi, I'm Keem.
 </p>
 
 {/* Large statement */}
 <h2
-  className="mb-6 leading-snug text-stone-900"
+  className="mb-6 leading-snug text-foreground"
   style={{
     fontFamily: 'Georgia, serif',
     fontSize: 'clamp(1.75rem, 3.5vw, 2.5rem)',
@@ -136,7 +136,7 @@ export function DigitalCraftPage() {
 </h2>
 
 {/* Supporting statement */}
-<p className="text-stone-600 leading-loose text-base md:text-lg mb-10">
+<p className="text-muted-foreground leading-loose text-base md:text-lg mb-10">
   From custom graphics and production-ready artwork to print file optimization
   and repair, I help apparel brands, creators, and print businesses deliver
   creative designs, clean files, and better prints.
@@ -148,12 +148,12 @@ export function DigitalCraftPage() {
             <div className="mt-10 flex items-start justify-center gap-6 md:gap-10 max-w-md mx-auto">
               {stats.map((s, i) => (
                 <div key={s.label} className="flex items-center gap-6 md:gap-10">
-                  {i > 0 && <div className="h-8 w-px bg-stone-300/70" />}
+                  {i > 0 && <div className="h-8 w-px border-border" />}
                   <div className="flex flex-col items-center text-center">
-                    <span className="font-bold text-stone-900 text-base md:text-lg">
+                    <span className="font-bold text-foreground text-base md:text-lg">
                       {s.value}
                     </span>
-                    <span className="text-[10px] md:text-xs text-stone-400 uppercase tracking-wider leading-tight mt-0.5">
+                    <span className="text-[10px] md:text-xs text-muted-foreground uppercase tracking-wider leading-tight mt-0.5">
                       {s.label}
                     </span>
                   </div>
@@ -183,10 +183,10 @@ export function DigitalCraftPage() {
                     className="w-7 h-7 mb-3"
                     style={{ filter: 'sepia(0.65) saturate(1.3) hue-rotate(-8deg) brightness(0.92)' }}
                   />
-                  <h3 className="font-bold mb-1.5 md:mb-2 text-stone-900 text-sm md:text-base leading-snug">
+                  <h3 className="font-bold mb-1.5 md:mb-2 text-foreground text-sm md:text-base leading-snug">
                     {svc.title}
                   </h3>
-                  <p className="text-stone-600 text-xs md:text-sm leading-relaxed">{svc.desc}</p>
+                  <p className="text-muted-foreground text-xs md:text-sm leading-relaxed">{svc.desc}</p>
                 </motion.div>
               ))}
             </div>
@@ -194,14 +194,14 @@ export function DigitalCraftPage() {
             <div className="flex flex-wrap justify-center gap-4 mt-10">
               <button
                 onClick={() => setComingSoon('Upwork')}
-                className="flex items-center gap-2.5 px-8 py-4 rounded-full border border-stone-300 bg-[#ECE5D9] text-stone-900 font-bold text-sm shadow-[inset_0_1px_0_rgba(255,255,255,.9),0_8px_20px_rgba(0,0,0,.06)] hover:bg-[#E5DDCF] hover:-translate-y-0.5 transition-all"
+                className="flex items-center gap-2.5 px-8 py-4 rounded-full border border-border bg-primary text-primary-foreground font-bold text-sm shadow-[inset_0_1px_0_rgba(255,255,255,.9),0_8px_20px_rgba(0,0,0,.06)] dark:shadow-[inset_0_1px_0_rgba(255,255,255,.06),0_8px_20px_rgba(0,0,0,.3)] hover:brightness-95 hover:-translate-y-0.5 transition-all"
               >
                 <UpworkIcon className="w-5 h-5" />
                 Hire on Upwork
               </button>
               <button
                 onClick={() => setComingSoon('Behance')}
-                className="flex items-center gap-2.5 px-8 py-4 rounded-full border border-stone-300 bg-[#ECE5D9] text-stone-900 font-bold text-sm shadow-[inset_0_1px_0_rgba(255,255,255,.9),0_8px_20px_rgba(0,0,0,.06)] hover:bg-[#E5DDCF] hover:-translate-y-0.5 transition-all"
+                className="flex items-center gap-2.5 px-8 py-4 rounded-full border border-border bg-primary text-primary-foreground font-bold text-sm shadow-[inset_0_1px_0_rgba(255,255,255,.9),0_8px_20px_rgba(0,0,0,.06)] dark:shadow-[inset_0_1px_0_rgba(255,255,255,.06),0_8px_20px_rgba(0,0,0,.3)] hover:brightness-95 hover:-translate-y-0.5 transition-all"
               >
                 <BehanceIcon className="w-5 h-5" />
                 View Behance
@@ -213,7 +213,7 @@ export function DigitalCraftPage() {
           <section className="mt-24">
             <SectionDivider label="Shop" />
 
-            <p className="text-center text-sm text-stone-500 mb-8">
+            <p className="text-center text-sm text-muted-foreground mb-8">
               Curated. Created. Designed for your world.
             </p>
 

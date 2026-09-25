@@ -75,8 +75,7 @@ const filteredProducts = products.filter((p) => {
 
   return (
     <div
-      className="min-h-screen text-stone-900"
-      style={{ backgroundColor: "#FBFAF7" }}
+      className="min-h-screen bg-background text-foreground"
     >
       <main className="max-w-7xl mx-auto px-5 md:px-8 py-12">
         <motion.section
@@ -84,11 +83,11 @@ const filteredProducts = products.filter((p) => {
   animate={{ opacity: 1, y: 0 }}
   className="text-center mb-10"
 >
-  <p className="uppercase tracking-[0.35em] text-xs text-stone-500 mb-2">
+  <p className="uppercase tracking-[0.35em] text-xs text-muted-foreground mb-2">
     My Finds
   </p>
 
-  <p className="font-serif text-stone-900 text-xl md:text-2xl">
+  <p className="font-serif text-foreground text-xl md:text-2xl">
     personally selected for their design, quality or value.
   </p>
 </motion.section>
@@ -150,11 +149,11 @@ onOpen={() => setSelected(product)}
   <div className="py-24 text-center">
     <div className="text-5xl mb-4">🔍</div>
 
-    <h3 className="font-serif text-3xl text-stone-900">
+    <h3 className="font-serif text-3xl text-foreground">
       No curated finds
     </h3>
 
-    <p className="mt-3 text-stone-500">
+    <p className="mt-3 text-muted-foreground">
       Try another search or browse another category.
     </p>
 
@@ -163,7 +162,7 @@ onOpen={() => setSelected(product)}
         setQuery("");
         setActiveTab("All");
       }}
-      className="mt-8 rounded-full bg-stone-900 px-6 py-3 text-sm uppercase tracking-[0.18em] text-white hover:bg-black transition"
+      className="mt-8 rounded-full bg-foreground px-6 py-3 text-sm uppercase tracking-[0.18em] text-background hover:opacity-90 transition"
     >
       Clear Search
     </button>

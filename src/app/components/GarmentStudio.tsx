@@ -122,7 +122,7 @@ function GarmentPreview({
         </AnimatePresence>
       </svg>
 
-      <span className="pointer-events-none absolute right-1 bottom-0 font-mono text-[10px] tracking-[0.14em] text-stone-400 uppercase">
+      <span className="pointer-events-none absolute right-1 bottom-0 font-mono text-[10px] tracking-[0.14em] text-muted-foreground uppercase">
         {Math.round(pw / 5.33)}" × {Math.round(ph / 5.33)}" print area
       </span>
     </div>
@@ -146,7 +146,7 @@ export function GarmentStudio({ designs }: { designs: StudioDesign[] }) {
   if (!design) return null;
 
   return (
-    <div className="rounded-[28px] border border-stone-200/60 bg-[#F2ECDD] p-6 md:p-10 shadow-sm">
+    <div className="rounded-[28px] border border-border bg-card p-6 md:p-10 shadow-sm">
       <div className="grid grid-cols-1 md:grid-cols-[1fr,1.1fr] gap-8 items-center">
         {/* Preview */}
         <div className="max-w-[260px] mx-auto w-full">
@@ -157,7 +157,7 @@ export function GarmentStudio({ designs }: { designs: StudioDesign[] }) {
         <div className="flex flex-col gap-6">
           {designs.length > 1 && (
             <div>
-              <p className="text-xs font-bold tracking-[0.2em] uppercase text-stone-400 mb-3">Design</p>
+              <p className="text-xs font-bold tracking-[0.2em] uppercase text-muted-foreground mb-3">Design</p>
               <div className="flex flex-wrap gap-2">
                 {designs.map((d) => (
                   <button
@@ -165,8 +165,8 @@ export function GarmentStudio({ designs }: { designs: StudioDesign[] }) {
                     onClick={() => setDesignId(d.id)}
                     className={`px-4 py-2 rounded-full text-xs font-semibold border transition-colors ${
                       d.id === designId
-                        ? 'bg-stone-900 text-white border-stone-900'
-                        : 'bg-white text-stone-600 border-stone-200 hover:border-stone-400'
+                        ? 'bg-foreground text-background border-foreground'
+                        : 'bg-card text-muted-foreground border-border hover:border-foreground/40'
                     }`}
                   >
                     {d.name}
@@ -177,7 +177,7 @@ export function GarmentStudio({ designs }: { designs: StudioDesign[] }) {
           )}
 
           <div>
-            <p className="text-xs font-bold tracking-[0.2em] uppercase text-stone-400 mb-3">Garment</p>
+            <p className="text-xs font-bold tracking-[0.2em] uppercase text-muted-foreground mb-3">Garment</p>
             <div className="flex flex-wrap gap-2">
               {GARMENT_TYPES.map((g) => (
                 <button
@@ -185,8 +185,8 @@ export function GarmentStudio({ designs }: { designs: StudioDesign[] }) {
                   onClick={() => setGarment(g.id)}
                   className={`px-4 py-2 rounded-full text-xs font-semibold border transition-colors ${
                     g.id === garment
-                      ? 'bg-stone-900 text-white border-stone-900'
-                      : 'bg-white text-stone-600 border-stone-200 hover:border-stone-400'
+                      ? 'bg-foreground text-background border-foreground'
+                      : 'bg-card text-muted-foreground border-border hover:border-foreground/40'
                   }`}
                 >
                   {g.label}
@@ -196,7 +196,7 @@ export function GarmentStudio({ designs }: { designs: StudioDesign[] }) {
           </div>
 
           <div>
-            <p className="text-xs font-bold tracking-[0.2em] uppercase text-stone-400 mb-3">Color</p>
+            <p className="text-xs font-bold tracking-[0.2em] uppercase text-muted-foreground mb-3">Color</p>
             <div className="flex flex-wrap gap-3">
               {GARMENT_COLORS.map((c) => (
                 <button
@@ -204,7 +204,7 @@ export function GarmentStudio({ designs }: { designs: StudioDesign[] }) {
                   onClick={() => setColorId(c.id)}
                   aria-label={c.label}
                   className={`w-9 h-9 rounded-full border-2 transition-transform ${
-                    c.id === colorId ? 'border-stone-900 scale-110' : 'border-stone-200'
+                    c.id === colorId ? 'border-foreground scale-110' : 'border-border'
                   }`}
                   style={{ backgroundColor: c.hex }}
                 />

@@ -27,13 +27,13 @@ export default function CheckoutPage() {
 
   if (!state?.item) {
     return (
-      <div className="min-h-screen flex items-center justify-center text-center px-6" style={{ backgroundColor: "#FBFAF7" }}>
+      <div className="min-h-screen flex items-center justify-center text-center px-6 bg-background">
         <div>
-          <p className="font-serif text-2xl text-stone-900 mb-3">Nothing to check out</p>
-          <p className="text-stone-500 mb-6">Head back and pick something from the presets shop.</p>
+          <p className="font-serif text-2xl text-foreground mb-3">Nothing to check out</p>
+          <p className="text-muted-foreground mb-6">Head back and pick something from the presets shop.</p>
           <button
             onClick={() => navigate("/fashion/presets")}
-            className="rounded-full bg-stone-900 px-6 py-3 text-sm uppercase tracking-[0.18em] text-white hover:bg-black transition"
+            className="rounded-full bg-foreground px-6 py-3 text-sm uppercase tracking-[0.18em] text-background hover:opacity-90 transition"
           >
             Back to Presets
           </button>
@@ -68,7 +68,7 @@ export default function CheckoutPage() {
   };
 
   return (
-    <div className="min-h-screen text-stone-900" style={{ backgroundColor: "#FBFAF7" }}>
+    <div className="min-h-screen bg-background text-foreground">
       <main className="max-w-lg mx-auto px-5 md:px-8 pt-10 pb-24">
         <motion.section
           initial={{ opacity: 0, y: 12 }}
@@ -76,14 +76,14 @@ export default function CheckoutPage() {
           transition={{ duration: 0.45 }}
           className="text-center mb-10"
         >
-          <p className="uppercase tracking-[0.35em] text-xs text-stone-500 mb-4">Checkout</p>
-          <h1 className="font-serif text-3xl md:text-4xl text-stone-900 leading-tight">
+          <p className="uppercase tracking-[0.35em] text-xs text-muted-foreground mb-4">Checkout</p>
+          <h1 className="font-serif text-3xl md:text-4xl text-foreground leading-tight">
             Almost there
           </h1>
         </motion.section>
 
         {/* Order summary */}
-        <div className="flex items-center gap-4 rounded-2xl border border-stone-200/60 bg-white p-5 mb-6">
+        <div className="flex items-center gap-4 rounded-2xl border border-border bg-card p-5 mb-6">
           {image && (
             <div className="w-16 h-16 rounded-xl overflow-hidden flex-shrink-0">
               <ImageWithFallback src={image} alt={item.name} className="w-full h-full object-cover" />
@@ -91,30 +91,30 @@ export default function CheckoutPage() {
           )}
           <div className="flex-1 min-w-0">
             {collection && (
-              <p className="text-[11px] uppercase tracking-[0.2em] text-stone-400 font-semibold mb-0.5">
+              <p className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground font-semibold mb-0.5">
                 {collection}
               </p>
             )}
-            <p className="font-serif text-lg text-stone-900 truncate">{item.name}</p>
+            <p className="font-serif text-lg text-foreground truncate">{item.name}</p>
           </div>
-          <p className="text-lg font-semibold text-stone-900 whitespace-nowrap">
+          <p className="text-lg font-semibold text-foreground whitespace-nowrap">
             {formatAmount(item.amount, item.currency)}
           </p>
         </div>
 
         {/* Buyer details */}
-        <div className="rounded-2xl border border-stone-200/60 bg-white p-6 md:p-8 flex flex-col gap-4">
+        <div className="rounded-2xl border border-border bg-card p-6 md:p-8 flex flex-col gap-4">
           <div>
-            <label className="text-xs text-stone-500 mb-1.5 block">Your name</label>
+            <label className="text-xs text-muted-foreground mb-1.5 block">Your name</label>
             <input
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="Your name"
-              className="w-full rounded-xl border border-stone-200 px-4 py-3 text-sm text-stone-900 outline-none focus:border-stone-400 transition-colors"
+              className="w-full rounded-xl border border-border bg-input-background px-4 py-3 text-sm text-foreground outline-none focus:border-foreground/40 transition-colors"
             />
           </div>
           <div>
-            <label className="text-xs text-stone-500 mb-1.5 block">
+            <label className="text-xs text-muted-foreground mb-1.5 block">
               Email (your download link goes here)
             </label>
             <input
@@ -122,7 +122,7 @@ export default function CheckoutPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="you@example.com"
-              className="w-full rounded-xl border border-stone-200 px-4 py-3 text-sm text-stone-900 outline-none focus:border-stone-400 transition-colors"
+              className="w-full rounded-xl border border-border bg-input-background px-4 py-3 text-sm text-foreground outline-none focus:border-foreground/40 transition-colors"
             />
           </div>
 
@@ -131,9 +131,9 @@ export default function CheckoutPage() {
               type="checkbox"
               checked={marketingOptIn}
               onChange={(e) => setMarketingOptIn(e.target.checked)}
-              className="mt-0.5 w-4 h-4 rounded border-stone-300 text-stone-900 focus:ring-stone-400"
+              className="mt-0.5 w-4 h-4 rounded border-border text-foreground focus:ring-foreground/40"
             />
-            <span className="text-sm text-stone-600 leading-relaxed">
+            <span className="text-sm text-muted-foreground leading-relaxed">
               Keep me updated on new drops and promotions
             </span>
           </label>
@@ -143,16 +143,16 @@ export default function CheckoutPage() {
           <button
             onClick={handlePay}
             disabled={!canPay || status === "paying"}
-            className={`mt-2 inline-flex items-center justify-center gap-2 rounded-full px-7 py-3.5 text-sm font-semibold tracking-[0.12em] text-white transition-all ${
+            className={`mt-2 inline-flex items-center justify-center gap-2 rounded-full px-7 py-3.5 text-sm font-semibold tracking-[0.12em] transition-all ${
               canPay && status !== "paying"
-                ? "bg-stone-900 hover:bg-black hover:-translate-y-0.5"
-                : "bg-stone-300 cursor-not-allowed"
+                ? "bg-foreground text-background hover:opacity-90 hover:-translate-y-0.5"
+                : "bg-muted text-muted-foreground cursor-not-allowed"
             }`}
           >
             {status === "paying" ? "Opening payment…" : `Pay ${formatAmount(item.amount, item.currency)} with Flutterwave`}
           </button>
 
-          <p className="text-xs text-stone-400 text-center">
+          <p className="text-xs text-muted-foreground text-center">
             Secure checkout via Flutterwave. Your card details never touch our servers.
           </p>
         </div>
