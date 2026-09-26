@@ -24,7 +24,7 @@ export default function TemuScrollBanner({
   storefrontUrl,
 }: TemuScrollBannerProps) {
   const temuProducts = products.filter(
-    (p) => String(p.Source || "").toLowerCase() === "temu"
+    (p) => String(p.source || "").toLowerCase() === "temu"
   );
 
   const trackRef = useRef<HTMLDivElement>(null);
@@ -108,14 +108,14 @@ export default function TemuScrollBanner({
         >
           {track.map((product, i) => (
             <button
-              key={`${product["Product Name"]}-${i}`}
+              key={`${product.id}-${i}`}
               onClick={() => onSelect(product)}
               className="w-36 md:w-44 flex-shrink-0 text-left"
             >
               <div className="relative h-36 md:h-44 overflow-hidden rounded-[18px]">
                 <ImageWithFallback
-                  src={product["Image URL"]}
-                  alt={product["Product Name"]}
+                  src={product.image_url}
+                  alt={product.name}
                   className="w-full h-full object-cover"
                 />
                 <span className="absolute top-2 right-2 rounded-full bg-white/95 backdrop-blur-md px-1.5 py-0.5 text-[7px] uppercase tracking-[0.22em] font-bold shadow-lg text-stone-900">
@@ -123,10 +123,10 @@ export default function TemuScrollBanner({
                 </span>
               </div>
               <p className="mt-2 text-xs text-foreground/80 leading-snug line-clamp-2">
-                {product["Product Name"]}
+                {product.name}
               </p>
               <p className="text-xs font-semibold text-foreground mt-0.5">
-                {formatPrice(product.Price)}
+                {formatPrice(product.price)}
               </p>
             </button>
           ))}

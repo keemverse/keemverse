@@ -8,7 +8,7 @@ import ProductCard from "../components/ProductCard";
 import TemuScrollBanner from "../components/TemuScrollBanner";
 import ProductPopup from "../components/ProductPopup";
 import { SocialFooter } from "../components/SocialFooter";
-import { getProducts } from "../lib/products";
+import { getCatalogProducts } from "../lib/products";
 import FashionFAQ from "../components/FashionFAQ";
 import SectionDivider from "../components/SectionDivider";
 const categories = [
@@ -44,31 +44,27 @@ export default function FashionFindsPage() {
 const [loading, setLoading] = useState(true);
 
 useEffect(() => {
-  getProducts()
+  getCatalogProducts("fashion_find")
     .then((data) => {
-  console.log(data);
-  console.log(data.map((p) => p["Affiliate Link"]));
-  setProducts(data);
-})
+      setProducts(data);
+    })
     .catch(console.error)
     .finally(() => {
       setLoading(false);
     });
 }, []);
 
-  const featured = products.filter(
-  (p) => String(p.Featured).toLowerCase() === "yes"
-);
+  const featured = products.filter((p) => p.featured === true);
 const filteredProducts = products.filter((p) => {
   const matchesCategory =
     activeTab === "All" ||
-    p.Category === activeTab;
+    p.category === activeTab;
 
   const search = query.toLowerCase();
 
   const matchesSearch =
-    p["Product Name"]?.toLowerCase().includes(search) ||
-    p.Tags?.toLowerCase().includes(search);
+    p.name?.toLowerCase().includes(search) ||
+    p.tags?.toLowerCase().includes(search);
 
   return matchesCategory && matchesSearch;
 });
@@ -121,14 +117,14 @@ const filteredProducts = products.filter((p) => {
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
               {featured.map((product) => (
   <ProductCard
-  key={`${product["Product Name"]}-${product.Source}`}
-  name={product["Product Name"]}
-  price={formatPrice(product.Price)}
-  image={product["Image URL"]}
-  source={product.Source}
-  category={product.Category}
+  key={product.id}
+  name={product.name}
+  price={formatPrice(product.price)}
+  image={product.image_url}
+  source={product.source}
+  category={product.category}
   buttonText="SHOP NOW"
-affiliateLink={product["Affiliate Link"]}
+affiliateLink={product.affiliate_link}
 onOpen={() => setSelected(product)}
 />
 ))}
@@ -171,14 +167,14 @@ onOpen={() => setSelected(product)}
   <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
     {filteredProducts.map((product) => (
       <ProductCard
-        key={`${product["Product Name"]}-${product.Source}`}
-        name={product["Product Name"]}
-        price={formatPrice(product.Price)}
-        image={product["Image URL"]}
-        source={product.Source}
-        category={product.Category}
+        key={product.id}
+        name={product.name}
+        price={formatPrice(product.price)}
+        image={product.image_url}
+        source={product.source}
+        category={product.category}
         buttonText="SHOP NOW"
-affiliateLink={product["Affiliate Link"]}
+affiliateLink={product.affiliate_link}
 onOpen={() => setSelected(product)}
       />
     ))}
@@ -190,22 +186,22 @@ onOpen={() => setSelected(product)}
  <ProductPopup
   open={true}
   onClose={() => setSelected(null)}
-  name={selected["Product Name"]}
-  price={formatPrice(selected.Price)}
-  image={selected["Image URL"]}
-  source={selected.Source}
-  category={selected.Category}
-  description={selected.Description || ""}
-  rating={selected.Rating}
+  name={selected.name}
+  price={formatPrice(selected.price)}
+  image={selected.image_url}
+  source={selected.source}
+  category={selected.category}
+  description={selected.description || ""}
+  rating={selected.rating}
   tags={
-    selected.Tags
-      ? String(selected.Tags)
+    selected.tags
+      ? String(selected.tags)
           .split(",")
           .map((t: string) => t.trim())
       : []
   }
-  whyPicked={selected["Why I Picked"] || ""}
-  affiliateLink={selected["Affiliate Link"]}
+  whyPicked={selected.why_picked || ""}
+  affiliateLink={selected.affiliate_link}
 />
 )}
 
