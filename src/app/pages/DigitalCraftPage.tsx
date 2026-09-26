@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion } from 'motion/react';
 import { SocialFooter } from '../components/SocialFooter';
 import { ComingSoonModal } from '../components/ComingSoonModal';
@@ -7,9 +7,8 @@ import { GeometricBackdrop } from '../components/GeometricBackdrop';
 import { UpworkIcon, BehanceIcon } from '../components/Icons';
 import UniverseShopCard from "../components/UniverseShopCard";
 import { CRAFT, CRAFT_DARK } from '../lib/theme';
+import { getCatalogProducts } from '../lib/products';
 import craftPageHero from '../../imports/craft-quality-hero_2.webp';
-import printableGraphicsHero from '../../imports/printable-graphics-hero.webp';
-import dtfDesignPacksHero from '../../imports/dtf-design-packs-hero.webp';
 import artistPaletteIcon from '../../imports/icons3d/artist-palette-3d.png';
 import briefcaseIcon from '../../imports/icons3d/briefcase-3d.png';
 
@@ -23,25 +22,6 @@ const services = [
     icon: briefcaseIcon,
     title: 'Creative Consultation & Support',
     desc: 'Professional guidance for apparel, print, and creative projects.',
-  },
-];
-
-const shop = [
-  {
-    title: 'Design Packs',
-    description: 'Print-ready artwork for apparel, decals, stickers, cups, posters, and more — for creators, print shops, and brands worldwide.',
-    image: printableGraphicsHero,
-    cta: 'Coming Soon',
-    tag: 'PENDING',
-    href: '#',
-  },
-  {
-    title: 'Wears',
-    description: 'KEEMVERSE-designed apparel, printed and shipped worldwide.',
-    image: dtfDesignPacksHero,
-    cta: 'Coming Soon',
-    tag: 'PENDING',
-    href: '#',
   },
 ];
 
@@ -63,6 +43,18 @@ function SectionDivider({ label }: { label: string }) {
 
 export function DigitalCraftPage() {
   const [comingSoon, setComingSoon] = useState<string | null>(null);
+  const [shop, setShop] = useState<any[]>([]);
+
+  useEffect(() => {
+    getCatalogProducts("design_bundle")
+      .then((data) => {
+        const sorted = [...data].sort(
+          (a, b) => (a.display_order ?? 999) - (b.display_order ?? 999)
+        );
+        setShop(sorted);
+      })
+      .catch(console.error);
+  }, []);
 
   return (
     <div className="relative min-h-screen bg-background text-foreground">
@@ -218,21 +210,24 @@ export function DigitalCraftPage() {
             </p>
 
             <div className="grid grid-cols-2 gap-3 md:gap-8 max-w-5xl mx-auto">
-              {shop.map((item, i) => (
-  <UniverseShopCard
-    key={item.title}
-    title={item.title}
-    description={item.description}
-    image={item.image}
-    cta={item.cta}
-    href={item.href}
-    tag={item.tag}
-    index={i}
-    onOpen={() => setComingSoon(item.title)}
-    accent={CRAFT}
-    accentDark={CRAFT_DARK}
-  />
-))}
+              {shop.map((item, i) => {
+                const isReady = Boolean(item.purchase_link);
+                return (
+                  <UniverseShopCard
+                    key={item.id}
+                    title={item.name}
+                    description={item.description}
+                    image={item.thumbnail || item.image_url}
+                    cta={isReady ? "Shop Now" : "Coming Soon"}
+                    href={isReady ? item.purchase_link : "#"}
+                    tag={isReady ? "LIVE" : "PENDING"}
+                    index={i}
+                    onOpen={() => setComingSoon(item.name)}
+                    accent={CRAFT}
+                    accentDark={CRAFT_DARK}
+                  />
+                );
+              })}
             </div>
           </section>
 
