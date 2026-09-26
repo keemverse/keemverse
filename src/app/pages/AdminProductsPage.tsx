@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import {
@@ -54,12 +54,16 @@ const numericPrice = (price: string | null) => {
   const n = parseFloat(String(price ?? "").replace(/[^0-9.]/g, ""));
   return isNaN(n) ? 0 : n;
 };
+// Alphabetical would put Hidden before Live, which is backwards for what
+// anyone actually wants from a "sort by status" — the thing that's
+// sellable right now belongs first.
+const STATUS_RANK: Record<Product["status"], number> = { Live: 0, "Sold Out": 1, Hidden: 2 };
 const sortProducts = (list: Product[], key: SortKey) => {
   if (key === "manual") return list; // as returned by the API (display_order-friendly, drag reflects this)
   const sorted = [...list];
   if (key === "name") sorted.sort((a, b) => a.name.localeCompare(b.name));
   if (key === "price") sorted.sort((a, b) => numericPrice(a.price) - numericPrice(b.price));
-  if (key === "status") sorted.sort((a, b) => a.status.localeCompare(b.status));
+  if (key === "status") sorted.sort((a, b) => STATUS_RANK[a.status] - STATUS_RANK[b.status]);
   if (key === "created_at") sorted.sort((a, b) => (b.created_at || "").localeCompare(a.created_at || ""));
   return sorted;
 };
@@ -118,7 +122,6 @@ export default function AdminProductsPage() {
   const [sortKey, setSortKey] = useState<SortKey>("manual");
   const [orderDirty, setOrderDirty] = useState(false);
   const [savingOrder, setSavingOrder] = useState(false);
-  const dragIndex = useRef<number | null>(null);
 
   const headers = () => ({
     "Content-Type": "application/json",
@@ -270,16 +273,17 @@ export default function AdminProductsPage() {
     load(typeFilter);
   };
 
-  // Reordering only makes sense against the "manual" view — dragging while
-  // sorted by name/price would silently fight whatever you just did.
-  const handleDrop = (dropIndex: number) => {
-    const from = dragIndex.current;
-    dragIndex.current = null;
-    if (from === null || from === dropIndex) return;
+  // Up/Down buttons rather than drag-and-drop — HTML5 drag is mouse-only
+  // and simply never fires on touch, so this is what actually works on
+  // mobile as well as desktop. Reordering only applies to the "manual"
+  // view — moving rows while sorted by name/price would silently fight
+  // whatever that sort just did.
+  const moveProduct = (index: number, direction: -1 | 1) => {
+    const target = index + direction;
+    if (target < 0 || target >= products.length) return;
     setProducts((prev) => {
       const next = [...prev];
-      const [moved] = next.splice(from, 1);
-      next.splice(dropIndex, 0, moved);
+      [next[index], next[target]] = [next[target], next[index]];
       return next;
     });
     setOrderDirty(true);
@@ -498,17 +502,28 @@ export default function AdminProductsPage() {
             sortProducts(products, sortKey).map((p, i) => (
               <div
                 key={p.id}
-                draggable={sortKey === "manual"}
-                onDragStart={() => (dragIndex.current = i)}
-                onDragOver={(e) => sortKey === "manual" && e.preventDefault()}
-                onDrop={() => sortKey === "manual" && handleDrop(i)}
-                className={`flex items-center justify-between border border-input rounded-md px-4 py-3 ${
-                  sortKey === "manual" ? "cursor-grab active:cursor-grabbing" : ""
-                }`}
+                className="flex items-center justify-between border border-input rounded-md px-4 py-3"
               >
                 <div className="flex items-center gap-3 min-w-0">
                   {sortKey === "manual" && (
-                    <span className="text-muted-foreground select-none" aria-hidden>⠿</span>
+                    <div className="flex flex-col shrink-0">
+                      <button
+                        onClick={() => moveProduct(i, -1)}
+                        disabled={i === 0}
+                        aria-label="Move up"
+                        className="text-muted-foreground disabled:opacity-30 leading-none px-1"
+                      >
+                        ▲
+                      </button>
+                      <button
+                        onClick={() => moveProduct(i, 1)}
+                        disabled={i === products.length - 1}
+                        aria-label="Move down"
+                        className="text-muted-foreground disabled:opacity-30 leading-none px-1"
+                      >
+                        ▼
+                      </button>
+                    </div>
                   )}
                   {(p.image_url || p.thumbnail) && (
                     <img src={p.image_url || p.thumbnail || ""} alt="" className="w-10 h-10 rounded object-cover shrink-0" />
