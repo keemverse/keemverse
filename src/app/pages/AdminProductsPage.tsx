@@ -1,6 +1,12 @@
 import { useEffect, useState } from "react";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "../components/ui/dialog";
 
 type Product = {
   id: string;
@@ -84,6 +90,7 @@ export default function AdminProductsPage() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState(EMPTY_FORM);
   const [error, setError] = useState("");
+  const [formOpen, setFormOpen] = useState(false);
 
   const headers = () => ({
     "Content-Type": "application/json",
@@ -134,8 +141,14 @@ export default function AdminProductsPage() {
     setEditingId(null);
   };
 
+  const openNew = () => {
+    resetForm();
+    setFormOpen(true);
+  };
+
   const startEdit = (p: Product) => {
     setEditingId(p.id);
+    setFormOpen(true);
     setForm({
       type: p.type,
       name: p.name || "",
@@ -213,6 +226,7 @@ export default function AdminProductsPage() {
       );
       if (!res.ok) throw new Error(await res.text());
       resetForm();
+      setFormOpen(false);
       load(typeFilter);
     } catch (e: any) {
       setError(e.message || "Save failed");
@@ -256,31 +270,44 @@ export default function AdminProductsPage() {
       <div className="max-w-5xl mx-auto space-y-8">
         <h1 className="font-serif text-2xl">Product Catalog</h1>
 
-        <div className="flex gap-2">
-          {TYPES.map((t) => (
-            <button
-              key={t}
-              onClick={() => {
-                setTypeFilter(t);
-                resetForm(t);
-              }}
-              className={`rounded-full px-4 py-2 text-xs uppercase tracking-[0.15em] border ${
-                typeFilter === t ? "bg-foreground text-background" : "border-input"
-              }`}
-            >
-              {t.replace("_", " ")}
-            </button>
-          ))}
+        <div className="flex items-center justify-between gap-2 flex-wrap">
+          <div className="flex gap-2">
+            {TYPES.map((t) => (
+              <button
+                key={t}
+                onClick={() => {
+                  setTypeFilter(t);
+                  resetForm(t);
+                }}
+                className={`rounded-full px-4 py-2 text-xs uppercase tracking-[0.15em] border ${
+                  typeFilter === t ? "bg-foreground text-background" : "border-input"
+                }`}
+              >
+                {t.replace("_", " ")}
+              </button>
+            ))}
+          </div>
+
+          <Button onClick={openNew}>+ Add new item</Button>
         </div>
 
         {error && <p className="text-sm text-destructive">{error}</p>}
 
-        {/* Form */}
-        <div className="border border-input rounded-lg p-5 space-y-3">
-          <h2 className="text-sm uppercase tracking-[0.15em] text-muted-foreground">
-            {editingId ? "Edit item" : "New item"} — {form.type.replace("_", " ")}
-          </h2>
+        <Dialog
+          open={formOpen}
+          onOpenChange={(open) => {
+            setFormOpen(open);
+            if (!open) resetForm();
+          }}
+        >
+          <DialogContent className="max-w-xl max-h-[85vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>
+                {editingId ? "Edit item" : "New item"} — {form.type.replace("_", " ")}
+              </DialogTitle>
+            </DialogHeader>
 
+            <div className="space-y-3">
           <div className="grid grid-cols-2 gap-3">
             <Input placeholder="Name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
             <Input placeholder="Price (e.g. ₦4,586)" value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} />
@@ -364,13 +391,19 @@ export default function AdminProductsPage() {
 
           <div className="flex gap-2">
             <Button onClick={save}>{editingId ? "Save changes" : "Add product"}</Button>
-            {editingId && (
-              <Button variant="outline" onClick={() => resetForm()}>
-                Cancel
-              </Button>
-            )}
+            <Button
+              variant="outline"
+              onClick={() => {
+                setFormOpen(false);
+                resetForm();
+              }}
+            >
+              Cancel
+            </Button>
           </div>
-        </div>
+            </div>
+          </DialogContent>
+        </Dialog>
 
         {/* List */}
         <div className="space-y-2">
