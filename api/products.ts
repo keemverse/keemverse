@@ -2,13 +2,16 @@ import type { VercelRequest, VercelResponse } from "@vercel/node";
 import { randomUUID } from "crypto";
 import { readProducts, writeProducts, isAuthorizedAdmin } from "./_github.js";
 
-// One endpoint, four verbs, backed by data/products.json in this repo
-// (read/written via the GitHub Contents API — see api/_github.ts):
-//   GET    /api/products?type=fashion_find            — public, Live rows only
-//   GET    /api/products?type=fashion_find&all=1       — admin, every status
-//   POST   /api/products                                — admin, create
-//   PATCH  /api/products?id=<id>                        — admin, update
-//   DELETE /api/products?id=<id>                        — admin, delete
+// One endpoint, backed by data/products.json in this repo (read/written
+// via the GitHub Contents API — see api/_github.ts):
+//   GET    /api/products?type=fashion_find              — public, Live rows only
+//   GET    /api/products?type=fashion_find&all=1        — admin, every status
+//   POST   /api/products                                 — admin, create
+//   PATCH  /api/products?id=<id>                         — admin, update one
+//   PATCH  /api/products?reorder=1  body: {ids: [...]}   — admin, set
+//          display_order for a whole type's list in ONE commit (drag-
+//          reorder in the admin UI), rather than one PATCH per row
+//   DELETE /api/products?id=<id>                         — admin, delete
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method === "GET") {
     const { type, all } = req.query;
@@ -42,6 +45,26 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       const updated = [...products, newProduct];
       await writeProducts(updated, sha, `Add product: ${newProduct.name}`);
       return res.status(201).json(newProduct);
+    } catch (err: any) {
+      return res.status(500).json({ error: err.message });
+    }
+  }
+
+  if (req.method === "PATCH" && req.query.reorder === "1") {
+    const ids = req.body?.ids;
+    if (!Array.isArray(ids) || ids.some((i) => typeof i !== "string")) {
+      return res.status(400).json({ error: "Body must be { ids: string[] } in the new order" });
+    }
+
+    try {
+      const { products, sha } = await readProducts();
+      const order = new Map(ids.map((id, index) => [id, index + 1]));
+      const now = new Date().toISOString();
+      const updated = products.map((p) =>
+        order.has(p.id) ? { ...p, display_order: order.get(p.id), updated_at: now } : p
+      );
+      await writeProducts(updated, sha, `Reorder ${ids.length} products`);
+      return res.status(200).json({ success: true, count: ids.length });
     } catch (err: any) {
       return res.status(500).json({ error: err.message });
     }

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import {
@@ -35,10 +35,34 @@ type Product = {
   display_order: number | null;
   drive_file_id: string | null;
   purchase_link: string | null;
+  created_at?: string;
+  updated_at?: string;
 };
 
 const TYPES: Product["type"][] = ["fashion_find", "preset", "design_bundle"];
 const STATUSES: Product["status"][] = ["Live", "Sold Out", "Hidden"];
+
+type SortKey = "manual" | "name" | "price" | "status" | "created_at";
+const SORT_LABELS: Record<SortKey, string> = {
+  manual: "Manual order (drag to reorder)",
+  name: "Name (A–Z)",
+  price: "Price (low → high)",
+  status: "Status",
+  created_at: "Date added (newest first)",
+};
+const numericPrice = (price: string | null) => {
+  const n = parseFloat(String(price ?? "").replace(/[^0-9.]/g, ""));
+  return isNaN(n) ? 0 : n;
+};
+const sortProducts = (list: Product[], key: SortKey) => {
+  if (key === "manual") return list; // as returned by the API (display_order-friendly, drag reflects this)
+  const sorted = [...list];
+  if (key === "name") sorted.sort((a, b) => a.name.localeCompare(b.name));
+  if (key === "price") sorted.sort((a, b) => numericPrice(a.price) - numericPrice(b.price));
+  if (key === "status") sorted.sort((a, b) => a.status.localeCompare(b.status));
+  if (key === "created_at") sorted.sort((a, b) => (b.created_at || "").localeCompare(a.created_at || ""));
+  return sorted;
+};
 
 // Fashion Finds are affiliate-linked retail picks (Temu etc.) — Why I
 // Picked It, a rating, and an affiliate link make sense there and nowhere
@@ -91,6 +115,10 @@ export default function AdminProductsPage() {
   const [form, setForm] = useState(EMPTY_FORM);
   const [error, setError] = useState("");
   const [formOpen, setFormOpen] = useState(false);
+  const [sortKey, setSortKey] = useState<SortKey>("manual");
+  const [orderDirty, setOrderDirty] = useState(false);
+  const [savingOrder, setSavingOrder] = useState(false);
+  const dragIndex = useRef<number | null>(null);
 
   const headers = () => ({
     "Content-Type": "application/json",
@@ -242,6 +270,40 @@ export default function AdminProductsPage() {
     load(typeFilter);
   };
 
+  // Reordering only makes sense against the "manual" view — dragging while
+  // sorted by name/price would silently fight whatever you just did.
+  const handleDrop = (dropIndex: number) => {
+    const from = dragIndex.current;
+    dragIndex.current = null;
+    if (from === null || from === dropIndex) return;
+    setProducts((prev) => {
+      const next = [...prev];
+      const [moved] = next.splice(from, 1);
+      next.splice(dropIndex, 0, moved);
+      return next;
+    });
+    setOrderDirty(true);
+  };
+
+  const saveOrder = async () => {
+    setSavingOrder(true);
+    setError("");
+    try {
+      const res = await fetch(`/api/products?reorder=1`, {
+        method: "PATCH",
+        headers: headers(),
+        body: JSON.stringify({ ids: products.map((p) => p.id) }),
+      });
+      if (!res.ok) throw new Error(await res.text());
+      setOrderDirty(false);
+      load(typeFilter);
+    } catch (e: any) {
+      setError(e.message || "Failed to save order");
+    } finally {
+      setSavingOrder(false);
+    }
+  };
+
   if (!unlocked) {
     return (
       <div className="min-h-screen bg-background text-foreground flex items-center justify-center px-5">
@@ -278,6 +340,8 @@ export default function AdminProductsPage() {
                 onClick={() => {
                   setTypeFilter(t);
                   resetForm(t);
+                  setSortKey("manual");
+                  setOrderDirty(false);
                 }}
                 className={`rounded-full px-4 py-2 text-xs uppercase tracking-[0.15em] border ${
                   typeFilter === t ? "bg-foreground text-background" : "border-input"
@@ -405,6 +469,25 @@ export default function AdminProductsPage() {
           </DialogContent>
         </Dialog>
 
+        {/* List controls */}
+        <div className="flex items-center justify-between gap-2 flex-wrap">
+          <select
+            className="h-9 rounded-md border border-input bg-input-background px-3 text-sm"
+            value={sortKey}
+            onChange={(e) => setSortKey(e.target.value as SortKey)}
+          >
+            {(Object.keys(SORT_LABELS) as SortKey[]).map((k) => (
+              <option key={k} value={k}>{SORT_LABELS[k]}</option>
+            ))}
+          </select>
+
+          {sortKey === "manual" && orderDirty && (
+            <Button size="sm" onClick={saveOrder} disabled={savingOrder}>
+              {savingOrder ? "Saving…" : "Save order"}
+            </Button>
+          )}
+        </div>
+
         {/* List */}
         <div className="space-y-2">
           {loading ? (
@@ -412,12 +495,21 @@ export default function AdminProductsPage() {
           ) : products.length === 0 ? (
             <p className="text-sm text-muted-foreground">No {typeFilter.replace("_", " ")} rows yet.</p>
           ) : (
-            products.map((p) => (
+            sortProducts(products, sortKey).map((p, i) => (
               <div
                 key={p.id}
-                className="flex items-center justify-between border border-input rounded-md px-4 py-3"
+                draggable={sortKey === "manual"}
+                onDragStart={() => (dragIndex.current = i)}
+                onDragOver={(e) => sortKey === "manual" && e.preventDefault()}
+                onDrop={() => sortKey === "manual" && handleDrop(i)}
+                className={`flex items-center justify-between border border-input rounded-md px-4 py-3 ${
+                  sortKey === "manual" ? "cursor-grab active:cursor-grabbing" : ""
+                }`}
               >
                 <div className="flex items-center gap-3 min-w-0">
+                  {sortKey === "manual" && (
+                    <span className="text-muted-foreground select-none" aria-hidden>⠿</span>
+                  )}
                   {(p.image_url || p.thumbnail) && (
                     <img src={p.image_url || p.thumbnail || ""} alt="" className="w-10 h-10 rounded object-cover shrink-0" />
                   )}

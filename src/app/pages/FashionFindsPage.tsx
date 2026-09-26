@@ -46,7 +46,14 @@ const [loading, setLoading] = useState(true);
 useEffect(() => {
   getCatalogProducts("fashion_find")
     .then((data) => {
-      setProducts(data);
+      // Items with a manually-set display_order (dragged into place in
+      // /admin/products) float to the top in that order; everything else
+      // keeps the API's default order (newest first) — a stable sort, so
+      // this changes nothing until display_order actually gets used.
+      const sorted = [...data].sort(
+        (a, b) => (a.display_order ?? 999999) - (b.display_order ?? 999999)
+      );
+      setProducts(sorted);
     })
     .catch(console.error)
     .finally(() => {
