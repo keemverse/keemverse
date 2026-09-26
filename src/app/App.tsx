@@ -15,6 +15,7 @@ import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
 import TermsPage from "./pages/TermsPage";
 import CheckoutPage from "./pages/CheckoutPage";
 import CheckoutSuccessPage from "./pages/CheckoutSuccessPage";
+import AdminProductsPage from "./pages/AdminProductsPage";
 // MediaKitPage: built and working, held in draft — not routed yet.
 // Re-add the import above and the route below (/fashion/media-kit)
 // when ready to make it live.
@@ -61,6 +62,8 @@ export default function App() {
 
 <Route path="/checkout" element={<CheckoutPage />} />
 <Route path="/checkout/success" element={<CheckoutSuccessPage />} />
+
+<Route path="/admin/products" element={<AdminProductsPage />} />
 </Routes>
       </div>
     </BrowserRouter>

@@ -42,3 +42,20 @@ export async function getRateCard() {
 
   return response.json();
 }
+
+// New catalog backend (Supabase via /api/products) — replaces the Apps
+// Script + Google Sheet functions above, one product type at a time. Not
+// wired into any page yet: cut a page over only after its data has been
+// migrated into the `products` table, so the site never reads an empty
+// catalog. See docs/admin-products-setup.md for the migration step.
+type CatalogType = "fashion_find" | "preset" | "design_bundle";
+
+export async function getCatalogProducts(type: CatalogType) {
+  const response = await fetch(`/api/products?type=${type}`);
+
+  if (!response.ok) {
+    throw new Error(`Failed to load ${type} products`);
+  }
+
+  return response.json();
+}
