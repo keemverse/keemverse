@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 import { randomUUID } from "crypto";
-import { readProducts, writeProducts, isAuthorizedAdmin } from "./_github";
+import { readProducts, writeProducts, isAuthorizedAdmin } from "./_github.js";
 
 // One endpoint, four verbs, backed by data/products.json in this repo
 // (read/written via the GitHub Contents API — see api/_github.ts):
