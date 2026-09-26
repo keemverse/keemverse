@@ -609,7 +609,7 @@
     "tags": "bundle, editorial, cinematic, film, complete pack",
     "rating": null,
     "created_at": "2026-08-30T00:00:00+00:00",
-    "updated_at": "2026-09-26T23:40:15.642Z",
+    "updated_at": "2026-09-26T23:40:29.792Z",
     "source": "",
     "why_picked": "",
     "affiliate_link": "",
@@ -624,7 +624,7 @@
     "price": "₦4,000",
     "status": "Live",
     "featured": false,
-    "display_order": 3,
+    "display_order": 2,
     "drive_file_id": "1GDPpl-n5tIvGglvio40x2wz-gy90mKem",
     "thumbnail": "/presets/amber-hour-thumbnail.webp",
     "image_url": "/presets/amber-hour-thumbnail.webp",
@@ -636,7 +636,7 @@
     "tags": "amber, golden hour, warm, lifestyle, portrait",
     "rating": null,
     "created_at": "2026-08-30T00:00:00+00:00",
-    "updated_at": "2026-09-26T23:40:15.642Z"
+    "updated_at": "2026-09-26T23:40:29.792Z"
   },
   {
     "id": "a21f7a80-ad6f-44d8-bd86-515359ef0150",
@@ -659,7 +659,7 @@
     "tags": "cool, blue, moody, street, contrast",
     "rating": null,
     "created_at": "2026-08-27T00:00:00+00:00",
-    "updated_at": "2026-09-26T23:40:15.642Z"
+    "updated_at": "2026-09-26T23:40:29.792Z"
   },
   {
     "id": "ef4bbdf9-d0ac-4490-8222-5543ba91d1b6",
@@ -670,7 +670,7 @@
     "price": "₦4,000",
     "status": "Live",
     "featured": false,
-    "display_order": 2,
+    "display_order": 3,
     "drive_file_id": "1CuValbVXphrWHBzby8YevGaht6S__7gG",
     "thumbnail": "/presets/storm-grey-thumbnail.webp",
     "image_url": "/presets/storm-grey-thumbnail.webp",
@@ -682,7 +682,7 @@
     "tags": "grey, desaturated, moody, minimal, dramatic",
     "rating": null,
     "created_at": "2026-08-30T00:00:00+00:00",
-    "updated_at": "2026-09-26T23:40:15.642Z"
+    "updated_at": "2026-09-26T23:40:29.792Z"
   },
   {
     "id": "f183b4e8-be18-485d-940e-51f6b775527a",
