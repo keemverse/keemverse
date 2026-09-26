@@ -90,12 +90,17 @@ export default function AdminProductsPage() {
     "x-admin-secret": secret,
   });
 
-  const load = async (type: Product["type"]) => {
+  // Takes the secret explicitly rather than reading the `secret` state
+  // variable — called right after setSecret() during unlock, before that
+  // state update has actually landed, so reading `secret` here would send
+  // whatever it was *before* this attempt (empty, on the very first try).
+  const load = async (type: Product["type"], secretOverride?: string) => {
+    const activeSecret = secretOverride ?? secret;
     setLoading(true);
     setError("");
     try {
       const res = await fetch(`/api/products?type=${type}&all=1`, {
-        headers: { "x-admin-secret": secret },
+        headers: { "x-admin-secret": activeSecret },
       });
       if (res.status === 401) {
         setUnlocked(false);
@@ -121,7 +126,7 @@ export default function AdminProductsPage() {
   const tryUnlock = () => {
     sessionStorage.setItem("kv_admin_secret", secretInput);
     setSecret(secretInput);
-    load(typeFilter);
+    load(typeFilter, secretInput);
   };
 
   const resetForm = (type: Product["type"] = typeFilter) => {
