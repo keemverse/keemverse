@@ -1,27 +1,11 @@
+// Still used for Media Kit / Rate Card, and (separately, via
+// VERIFY_API_URL in lib/flutterwave.ts, same underlying Apps Script)
+// for post-payment verification and download unlocking — don't remove
+// this Web App or its URL, only the listing-fetch helpers that used to
+// read Fashion Finds/Presets from it are gone now that both pages read
+// from the new catalog backend (getCatalogProducts below) instead.
 const API_URL =
   "https://script.google.com/macros/s/AKfycbxvRs-TgA3tqIMA7tBxvjs5pZ4j52cKyP3gYODzucUM1SU2rQ3OwSNxeqsZDNjRW8gc/exec";
-
-export async function getProducts() {
-  const response = await fetch(API_URL);
-
-  if (!response.ok) {
-    throw new Error("Failed to load products");
-  }
-
-  return response.json();
-}
-
-export async function getPresets() {
-  const response = await fetch(
-    `${API_URL}?sheet=Lightroom%20Presets`
-  );
-
-  if (!response.ok) {
-    throw new Error("Failed to load Lightroom presets");
-  }
-
-  return response.json();
-}
 
 export async function getMediaKit() {
   const response = await fetch(`${API_URL}?sheet=Media%20Kit`);
@@ -43,11 +27,8 @@ export async function getRateCard() {
   return response.json();
 }
 
-// New catalog backend (Supabase via /api/products) — replaces the Apps
-// Script + Google Sheet functions above, one product type at a time. Not
-// wired into any page yet: cut a page over only after its data has been
-// migrated into the `products` table, so the site never reads an empty
-// catalog. See docs/admin-products-setup.md for the migration step.
+// Catalog backend (GitHub-file store via /api/products) — Fashion Finds
+// and Presets both read from here now. See docs/admin-products-setup.md.
 type CatalogType = "fashion_find" | "preset" | "design_bundle";
 
 export async function getCatalogProducts(type: CatalogType) {

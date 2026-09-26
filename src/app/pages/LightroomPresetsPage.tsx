@@ -7,7 +7,7 @@ import { SocialFooter } from "../components/SocialFooter";
 import UniverseSearch from "../components/UniverseSearch";
 import UniverseTabs from "../components/UniverseTabs";
 import SectionDivider from "../components/SectionDivider";
-import { getPresets } from "../lib/products";
+import { getCatalogProducts } from "../lib/products";
 import PresetPopup from "../components/PresetPopup";
 import RestoreDownloadForm from "../components/RestoreDownloadForm";
 import PresetFAQ from "../components/PresetFAQ";
@@ -49,10 +49,15 @@ export default function LightroomPresetsPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    getPresets()
+    getCatalogProducts("preset")
       .then((data) => {
-        console.log("Lightroom presets:", data);
-        setPresets(data);
+        // The API's default sort is by creation date, but presets have a
+        // deliberate curated order (bundle first, then each look) — that's
+        // display_order, not when the row happened to be added.
+        const sorted = [...data].sort(
+          (a, b) => (a.display_order ?? 999) - (b.display_order ?? 999)
+        );
+        setPresets(sorted);
       })
       .catch((error) => {
         console.error("Failed to load Lightroom presets:", error);
@@ -62,29 +67,20 @@ export default function LightroomPresetsPage() {
       });
   }, []);
 
-  const featured = presets.filter(
-    (preset) =>
-      String(preset.Featured).toLowerCase() === "yes"
-  );
+  const featured = presets.filter((preset) => preset.featured === true);
 
   const filteredPresets = presets.filter((preset) => {
     const matchesCategory =
       activeTab === "All" ||
-      preset.Collection === activeTab;
+      preset.collection === activeTab;
 
     const search = query.toLowerCase().trim();
 
     const matchesSearch =
       !search ||
-      preset["Preset Name"]
-        ?.toLowerCase()
-        .includes(search) ||
-      preset.Tags
-        ?.toLowerCase()
-        .includes(search) ||
-      preset.Collection
-        ?.toLowerCase()
-        .includes(search);
+      preset.name?.toLowerCase().includes(search) ||
+      preset.tags?.toLowerCase().includes(search) ||
+      preset.collection?.toLowerCase().includes(search);
 
     return matchesCategory && matchesSearch;
   });
@@ -139,11 +135,11 @@ export default function LightroomPresetsPage() {
             <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
               {featured.map((preset, index) => (
   <PresetCard
-    key={`${preset["Preset Name"]}-${index}`}
-    name={preset["Preset Name"]}
-    price={formatPrice(preset.Price)}
-    image={preset["Thumbnail"]}
-    collection={preset.Collection}
+    key={preset.id}
+    name={preset.name}
+    price={formatPrice(preset.price)}
+    image={preset.thumbnail}
+    collection={preset.collection}
     index={index}
     onOpen={() => setSelected(preset)}
   />
@@ -196,11 +192,11 @@ export default function LightroomPresetsPage() {
 
               {filteredPresets.map((preset, index) => (
   <PresetCard
-    key={`${preset["Preset Name"]}-${index}`}
-    name={preset["Preset Name"]}
-    price={formatPrice(preset.Price)}
-    image={preset["Thumbnail"]}
-    collection={preset.Collection}
+    key={preset.id}
+    name={preset.name}
+    price={formatPrice(preset.price)}
+    image={preset.thumbnail}
+    collection={preset.collection}
     index={index}
     onOpen={() => setSelected(preset)}
   />
@@ -228,26 +224,26 @@ export default function LightroomPresetsPage() {
           <PresetPopup
             open={true}
             onClose={() => setSelected(null)}
-            name={selected["Preset Name"]}
-            price={formatPrice(selected.Price)}
-            rawPrice={selected.Price}
-            previewImage={selected["Thumbnail"]}
-            banner={selected["Banner"]}
-            collection={selected.Collection}
-            description={selected.Description}
-            whyCreated={selected["Why I Created It"]}
-            whatsIncluded={selected["What's Included"]}
-            installation={selected.Installation}
-            compatibleWith={selected["Compatible With"]}
-            rating={selected.Rating}
+            name={selected.name}
+            price={formatPrice(selected.price)}
+            rawPrice={selected.price}
+            previewImage={selected.thumbnail}
+            banner={selected.banner}
+            collection={selected.collection}
+            description={selected.description}
+            whyCreated={selected.why_created}
+            whatsIncluded={selected.whats_included}
+            installation={selected.installation}
+            compatibleWith={selected.compatible_with}
+            rating={selected.rating}
             tags={
-              selected.Tags
-                ? String(selected.Tags)
+              selected.tags
+                ? String(selected.tags)
                     .split(",")
                     .map((tag: string) => tag.trim())
                 : []
             }
-            purchaseLink={selected["Purchase Link"]}
+            purchaseLink={selected.purchase_link}
           />
         )}
 
