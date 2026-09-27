@@ -1,6 +1,7 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
+import { useAdminAuth } from "../lib/useAdminAuth";
 import manifest from "../../assets/mannequin/garments/manifest.json";
 
 // Raw SVG source for the body + every garment, keyed by their path relative
@@ -33,41 +34,9 @@ function resolveRaw(map: Record<string, string>, filename: string): string {
 type GarmentSlot = string;
 
 export default function MannequinStudioPage() {
-  const [secret, setSecret] = useState(
-    () => sessionStorage.getItem("kv_admin_secret") || ""
-  );
+  const { unlocked, checking, error, checkSecret } = useAdminAuth();
   const [secretInput, setSecretInput] = useState("");
-  const [unlocked, setUnlocked] = useState(false);
-  const [checking, setChecking] = useState(false);
-  const [error, setError] = useState("");
   const [selected, setSelected] = useState<Record<GarmentSlot, string | null>>({});
-
-  const checkSecret = async (value: string) => {
-    setChecking(true);
-    setError("");
-    try {
-      const res = await fetch("/api/products?type=fashion_find&all=1", {
-        headers: { "x-admin-secret": value },
-      });
-      if (res.status === 401) {
-        setError("That secret was rejected — try again.");
-        setUnlocked(false);
-        return;
-      }
-      sessionStorage.setItem("kv_admin_secret", value);
-      setSecret(value);
-      setUnlocked(true);
-    } catch (e: any) {
-      setError(e.message || "Could not verify secret");
-    } finally {
-      setChecking(false);
-    }
-  };
-
-  useEffect(() => {
-    if (secret) checkSecret(secret);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   const bodyInner = useMemo(() => innerPaths(resolveRaw(bodySvg, manifest.body.file.replace("../", ""))), []);
 
