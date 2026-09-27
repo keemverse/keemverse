@@ -30,5 +30,36 @@
         "ty": -3.19
       }
     }
+  },
+  "_rasterComment": "Raster garments (photorealistic renders, generated isolated/no-model with the reference body's proportions in mind) are placed directly in body SVG units via `rect` {x,y,width,height} — the whole PNG canvas is drawn at that rect with an <image> element, no per-path transform needed. `rect` was calibrated once per garment by overlaying the PNG on body-solo-front.svg and eyeballing shoulder/torso fit; every color variant shares the same rect since they're color-only edits of the same base render (identical framing/dimensions). Colors are a fixed set of pre-rendered images (via Adobe HSL colorize + background removal), not a live recolor — add a new color by running the same recolor+cutout pass on the base image and adding a file entry.",
+  "rasterGarments": {
+    "top-tank": {
+      "slot": "top",
+      "canvasWidth": 1024,
+      "canvasHeight": 1536,
+      "rect": { "x": 331, "y": 234, "width": 650, "height": 975 },
+      "defaultColor": "navy",
+      "colors": {
+        "navy": "top-tank-navy.webp",
+        "white": "top-tank-white.webp",
+        "black": "top-tank-black.webp",
+        "grey": "top-tank-grey.webp",
+        "red": "top-tank-red.webp"
+      }
+    },
+    "top-hoodie": {
+      "slot": "top",
+      "canvasWidth": 987,
+      "canvasHeight": 1116,
+      "rect": { "x": 280, "y": 200, "width": 780, "height": 882 },
+      "defaultColor": "grey",
+      "colors": {
+        "grey": "top-hoodie-grey.webp",
+        "white": "top-hoodie-white.webp",
+        "black": "top-hoodie-black.webp",
+        "navy": "top-hoodie-navy.webp",
+        "red": "top-hoodie-red.webp"
+      }
+    }
   }
 }

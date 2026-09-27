@@ -5,16 +5,24 @@ import { useAdminAuth } from "../lib/useAdminAuth";
 import { recolorSvg } from "../lib/recolorSvg";
 import manifest from "../../assets/mannequin/garments/manifest.json";
 
-// Raw SVG source for the body + every garment, keyed by their path relative
-// to this glob's root. Vite resolves these at build time — dropping a new
-// garment SVG in this folder and adding it to manifest.json is enough for
-// it to show up here, no code change needed.
+// Raw SVG source for the body + every path-based garment, keyed by their
+// path relative to this glob's root. Vite resolves these at build time —
+// dropping a new garment SVG in this folder and adding it to manifest.json
+// is enough for it to show up here, no code change needed.
 const garmentSvgs = import.meta.glob("../../assets/mannequin/garments/*.svg", {
   as: "raw",
   eager: true,
 }) as Record<string, string>;
 const bodySvg = import.meta.glob("../../assets/mannequin/*.svg", {
   as: "raw",
+  eager: true,
+}) as Record<string, string>;
+
+// Raster garments (photorealistic renders — see manifest.json's
+// _rasterComment) are plain image assets, resolved to their built URL
+// rather than raw source.
+const garmentRasters = import.meta.glob("../../assets/mannequin/garments-raster/*.webp", {
+  as: "url",
   eager: true,
 }) as Record<string, string>;
 
@@ -43,6 +51,22 @@ function resolveRaw(map: Record<string, string>, filename: string): string {
 
 type GarmentSlot = string;
 
+type SvgGarment = {
+  file: string;
+  slot: string;
+  baseColor: string;
+  transform: { scale: number; tx: number; ty: number };
+};
+
+type RasterGarment = {
+  slot: string;
+  canvasWidth: number;
+  canvasHeight: number;
+  rect: { x: number; y: number; width: number; height: number };
+  defaultColor: string;
+  colors: Record<string, string>;
+};
+
 const BACKGROUNDS = [
   { id: "none", label: "None", src: null },
   { id: "studio-1", label: "Studio 1", src: "/mannequin-backgrounds/studio-bg-1.webp" },
@@ -52,8 +76,12 @@ const BACKGROUNDS = [
 export default function MannequinStudioPage() {
   const { unlocked, checking, error, checkSecret } = useAdminAuth();
   const [secretInput, setSecretInput] = useState("");
+  // selected[slot] holds a garment id, which may belong to either the SVG
+  // set (manifest.garments) or the raster set (manifest.rasterGarments) —
+  // ids are unique across both, so a single map works for either kind.
   const [selected, setSelected] = useState<Record<GarmentSlot, string | null>>({});
   const [colors, setColors] = useState<Record<string, string>>({});
+  const [rasterColors, setRasterColors] = useState<Record<string, string>>({});
   const [background, setBackground] = useState(BACKGROUNDS[1].id);
 
   const bodyInner = useMemo(
@@ -61,14 +89,13 @@ export default function MannequinStudioPage() {
     []
   );
 
-  const garmentEntries = Object.entries(manifest.garments as Record<
-    string,
-    { file: string; slot: string; baseColor: string; transform: { scale: number; tx: number; ty: number } }
-  >);
+  const garmentEntries = Object.entries(manifest.garments as Record<string, SvgGarment>);
+  const rasterEntries = Object.entries((manifest as any).rasterGarments as Record<string, RasterGarment>);
 
   const slots = useMemo(() => {
     const s = new Set<string>();
     garmentEntries.forEach(([, g]) => s.add(g.slot));
+    rasterEntries.forEach(([, g]) => s.add(g.slot));
     return Array.from(s);
   }, []);
 
@@ -107,8 +134,11 @@ export default function MannequinStudioPage() {
           <h1 className="font-serif text-2xl">Mannequin Studio</h1>
           {slots.map((slot) => {
             const activeId = selected[slot];
-            const activeGarment = activeId
-              ? (manifest.garments as Record<string, { baseColor: string }>)[activeId]
+            const activeSvgGarment = activeId
+              ? (manifest.garments as Record<string, SvgGarment>)[activeId]
+              : null;
+            const activeRasterGarment = activeId
+              ? ((manifest as any).rasterGarments as Record<string, RasterGarment>)[activeId]
               : null;
             return (
               <div key={slot} className="space-y-2">
@@ -131,11 +161,26 @@ export default function MannequinStudioPage() {
                         {id.replace(/^(top|bottom|footwear|headwear)-/, "").replace(/-/g, " ")}
                       </button>
                     ))}
-                  {activeGarment && (
+                  {rasterEntries
+                    .filter(([, g]) => g.slot === slot)
+                    .map(([id]) => (
+                      <button
+                        key={id}
+                        onClick={() => toggleGarment(slot, id)}
+                        className={`rounded-full px-3 py-1.5 text-xs border ${
+                          selected[slot] === id
+                            ? "bg-foreground text-background"
+                            : "border-input"
+                        }`}
+                      >
+                        {id.replace(/^(top|bottom|footwear|headwear)-/, "").replace(/-/g, " ")}
+                      </button>
+                    ))}
+                  {activeSvgGarment && (
                     <input
                       type="color"
                       title="Recolor"
-                      value={colors[slot] || activeGarment.baseColor}
+                      value={colors[slot] || activeSvgGarment.baseColor}
                       onChange={(e) =>
                         setColors((prev) => ({ ...prev, [slot]: e.target.value }))
                       }
@@ -143,6 +188,25 @@ export default function MannequinStudioPage() {
                     />
                   )}
                 </div>
+                {activeRasterGarment && (
+                  <div className="flex flex-wrap items-center gap-1.5 pt-1">
+                    {Object.keys(activeRasterGarment.colors).map((colorKey) => (
+                      <button
+                        key={colorKey}
+                        title={colorKey}
+                        onClick={() =>
+                          setRasterColors((prev) => ({ ...prev, [activeId as string]: colorKey }))
+                        }
+                        className={`h-6 w-6 rounded-full border-2 ${
+                          (rasterColors[activeId as string] || activeRasterGarment.defaultColor) === colorKey
+                            ? "border-foreground"
+                            : "border-input"
+                        }`}
+                        style={{ backgroundColor: RASTER_SWATCH_COLORS[colorKey] || "#999" }}
+                      />
+                    ))}
+                  </div>
+                )}
               </div>
             );
           })}
@@ -202,9 +266,33 @@ export default function MannequinStudioPage() {
                 />
               );
             })}
+            {rasterEntries.map(([id, g]) => {
+              if (selected[g.slot] !== id) return null;
+              const colorKey = rasterColors[id] || g.defaultColor;
+              const filename = g.colors[colorKey];
+              const href = resolveRaw(garmentRasters, filename);
+              return (
+                <image
+                  key={id}
+                  href={href}
+                  x={g.rect.x}
+                  y={g.rect.y}
+                  width={g.rect.width}
+                  height={g.rect.height}
+                />
+              );
+            })}
           </svg>
         </div>
       </div>
     </div>
   );
 }
+
+const RASTER_SWATCH_COLORS: Record<string, string> = {
+  navy: "#1f3a5f",
+  white: "#f2f2f2",
+  black: "#161616",
+  grey: "#8a8a8a",
+  red: "#8f1f1f",
+};
