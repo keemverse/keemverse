@@ -182,6 +182,7 @@ export default function MannequinStudioPage() {
           <svg
             viewBox={`0 0 ${manifest.body.canvasWidth} ${manifest.body.canvasHeight}`}
             className="w-full max-w-sm"
+            style={{ filter: "drop-shadow(0 18px 14px rgba(0,0,0,0.35))" }}
           >
             <g dangerouslySetInnerHTML={{ __html: bodyInner }} />
             {garmentEntries.map(([id, g]) => {
