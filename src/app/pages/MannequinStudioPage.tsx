@@ -27,6 +27,15 @@ function innerPaths(svgSource: string): string {
   return match ? match[1] : svgSource;
 }
 
+// The vectorizer's first path in every export is a full-canvas background
+// fill (with the figure's own outline cut out as a hole) — needed for a
+// standalone preview, but it paints an opaque white card over whatever
+// backdrop the Studio page is showing. Strip it so the body is transparent
+// everywhere except the actual figure.
+function stripBackgroundPath(inner: string): string {
+  return inner.replace(/<path[^>]*\/>/, "");
+}
+
 function resolveRaw(map: Record<string, string>, filename: string): string {
   const key = Object.keys(map).find((k) => k.endsWith("/" + filename));
   return key ? map[key] : "";
@@ -47,7 +56,10 @@ export default function MannequinStudioPage() {
   const [colors, setColors] = useState<Record<string, string>>({});
   const [background, setBackground] = useState(BACKGROUNDS[1].id);
 
-  const bodyInner = useMemo(() => innerPaths(resolveRaw(bodySvg, manifest.body.file.replace("../", ""))), []);
+  const bodyInner = useMemo(
+    () => stripBackgroundPath(innerPaths(resolveRaw(bodySvg, manifest.body.file.replace("../", "")))),
+    []
+  );
 
   const garmentEntries = Object.entries(manifest.garments as Record<
     string,
