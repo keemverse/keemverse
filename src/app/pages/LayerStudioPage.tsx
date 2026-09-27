@@ -26,6 +26,15 @@ function readFileAsDataUrl(file: File): Promise<string> {
   });
 }
 
+// Starter pieces from the earlier mannequin build — still on disk, just not
+// auto-loaded into every project. One click adds them as an ordinary layer
+// that can be dragged/resized/deleted like anything else.
+const STARTER_PIECES = [
+  { id: "body", name: "Body model", src: "/mannequin-library/body.svg", kind: "figure" as const },
+  { id: "studio-1", name: "Studio background 1", src: "/mannequin-backgrounds/studio-bg-1.webp", kind: "background" as const },
+  { id: "studio-2", name: "Studio background 2", src: "/mannequin-backgrounds/studio-bg-2.webp", kind: "background" as const },
+];
+
 function loadImage(src: string): Promise<HTMLImageElement> {
   return new Promise((resolve, reject) => {
     const img = new Image();
@@ -84,6 +93,40 @@ export default function LayerStudioPage() {
       setLayers((prev) => [...prev, layer]);
       setSelectedId(layer.id);
     }
+  };
+
+  const addStarterPiece = async (piece: (typeof STARTER_PIECES)[number]) => {
+    const img = await loadImage(piece.src);
+    if (piece.kind === "background") {
+      const layer: Layer = {
+        id: crypto.randomUUID(),
+        name: piece.name,
+        src: piece.src,
+        x: 0,
+        y: 0,
+        width: STAGE_WIDTH,
+        height: STAGE_HEIGHT,
+      };
+      // Backgrounds go behind everything already on the canvas.
+      setLayers((prev) => [layer, ...prev]);
+      setSelectedId(layer.id);
+      return;
+    }
+    const targetHeight = STAGE_HEIGHT * 0.9;
+    const scale = targetHeight / img.naturalHeight;
+    const width = img.naturalWidth * scale;
+    const height = img.naturalHeight * scale;
+    const layer: Layer = {
+      id: crypto.randomUUID(),
+      name: piece.name,
+      src: piece.src,
+      x: (STAGE_WIDTH - width) / 2,
+      y: (STAGE_HEIGHT - height) / 2,
+      width,
+      height,
+    };
+    setLayers((prev) => [...prev, layer]);
+    setSelectedId(layer.id);
   };
 
   const onPointerMove = useCallback((e: PointerEvent) => {
@@ -253,6 +296,24 @@ export default function LayerStudioPage() {
             <Button className="w-full" onClick={() => fileInputRef.current?.click()}>
               Import image(s)
             </Button>
+          </div>
+
+          <div className="space-y-2">
+            <h2 className="text-xs uppercase tracking-[0.15em] text-muted-foreground">
+              Starter pieces
+            </h2>
+            <div className="flex flex-wrap gap-2">
+              {STARTER_PIECES.map((piece) => (
+                <button
+                  key={piece.id}
+                  onClick={() => addStarterPiece(piece)}
+                  title={piece.name}
+                  className="h-14 w-14 rounded-lg border border-input overflow-hidden bg-input-background"
+                >
+                  <img src={piece.src} alt={piece.name} className="w-full h-full object-cover" />
+                </button>
+              ))}
+            </div>
           </div>
 
           {selectedLayer && (
