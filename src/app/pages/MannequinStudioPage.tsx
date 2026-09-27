@@ -34,11 +34,18 @@ function resolveRaw(map: Record<string, string>, filename: string): string {
 
 type GarmentSlot = string;
 
+const BACKGROUNDS = [
+  { id: "none", label: "None", src: null },
+  { id: "studio-1", label: "Studio 1", src: "/mannequin-backgrounds/studio-bg-1.webp" },
+  { id: "studio-2", label: "Studio 2", src: "/mannequin-backgrounds/studio-bg-2.webp" },
+];
+
 export default function MannequinStudioPage() {
   const { unlocked, checking, error, checkSecret } = useAdminAuth();
   const [secretInput, setSecretInput] = useState("");
   const [selected, setSelected] = useState<Record<GarmentSlot, string | null>>({});
   const [colors, setColors] = useState<Record<string, string>>({});
+  const [background, setBackground] = useState(BACKGROUNDS[1].id);
 
   const bodyInner = useMemo(() => innerPaths(resolveRaw(bodySvg, manifest.body.file.replace("../", ""))), []);
 
@@ -127,9 +134,39 @@ export default function MannequinStudioPage() {
               </div>
             );
           })}
+
+          <div className="space-y-2">
+            <h2 className="text-xs uppercase tracking-[0.15em] text-muted-foreground">
+              Background
+            </h2>
+            <div className="flex flex-wrap gap-2">
+              {BACKGROUNDS.map((bg) => (
+                <button
+                  key={bg.id}
+                  onClick={() => setBackground(bg.id)}
+                  className={`rounded-full px-3 py-1.5 text-xs border ${
+                    background === bg.id
+                      ? "bg-foreground text-background"
+                      : "border-input"
+                  }`}
+                >
+                  {bg.label}
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
 
-        <div className="flex justify-center bg-input-background rounded-2xl p-6">
+        <div
+          className="flex justify-center rounded-2xl p-6 bg-cover bg-center"
+          style={{
+            backgroundColor: "var(--input-background)",
+            backgroundImage: (() => {
+              const bg = BACKGROUNDS.find((b) => b.id === background);
+              return bg?.src ? `url(${bg.src})` : undefined;
+            })(),
+          }}
+        >
           <svg
             viewBox={`0 0 ${manifest.body.canvasWidth} ${manifest.body.canvasHeight}`}
             className="w-full max-w-sm"
