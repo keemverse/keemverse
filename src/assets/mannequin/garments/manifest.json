@@ -1,5 +1,5 @@
 {
-  "_comment": "Each garment SVG is generated independently, so it never shares the body's exact framing/scale. transform (scale, tx, ty) is calibrated once per asset by matching the garment's own figure bounding box (full height, horizontal center) against the base body's bounding box in body-solo-front.svg (canvas 1333x2000). Apply as: transform=\"translate(tx,ty) scale(scale)\" on a <g> wrapping the garment's inner paths, layered on top of the body.",
+  "_comment": "Each garment SVG is generated independently, so it never shares the body's exact framing/scale. transform (scale, tx, ty) is calibrated once per asset by matching the garment's own figure bounding box (full height, horizontal center) against the base body's bounding box in body-solo-front.svg (canvas 1333x2000). Apply as: transform=\"translate(tx,ty) scale(scale)\" on a <g> wrapping the garment's inner paths, layered on top of the body. IMPORTANT: the raw vectorization of a garment reference image contains the WHOLE figure (skin, head, everything from that source image), not just the garment shape — stacking it raw repaints the body underneath with that image's own skin tone. Every garment file here has already been stripped down to only its garment-colored paths (skin-tone and background paths removed by color-distance matching against body-solo-front.svg's palette) so it layers transparently everywhere except the actual garment.",
   "body": {
     "file": "../body-solo-front.svg",
     "canvasWidth": 1333,
@@ -15,6 +15,17 @@
         "scale": 1.9687,
         "tx": -4.72,
         "ty": -12.22
+      }
+    },
+    "bottom-pants-grey": {
+      "file": "bottom-pants-grey.svg",
+      "slot": "bottom",
+      "sourceCanvasWidth": 682,
+      "sourceCanvasHeight": 1024,
+      "transform": {
+        "scale": 1.9599,
+        "tx": -1.42,
+        "ty": -3.19
       }
     }
   }
