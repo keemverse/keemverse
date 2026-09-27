@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { useAdminAuth } from "../lib/useAdminAuth";
@@ -73,6 +73,44 @@ const BACKGROUNDS = [
   { id: "studio-2", label: "Studio 2", src: "/mannequin-backgrounds/studio-bg-2.webp" },
 ];
 
+const PRESETS_STORAGE_KEY = "keemverse-mannequin-presets";
+
+type OutfitPreset = {
+  name: string;
+  selected: Record<string, string | null>;
+  colors: Record<string, string>;
+  rasterColors: Record<string, string>;
+  background: string;
+};
+
+function loadPresets(): OutfitPreset[] {
+  try {
+    const raw = localStorage.getItem(PRESETS_STORAGE_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch {
+    return [];
+  }
+}
+
+function savePresetsToStorage(presets: OutfitPreset[]) {
+  try {
+    localStorage.setItem(PRESETS_STORAGE_KEY, JSON.stringify(presets));
+  } catch {
+    // localStorage unavailable (private window, quota, etc.) — saving silently no-ops
+  }
+}
+
+// Loads an <img> from a URL and resolves once it's ready to draw to canvas.
+function loadImage(src: string): Promise<HTMLImageElement> {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.onload = () => resolve(img);
+    img.onerror = reject;
+    img.src = src;
+  });
+}
+
 export default function MannequinStudioPage() {
   const { unlocked, checking, error, checkSecret } = useAdminAuth();
   const [secretInput, setSecretInput] = useState("");
@@ -83,6 +121,87 @@ export default function MannequinStudioPage() {
   const [colors, setColors] = useState<Record<string, string>>({});
   const [rasterColors, setRasterColors] = useState<Record<string, string>>({});
   const [background, setBackground] = useState(BACKGROUNDS[1].id);
+  const [presets, setPresets] = useState<OutfitPreset[]>([]);
+  const [presetName, setPresetName] = useState("");
+  const [exporting, setExporting] = useState(false);
+  const svgRef = useRef<SVGSVGElement>(null);
+
+  useEffect(() => {
+    setPresets(loadPresets());
+  }, []);
+
+  const saveCurrentAsPreset = () => {
+    const name = presetName.trim();
+    if (!name) return;
+    const next = [
+      ...presets.filter((p) => p.name !== name),
+      { name, selected, colors, rasterColors, background },
+    ];
+    setPresets(next);
+    savePresetsToStorage(next);
+    setPresetName("");
+  };
+
+  const loadPreset = (preset: OutfitPreset) => {
+    setSelected(preset.selected);
+    setColors(preset.colors);
+    setRasterColors(preset.rasterColors);
+    setBackground(preset.background);
+  };
+
+  const deletePreset = (name: string) => {
+    const next = presets.filter((p) => p.name !== name);
+    setPresets(next);
+    savePresetsToStorage(next);
+  };
+
+  const downloadPng = async () => {
+    const svgEl = svgRef.current;
+    if (!svgEl) return;
+    setExporting(true);
+    try {
+      const EXPORT_W = manifest.body.canvasWidth * 2;
+      const EXPORT_H = manifest.body.canvasHeight * 2;
+
+      const clone = svgEl.cloneNode(true) as SVGSVGElement;
+      clone.setAttribute("width", String(EXPORT_W));
+      clone.setAttribute("height", String(EXPORT_H));
+      clone.removeAttribute("style"); // drop the on-screen drop-shadow filter for the export
+      const svgString = new XMLSerializer().serializeToString(clone);
+      const svgBlob = new Blob([svgString], { type: "image/svg+xml;charset=utf-8" });
+      const svgUrl = URL.createObjectURL(svgBlob);
+
+      const canvas = document.createElement("canvas");
+      canvas.width = EXPORT_W;
+      canvas.height = EXPORT_H;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return;
+
+      const bg = BACKGROUNDS.find((b) => b.id === background);
+      if (bg?.src) {
+        const bgImg = await loadImage(bg.src);
+        const scale = Math.max(EXPORT_W / bgImg.width, EXPORT_H / bgImg.height);
+        const drawW = bgImg.width * scale;
+        const drawH = bgImg.height * scale;
+        ctx.drawImage(bgImg, (EXPORT_W - drawW) / 2, (EXPORT_H - drawH) / 2, drawW, drawH);
+      } else {
+        ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue("--input-background") || "#e9e5dd";
+        ctx.fillRect(0, 0, EXPORT_W, EXPORT_H);
+      }
+
+      const svgImg = await loadImage(svgUrl);
+      ctx.drawImage(svgImg, 0, 0, EXPORT_W, EXPORT_H);
+      URL.revokeObjectURL(svgUrl);
+
+      const pngUrl = canvas.toDataURL("image/png");
+      const a = document.createElement("a");
+      a.href = pngUrl;
+      a.download = `mannequin-${Date.now()}.png`;
+      a.click();
+    } finally {
+      setExporting(false);
+    }
+  };
 
   const bodyInner = useMemo(
     () => stripBackgroundPath(innerPaths(resolveRaw(bodySvg, manifest.body.file.replace("../", "")))),
@@ -231,6 +350,49 @@ export default function MannequinStudioPage() {
               ))}
             </div>
           </div>
+
+          <div className="space-y-2">
+            <h2 className="text-xs uppercase tracking-[0.15em] text-muted-foreground">
+              Save look
+            </h2>
+            <div className="flex gap-2">
+              <Input
+                placeholder="Name this look"
+                value={presetName}
+                onChange={(e) => setPresetName(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && saveCurrentAsPreset()}
+                className="h-9 text-sm"
+              />
+              <Button className="shrink-0" onClick={saveCurrentAsPreset} disabled={!presetName.trim()}>
+                Save
+              </Button>
+            </div>
+            {presets.length > 0 && (
+              <div className="space-y-1.5 pt-1">
+                {presets.map((p) => (
+                  <div key={p.name} className="flex items-center gap-2">
+                    <button
+                      onClick={() => loadPreset(p)}
+                      className="flex-1 text-left rounded-lg border border-input px-3 py-1.5 text-xs hover:bg-input-background transition-colors"
+                    >
+                      {p.name}
+                    </button>
+                    <button
+                      onClick={() => deletePreset(p.name)}
+                      title="Delete"
+                      className="text-xs text-muted-foreground hover:text-destructive px-1"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <Button className="w-full" onClick={downloadPng} disabled={exporting}>
+            {exporting ? "Preparing…" : "Download PNG"}
+          </Button>
         </div>
 
         <div
@@ -244,6 +406,7 @@ export default function MannequinStudioPage() {
           }}
         >
           <svg
+            ref={svgRef}
             viewBox={`0 0 ${manifest.body.canvasWidth} ${manifest.body.canvasHeight}`}
             className="w-full max-w-sm"
             style={{ filter: "drop-shadow(0 18px 14px rgba(0,0,0,0.35))" }}
