@@ -11,6 +11,7 @@
       "slot": "top",
       "sourceCanvasWidth": 682,
       "sourceCanvasHeight": 1024,
+      "baseColor": "#326692",
       "transform": {
         "scale": 1.9687,
         "tx": -4.72,
@@ -22,6 +23,7 @@
       "slot": "bottom",
       "sourceCanvasWidth": 682,
       "sourceCanvasHeight": 1024,
+      "baseColor": "#5b5b5b",
       "transform": {
         "scale": 1.9599,
         "tx": -1.42,

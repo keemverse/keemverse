@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { useAdminAuth } from "../lib/useAdminAuth";
+import { recolorSvg } from "../lib/recolorSvg";
 import manifest from "../../assets/mannequin/garments/manifest.json";
 
 // Raw SVG source for the body + every garment, keyed by their path relative
@@ -37,12 +38,13 @@ export default function MannequinStudioPage() {
   const { unlocked, checking, error, checkSecret } = useAdminAuth();
   const [secretInput, setSecretInput] = useState("");
   const [selected, setSelected] = useState<Record<GarmentSlot, string | null>>({});
+  const [colors, setColors] = useState<Record<string, string>>({});
 
   const bodyInner = useMemo(() => innerPaths(resolveRaw(bodySvg, manifest.body.file.replace("../", ""))), []);
 
   const garmentEntries = Object.entries(manifest.garments as Record<
     string,
-    { file: string; slot: string; transform: { scale: number; tx: number; ty: number } }
+    { file: string; slot: string; baseColor: string; transform: { scale: number; tx: number; ty: number } }
   >);
 
   const slots = useMemo(() => {
@@ -84,30 +86,47 @@ export default function MannequinStudioPage() {
       <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-[280px_1fr] gap-8">
         <div className="space-y-6">
           <h1 className="font-serif text-2xl">Mannequin Studio</h1>
-          {slots.map((slot) => (
-            <div key={slot} className="space-y-2">
-              <h2 className="text-xs uppercase tracking-[0.15em] text-muted-foreground">
-                {slot}
-              </h2>
-              <div className="flex flex-wrap gap-2">
-                {garmentEntries
-                  .filter(([, g]) => g.slot === slot)
-                  .map(([id]) => (
-                    <button
-                      key={id}
-                      onClick={() => toggleGarment(slot, id)}
-                      className={`rounded-full px-3 py-1.5 text-xs border ${
-                        selected[slot] === id
-                          ? "bg-foreground text-background"
-                          : "border-input"
-                      }`}
-                    >
-                      {id.replace(/^(top|bottom|footwear|headwear)-/, "").replace(/-/g, " ")}
-                    </button>
-                  ))}
+          {slots.map((slot) => {
+            const activeId = selected[slot];
+            const activeGarment = activeId
+              ? (manifest.garments as Record<string, { baseColor: string }>)[activeId]
+              : null;
+            return (
+              <div key={slot} className="space-y-2">
+                <h2 className="text-xs uppercase tracking-[0.15em] text-muted-foreground">
+                  {slot}
+                </h2>
+                <div className="flex flex-wrap items-center gap-2">
+                  {garmentEntries
+                    .filter(([, g]) => g.slot === slot)
+                    .map(([id]) => (
+                      <button
+                        key={id}
+                        onClick={() => toggleGarment(slot, id)}
+                        className={`rounded-full px-3 py-1.5 text-xs border ${
+                          selected[slot] === id
+                            ? "bg-foreground text-background"
+                            : "border-input"
+                        }`}
+                      >
+                        {id.replace(/^(top|bottom|footwear|headwear)-/, "").replace(/-/g, " ")}
+                      </button>
+                    ))}
+                  {activeGarment && (
+                    <input
+                      type="color"
+                      title="Recolor"
+                      value={colors[slot] || activeGarment.baseColor}
+                      onChange={(e) =>
+                        setColors((prev) => ({ ...prev, [slot]: e.target.value }))
+                      }
+                      className="h-8 w-8 rounded-full border border-input p-0 cursor-pointer bg-transparent"
+                    />
+                  )}
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
         <div className="flex justify-center bg-input-background rounded-2xl p-6">
@@ -119,11 +138,17 @@ export default function MannequinStudioPage() {
             {garmentEntries.map(([id, g]) => {
               if (selected[g.slot] !== id) return null;
               const raw = resolveRaw(garmentSvgs, g.file);
+              const paths = innerPaths(raw);
+              const chosenColor = colors[g.slot];
+              const recolored =
+                chosenColor && chosenColor.toLowerCase() !== g.baseColor.toLowerCase()
+                  ? recolorSvg(paths, chosenColor)
+                  : paths;
               return (
                 <g
                   key={id}
                   transform={`translate(${g.transform.tx},${g.transform.ty}) scale(${g.transform.scale})`}
-                  dangerouslySetInnerHTML={{ __html: innerPaths(raw) }}
+                  dangerouslySetInnerHTML={{ __html: recolored }}
                 />
               );
             })}
