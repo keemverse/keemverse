@@ -56,6 +56,40 @@ const STARTER_PIECES = [
   { id: "body", name: "Body model", src: "/mannequin-library/body.webp" },
 ];
 
+// Ghost-mannequin garments shipped with the site itself (bundled assets, not
+// per-browser IndexedDB) — always available on every device without needing
+// to be manually imported and saved first. Shown alongside the user's own
+// saved pieces in the same category sections.
+const wardrobeImages = import.meta.glob("../../assets/wardrobe/*.webp", {
+  as: "url",
+  eager: true,
+}) as Record<string, string>;
+
+function wardrobeSrc(filename: string): string {
+  const key = Object.keys(wardrobeImages).find((k) => k.endsWith("/" + filename));
+  return key ? wardrobeImages[key] : "";
+}
+
+type WardrobeVariant = { label: string; file: string };
+type WardrobeGroup = { category: PieceCategory; groupName: string; variants: WardrobeVariant[] };
+
+const WARDROBE: WardrobeGroup[] = [
+  {
+    category: "top",
+    groupName: "T-shirt",
+    variants: [
+      { label: "White", file: "top-tshirt-white.webp" },
+      { label: "Black", file: "top-tshirt-black.webp" },
+      { label: "Grey", file: "top-tshirt-grey.webp" },
+      { label: "Blue", file: "top-tshirt-navy.webp" },
+      { label: "Red", file: "top-tshirt-red.webp" },
+      { label: "Light Blue", file: "top-tshirt-lightblue.webp" },
+      { label: "Beige", file: "top-tshirt-beige.webp" },
+      { label: "Green", file: "top-tshirt-green.webp" },
+    ],
+  },
+];
+
 type ResizeAxis = "both" | "x" | "y";
 
 type DragState =
@@ -125,6 +159,14 @@ export default function LayerStudioPage() {
     const targetHeight = STAGE_HEIGHT * 0.9;
     const scale = targetHeight / img.naturalHeight;
     addLayer(piece.src, piece.name, img.naturalWidth * scale, img.naturalHeight * scale);
+  };
+
+  const addWardrobeVariant = async (groupName: string, variant: WardrobeVariant) => {
+    const src = wardrobeSrc(variant.file);
+    const img = await loadImage(src);
+    const targetHeight = STAGE_HEIGHT * 0.55;
+    const scale = targetHeight / img.naturalHeight;
+    addLayer(src, `${groupName} (${variant.label})`, img.naturalWidth * scale, img.naturalHeight * scale);
   };
 
   const saveSelectedToLibrary = async () => {
@@ -400,40 +442,66 @@ export default function LayerStudioPage() {
             </div>
           </div>
 
-          {groupedLibrary.map((cat) => (
-            <div key={cat.id} className="space-y-2">
-              <h2 className="text-xs uppercase tracking-[0.15em] text-muted-foreground">
-                {cat.label}
-              </h2>
-              <div className="space-y-2">
-                {cat.groups.map(([groupName, variants]) => (
-                  <div key={groupName}>
-                    <p className="text-[11px] text-muted-foreground mb-1">{groupName}</p>
-                    <div className="flex flex-wrap gap-2">
-                      {variants.map((piece) => (
-                        <div key={piece.id} className="relative group">
+          {PIECE_CATEGORIES.map((cat) => {
+            const wardrobeGroups = WARDROBE.filter((g) => g.category === cat.id);
+            const savedCat = groupedLibrary.find((c) => c.id === cat.id);
+            if (wardrobeGroups.length === 0 && !savedCat) return null;
+            return (
+              <div key={cat.id} className="space-y-2">
+                <h2 className="text-xs uppercase tracking-[0.15em] text-muted-foreground">
+                  {cat.label}
+                </h2>
+                <div className="space-y-2">
+                  {wardrobeGroups.map((group) => (
+                    <div key={group.groupName}>
+                      <p className="text-[11px] text-muted-foreground mb-1">{group.groupName}</p>
+                      <div className="flex flex-wrap gap-2">
+                        {group.variants.map((variant) => (
                           <button
-                            onClick={() => addLibraryPiece(piece)}
-                            title={`${piece.groupName} — ${piece.variantName}`}
+                            key={variant.label}
+                            onClick={() => addWardrobeVariant(group.groupName, variant)}
+                            title={`${group.groupName} — ${variant.label}`}
                             className="h-12 w-12 rounded-lg border border-input overflow-hidden bg-input-background"
                           >
-                            <img src={piece.src} alt={piece.variantName} className="w-full h-full object-cover" />
+                            <img src={wardrobeSrc(variant.file)} alt={variant.label} className="w-full h-full object-cover" />
                           </button>
-                          <button
-                            onClick={() => removeLibraryPiece(piece.id)}
-                            title="Remove from library"
-                            className="absolute -top-1.5 -right-1.5 h-4 w-4 rounded-full bg-background border border-input text-[10px] leading-none flex items-center justify-center text-muted-foreground hover:text-destructive"
-                          >
-                            ✕
-                          </button>
-                        </div>
-                      ))}
+                        ))}
+                      </div>
                     </div>
+                  ))}
+                </div>
+                {savedCat && (
+                  <div className="space-y-2">
+                    {savedCat.groups.map(([groupName, variants]) => (
+                      <div key={groupName}>
+                        <p className="text-[11px] text-muted-foreground mb-1">{groupName}</p>
+                        <div className="flex flex-wrap gap-2">
+                          {variants.map((piece) => (
+                            <div key={piece.id} className="relative group">
+                              <button
+                                onClick={() => addLibraryPiece(piece)}
+                                title={`${piece.groupName} — ${piece.variantName}`}
+                                className="h-12 w-12 rounded-lg border border-input overflow-hidden bg-input-background"
+                              >
+                                <img src={piece.src} alt={piece.variantName} className="w-full h-full object-cover" />
+                              </button>
+                              <button
+                                onClick={() => removeLibraryPiece(piece.id)}
+                                title="Remove from library"
+                                className="absolute -top-1.5 -right-1.5 h-4 w-4 rounded-full bg-background border border-input text-[10px] leading-none flex items-center justify-center text-muted-foreground hover:text-destructive"
+                              >
+                                ✕
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
                   </div>
-                ))}
+                )}
               </div>
-            </div>
-          ))}
+            );
+          })}
 
           {selectedLayer && (
             <div className="space-y-2 rounded-lg border border-input p-3">
