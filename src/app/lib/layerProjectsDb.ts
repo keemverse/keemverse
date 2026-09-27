@@ -19,11 +19,28 @@ export type LayerProject = {
   updatedAt: number;
 };
 
+export type PieceCategory = "top" | "bottom" | "headwear" | "footwear" | "other";
+
+export const PIECE_CATEGORIES: { id: PieceCategory; label: string }[] = [
+  { id: "top", label: "Tops" },
+  { id: "bottom", label: "Bottoms" },
+  { id: "headwear", label: "Headwear" },
+  { id: "footwear", label: "Footwear" },
+  { id: "other", label: "Other" },
+];
+
 // A single reusable imported image (a garment, a prop, anything) saved once
 // and available as a one-click add across every future project — distinct
-// from a project, which is a whole saved canvas arrangement.
+// from a project, which is a whole saved canvas arrangement. Pieces are
+// organized by category (top/bottom/headwear/footwear/other) and grouped by
+// groupName, so several color/style variants of the same item (e.g. a
+// "Hoodie" in Grey and Navy) can be saved under one group and swapped
+// between, rather than each variant being its own unrelated entry.
 export type LibraryPiece = {
-  id: string; // piece name, used as the key
+  id: string; // `${category}:${groupName}:${variantName}`, used as the key
+  category: PieceCategory;
+  groupName: string;
+  variantName: string;
   src: string; // data URL
   width: number;
   height: number;

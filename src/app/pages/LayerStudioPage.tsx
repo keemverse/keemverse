@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { useAdminAuth } from "../lib/useAdminAuth";
@@ -9,9 +9,11 @@ import {
   listProjects,
   saveLibraryPiece,
   saveProject,
+  PIECE_CATEGORIES,
   type Layer,
   type LayerProject,
   type LibraryPiece,
+  type PieceCategory,
 } from "../lib/layerProjectsDb";
 
 // The editing stage is drawn at half the final export resolution so drag/
@@ -75,6 +77,9 @@ export default function LayerStudioPage() {
   const [projects, setProjects] = useState<LayerProject[]>([]);
   const [projectName, setProjectName] = useState("");
   const [libraryPieces, setLibraryPieces] = useState<LibraryPiece[]>([]);
+  const [saveCategory, setSaveCategory] = useState<PieceCategory>("other");
+  const [saveGroupName, setSaveGroupName] = useState("");
+  const [saveVariantName, setSaveVariantName] = useState("");
   const [exporting, setExporting] = useState(false);
   const dragState = useRef<DragState | null>(null);
   const stageRef = useRef<HTMLDivElement>(null);
@@ -119,11 +124,16 @@ export default function LayerStudioPage() {
     addLayer(piece.src, piece.name, img.naturalWidth * scale, img.naturalHeight * scale);
   };
 
-  const saveLayerToLibrary = async (layer: Layer) => {
-    const name = window.prompt("Save this piece as…", layer.name);
-    if (!name) return;
+  const saveSelectedToLibrary = async () => {
+    const layer = layers.find((l) => l.id === selectedId);
+    const groupName = saveGroupName.trim();
+    const variantName = saveVariantName.trim() || "Default";
+    if (!layer || !groupName) return;
     const piece: LibraryPiece = {
-      id: name,
+      id: `${saveCategory}:${groupName}:${variantName}`,
+      category: saveCategory,
+      groupName,
+      variantName,
       src: layer.src,
       width: layer.width,
       height: layer.height,
@@ -131,10 +141,12 @@ export default function LayerStudioPage() {
     };
     await saveLibraryPiece(piece);
     setLibraryPieces(await listLibraryPieces());
+    setSaveGroupName("");
+    setSaveVariantName("");
   };
 
   const addLibraryPiece = (piece: LibraryPiece) => {
-    addLayer(piece.src, piece.id, piece.width, piece.height);
+    addLayer(piece.src, `${piece.groupName} (${piece.variantName})`, piece.width, piece.height);
   };
 
   const removeLibraryPiece = async (id: string) => {
@@ -272,6 +284,21 @@ export default function LayerStudioPage() {
     }
   };
 
+  const groupedLibrary = useMemo(() => {
+    return PIECE_CATEGORIES.map((cat) => {
+      const inCategory = libraryPieces.filter(
+        (p) => (p.category || "other") === cat.id
+      );
+      const groups = new Map<string, LibraryPiece[]>();
+      for (const piece of inCategory) {
+        const key = piece.groupName || piece.id;
+        if (!groups.has(key)) groups.set(key, []);
+        groups.get(key)!.push(piece);
+      }
+      return { ...cat, groups: Array.from(groups.entries()) };
+    }).filter((cat) => cat.groups.length > 0);
+  }, [libraryPieces]);
+
   if (!unlocked) {
     return (
       <div className="min-h-screen bg-background text-foreground flex items-center justify-center px-5">
@@ -294,6 +321,7 @@ export default function LayerStudioPage() {
   }
 
   const activeBackground = BACKGROUNDS.find((b) => b.id === background);
+  const selectedLayer = layers.find((l) => l.id === selectedId) || null;
   // Reverse for display so the topmost layer (end of the array) is listed first.
   const layersTopFirst = [...layers].map((l, i) => ({ layer: l, index: i })).reverse();
 
@@ -359,31 +387,71 @@ export default function LayerStudioPage() {
             </div>
           </div>
 
-          {libraryPieces.length > 0 && (
-            <div className="space-y-2">
+          {groupedLibrary.map((cat) => (
+            <div key={cat.id} className="space-y-2">
               <h2 className="text-xs uppercase tracking-[0.15em] text-muted-foreground">
-                Your pieces
+                {cat.label}
               </h2>
-              <div className="flex flex-wrap gap-2">
-                {libraryPieces.map((piece) => (
-                  <div key={piece.id} className="relative group">
-                    <button
-                      onClick={() => addLibraryPiece(piece)}
-                      title={piece.id}
-                      className="h-14 w-14 rounded-lg border border-input overflow-hidden bg-input-background"
-                    >
-                      <img src={piece.src} alt={piece.id} className="w-full h-full object-cover" />
-                    </button>
-                    <button
-                      onClick={() => removeLibraryPiece(piece.id)}
-                      title="Remove from library"
-                      className="absolute -top-1.5 -right-1.5 h-4 w-4 rounded-full bg-background border border-input text-[10px] leading-none flex items-center justify-center text-muted-foreground hover:text-destructive"
-                    >
-                      ✕
-                    </button>
+              <div className="space-y-2">
+                {cat.groups.map(([groupName, variants]) => (
+                  <div key={groupName}>
+                    <p className="text-[11px] text-muted-foreground mb-1">{groupName}</p>
+                    <div className="flex flex-wrap gap-2">
+                      {variants.map((piece) => (
+                        <div key={piece.id} className="relative group">
+                          <button
+                            onClick={() => addLibraryPiece(piece)}
+                            title={`${piece.groupName} — ${piece.variantName}`}
+                            className="h-12 w-12 rounded-lg border border-input overflow-hidden bg-input-background"
+                          >
+                            <img src={piece.src} alt={piece.variantName} className="w-full h-full object-cover" />
+                          </button>
+                          <button
+                            onClick={() => removeLibraryPiece(piece.id)}
+                            title="Remove from library"
+                            className="absolute -top-1.5 -right-1.5 h-4 w-4 rounded-full bg-background border border-input text-[10px] leading-none flex items-center justify-center text-muted-foreground hover:text-destructive"
+                          >
+                            ✕
+                          </button>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 ))}
               </div>
+            </div>
+          ))}
+
+          {selectedLayer && (
+            <div className="space-y-2 rounded-lg border border-input p-3">
+              <h2 className="text-xs uppercase tracking-[0.15em] text-muted-foreground">
+                Save "{selectedLayer.name}" to library
+              </h2>
+              <select
+                value={saveCategory}
+                onChange={(e) => setSaveCategory(e.target.value as PieceCategory)}
+                className="w-full h-9 text-sm rounded-md border border-input bg-background px-2"
+              >
+                {PIECE_CATEGORIES.map((c) => (
+                  <option key={c.id} value={c.id}>{c.label}</option>
+                ))}
+              </select>
+              <Input
+                placeholder="Piece name (e.g. Hoodie)"
+                value={saveGroupName}
+                onChange={(e) => setSaveGroupName(e.target.value)}
+                className="h-9 text-sm"
+              />
+              <Input
+                placeholder="Variant (e.g. Grey) — optional"
+                value={saveVariantName}
+                onChange={(e) => setSaveVariantName(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && saveSelectedToLibrary()}
+                className="h-9 text-sm"
+              />
+              <Button className="w-full" onClick={saveSelectedToLibrary} disabled={!saveGroupName.trim()}>
+                Save piece
+              </Button>
             </div>
           )}
 
@@ -500,13 +568,6 @@ export default function LayerStudioPage() {
                     className="text-xs px-1.5 py-0.5 rounded border border-input disabled:opacity-30"
                   >
                     ▼
-                  </button>
-                  <button
-                    onClick={(e) => { e.stopPropagation(); saveLayerToLibrary(layer); }}
-                    title="Save to your pieces"
-                    className="text-xs px-1.5 py-0.5 rounded border border-input"
-                  >
-                    Save
                   </button>
                   <button
                     onClick={(e) => { e.stopPropagation(); deleteLayer(layer.id); }}
