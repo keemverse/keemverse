@@ -30,15 +30,6 @@ function readFileAsDataUrl(file: File): Promise<string> {
   });
 }
 
-// Starter pieces from the earlier mannequin build — still on disk, just not
-// auto-loaded into every project. One click adds them as an ordinary layer
-// that can be dragged/resized/deleted like anything else.
-const STARTER_PIECES = [
-  { id: "body", name: "Body model", src: "/mannequin-library/body.webp", kind: "figure" as const },
-  { id: "studio-1", name: "Studio background 1", src: "/mannequin-backgrounds/studio-bg-1.webp", kind: "background" as const },
-  { id: "studio-2", name: "Studio background 2", src: "/mannequin-backgrounds/studio-bg-2.webp", kind: "background" as const },
-];
-
 function loadImage(src: string): Promise<HTMLImageElement> {
   return new Promise((resolve, reject) => {
     const img = new Image();
@@ -47,6 +38,21 @@ function loadImage(src: string): Promise<HTMLImageElement> {
     img.src = src;
   });
 }
+
+// Backgrounds are a single fixed picker, not draggable layers — pick one
+// and it always sits behind everything on the canvas.
+const BACKGROUNDS = [
+  { id: "none", label: "None", src: null as string | null },
+  { id: "studio-1", label: "Studio 1", src: "/mannequin-backgrounds/studio-bg-1.webp" },
+  { id: "studio-2", label: "Studio 2", src: "/mannequin-backgrounds/studio-bg-2.webp" },
+];
+
+// Starter pieces from the earlier mannequin build — still on disk, just not
+// auto-loaded into every project. One click adds them as an ordinary layer
+// that can be dragged/resized/deleted like anything else.
+const STARTER_PIECES = [
+  { id: "body", name: "Body model", src: "/mannequin-library/body.webp" },
+];
 
 type DragState =
   | { kind: "move"; id: string; startPointerX: number; startPointerY: number; startX: number; startY: number }
@@ -65,10 +71,10 @@ export default function LayerStudioPage() {
   const [secretInput, setSecretInput] = useState("");
   const [layers, setLayers] = useState<Layer[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [background, setBackground] = useState(BACKGROUNDS[0].id);
   const [projects, setProjects] = useState<LayerProject[]>([]);
   const [projectName, setProjectName] = useState("");
   const [libraryPieces, setLibraryPieces] = useState<LibraryPiece[]>([]);
-  const [pieceName, setPieceName] = useState("");
   const [exporting, setExporting] = useState(false);
   const dragState = useRef<DragState | null>(null);
   const stageRef = useRef<HTMLDivElement>(null);
@@ -81,54 +87,11 @@ export default function LayerStudioPage() {
     }
   }, [unlocked]);
 
-  const handleImport = async (files: FileList | null) => {
-    if (!files) return;
-    for (const file of Array.from(files)) {
-      const src = await readFileAsDataUrl(file);
-      const img = await loadImage(src);
-      const maxDim = 260;
-      const scale = Math.min(1, maxDim / Math.max(img.naturalWidth, img.naturalHeight));
-      const width = img.naturalWidth * scale;
-      const height = img.naturalHeight * scale;
-      const layer: Layer = {
-        id: crypto.randomUUID(),
-        name: file.name,
-        src,
-        x: (STAGE_WIDTH - width) / 2,
-        y: (STAGE_HEIGHT - height) / 2,
-        width,
-        height,
-      };
-      setLayers((prev) => [...prev, layer]);
-      setSelectedId(layer.id);
-    }
-  };
-
-  const addStarterPiece = async (piece: (typeof STARTER_PIECES)[number]) => {
-    const img = await loadImage(piece.src);
-    if (piece.kind === "background") {
-      const layer: Layer = {
-        id: crypto.randomUUID(),
-        name: piece.name,
-        src: piece.src,
-        x: 0,
-        y: 0,
-        width: STAGE_WIDTH,
-        height: STAGE_HEIGHT,
-      };
-      // Backgrounds go behind everything already on the canvas.
-      setLayers((prev) => [layer, ...prev]);
-      setSelectedId(layer.id);
-      return;
-    }
-    const targetHeight = STAGE_HEIGHT * 0.9;
-    const scale = targetHeight / img.naturalHeight;
-    const width = img.naturalWidth * scale;
-    const height = img.naturalHeight * scale;
+  const addLayer = (src: string, name: string, width: number, height: number) => {
     const layer: Layer = {
       id: crypto.randomUUID(),
-      name: piece.name,
-      src: piece.src,
+      name,
+      src,
       x: (STAGE_WIDTH - width) / 2,
       y: (STAGE_HEIGHT - height) / 2,
       width,
@@ -138,11 +101,27 @@ export default function LayerStudioPage() {
     setSelectedId(layer.id);
   };
 
-  const saveSelectedToLibrary = async () => {
-    const name = pieceName.trim();
-    if (!name || !selectedId) return;
-    const layer = layers.find((l) => l.id === selectedId);
-    if (!layer) return;
+  const handleImport = async (files: FileList | null) => {
+    if (!files) return;
+    for (const file of Array.from(files)) {
+      const src = await readFileAsDataUrl(file);
+      const img = await loadImage(src);
+      const maxDim = 260;
+      const scale = Math.min(1, maxDim / Math.max(img.naturalWidth, img.naturalHeight));
+      addLayer(src, file.name, img.naturalWidth * scale, img.naturalHeight * scale);
+    }
+  };
+
+  const addStarterPiece = async (piece: (typeof STARTER_PIECES)[number]) => {
+    const img = await loadImage(piece.src);
+    const targetHeight = STAGE_HEIGHT * 0.9;
+    const scale = targetHeight / img.naturalHeight;
+    addLayer(piece.src, piece.name, img.naturalWidth * scale, img.naturalHeight * scale);
+  };
+
+  const saveLayerToLibrary = async (layer: Layer) => {
+    const name = window.prompt("Save this piece as…", layer.name);
+    if (!name) return;
     const piece: LibraryPiece = {
       id: name,
       src: layer.src,
@@ -152,21 +131,10 @@ export default function LayerStudioPage() {
     };
     await saveLibraryPiece(piece);
     setLibraryPieces(await listLibraryPieces());
-    setPieceName("");
   };
 
   const addLibraryPiece = (piece: LibraryPiece) => {
-    const layer: Layer = {
-      id: crypto.randomUUID(),
-      name: piece.id,
-      src: piece.src,
-      x: (STAGE_WIDTH - piece.width) / 2,
-      y: (STAGE_HEIGHT - piece.height) / 2,
-      width: piece.width,
-      height: piece.height,
-    };
-    setLayers((prev) => [...prev, layer]);
-    setSelectedId(layer.id);
+    addLayer(piece.src, piece.id, piece.width, piece.height);
   };
 
   const removeLibraryPiece = async (id: string) => {
@@ -229,27 +197,21 @@ export default function LayerStudioPage() {
     window.addEventListener("pointerup", onPointerUp);
   };
 
-  const deleteSelected = () => {
-    if (!selectedId) return;
-    setLayers((prev) => prev.filter((l) => l.id !== selectedId));
-    setSelectedId(null);
+  const deleteLayer = (id: string) => {
+    setLayers((prev) => prev.filter((l) => l.id !== id));
+    setSelectedId((prev) => (prev === id ? null : prev));
   };
 
-  const bringToFront = () => {
-    if (!selectedId) return;
+  // index is the layer's position in the `layers` array (end of array = top
+  // of the visual stack), so "move up" (toward the viewer) means moving
+  // toward the end of the array.
+  const moveLayer = (index: number, direction: "up" | "down") => {
     setLayers((prev) => {
-      const layer = prev.find((l) => l.id === selectedId);
-      if (!layer) return prev;
-      return [...prev.filter((l) => l.id !== selectedId), layer];
-    });
-  };
-
-  const sendToBack = () => {
-    if (!selectedId) return;
-    setLayers((prev) => {
-      const layer = prev.find((l) => l.id === selectedId);
-      if (!layer) return prev;
-      return [layer, ...prev.filter((l) => l.id !== selectedId)];
+      const next = [...prev];
+      const targetIndex = direction === "up" ? index + 1 : index - 1;
+      if (targetIndex < 0 || targetIndex >= next.length) return prev;
+      [next[index], next[targetIndex]] = [next[targetIndex], next[index]];
+      return next;
     });
   };
 
@@ -280,6 +242,16 @@ export default function LayerStudioPage() {
       canvas.height = STAGE_HEIGHT * EXPORT_SCALE;
       const ctx = canvas.getContext("2d");
       if (!ctx) return;
+
+      const bg = BACKGROUNDS.find((b) => b.id === background);
+      if (bg?.src) {
+        const bgImg = await loadImage(bg.src);
+        const scale = Math.max(canvas.width / bgImg.width, canvas.height / bgImg.height);
+        const drawW = bgImg.width * scale;
+        const drawH = bgImg.height * scale;
+        ctx.drawImage(bgImg, (canvas.width - drawW) / 2, (canvas.height - drawH) / 2, drawW, drawH);
+      }
+
       for (const layer of layers) {
         const img = await loadImage(layer.src);
         ctx.drawImage(
@@ -321,11 +293,13 @@ export default function LayerStudioPage() {
     );
   }
 
-  const selectedLayer = layers.find((l) => l.id === selectedId) || null;
+  const activeBackground = BACKGROUNDS.find((b) => b.id === background);
+  // Reverse for display so the topmost layer (end of the array) is listed first.
+  const layersTopFirst = [...layers].map((l, i) => ({ layer: l, index: i })).reverse();
 
   return (
     <div className="min-h-screen bg-background text-foreground px-5 md:px-8 py-10">
-      <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-[280px_1fr] gap-8">
+      <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-[300px_1fr] gap-8">
         <div className="space-y-6">
           <h1 className="font-serif text-2xl">Layer Studio</h1>
 
@@ -341,6 +315,30 @@ export default function LayerStudioPage() {
             <Button className="w-full" onClick={() => fileInputRef.current?.click()}>
               Import image(s)
             </Button>
+          </div>
+
+          <div className="space-y-2">
+            <h2 className="text-xs uppercase tracking-[0.15em] text-muted-foreground">
+              Background
+            </h2>
+            <div className="flex flex-wrap gap-2">
+              {BACKGROUNDS.map((bg) => (
+                <button
+                  key={bg.id}
+                  onClick={() => setBackground(bg.id)}
+                  title={bg.label}
+                  className={`h-14 w-14 rounded-lg border overflow-hidden bg-input-background flex items-center justify-center text-[10px] text-muted-foreground ${
+                    background === bg.id ? "border-foreground border-2" : "border-input"
+                  }`}
+                >
+                  {bg.src ? (
+                    <img src={bg.src} alt={bg.label} className="w-full h-full object-cover" />
+                  ) : (
+                    "None"
+                  )}
+                </button>
+              ))}
+            </div>
           </div>
 
           <div className="space-y-2">
@@ -389,31 +387,6 @@ export default function LayerStudioPage() {
             </div>
           )}
 
-          {selectedLayer && (
-            <div className="space-y-2">
-              <h2 className="text-xs uppercase tracking-[0.15em] text-muted-foreground">
-                Selected: {selectedLayer.name}
-              </h2>
-              <div className="flex flex-wrap gap-2">
-                <Button variant="outline" onClick={bringToFront}>Bring to front</Button>
-                <Button variant="outline" onClick={sendToBack}>Send to back</Button>
-                <Button variant="outline" onClick={deleteSelected}>Delete</Button>
-              </div>
-              <div className="flex gap-2 pt-1">
-                <Input
-                  placeholder="Save this piece as…"
-                  value={pieceName}
-                  onChange={(e) => setPieceName(e.target.value)}
-                  onKeyDown={(e) => e.key === "Enter" && saveSelectedToLibrary()}
-                  className="h-9 text-sm"
-                />
-                <Button className="shrink-0" variant="outline" onClick={saveSelectedToLibrary} disabled={!pieceName.trim()}>
-                  Save piece
-                </Button>
-              </div>
-            </div>
-          )}
-
           <div className="space-y-2">
             <h2 className="text-xs uppercase tracking-[0.15em] text-muted-foreground">
               Save project
@@ -458,41 +431,94 @@ export default function LayerStudioPage() {
           </Button>
         </div>
 
-        <div className="flex justify-center">
-          <div
-            ref={stageRef}
-            onPointerDown={() => setSelectedId(null)}
-            className="relative overflow-hidden rounded-2xl border border-input bg-[repeating-conic-gradient(#00000010_0_25%,transparent_0_50%)]"
-            style={{
-              width: STAGE_WIDTH,
-              height: STAGE_HEIGHT,
-              backgroundSize: "20px 20px",
-            }}
-          >
-            {layers.map((layer) => (
-              <div
-                key={layer.id}
-                onPointerDown={(e) => startMove(e, layer)}
-                className={`absolute select-none touch-none ${
-                  selectedId === layer.id ? "outline outline-2 outline-foreground" : ""
-                }`}
-                style={{ left: layer.x, top: layer.y, width: layer.width, height: layer.height }}
-              >
-                <img
-                  src={layer.src}
-                  alt={layer.name}
-                  draggable={false}
-                  className="w-full h-full pointer-events-none"
-                />
-                {selectedId === layer.id && (
-                  <div
-                    onPointerDown={(e) => startResize(e, layer)}
-                    className="absolute -right-2 -bottom-2 h-4 w-4 rounded-full bg-foreground cursor-nwse-resize touch-none"
+        <div className="space-y-4">
+          <div className="flex justify-center">
+            <div
+              ref={stageRef}
+              onPointerDown={() => setSelectedId(null)}
+              className="relative overflow-hidden rounded-2xl border border-input bg-[repeating-conic-gradient(#00000010_0_25%,transparent_0_50%)] bg-cover bg-center"
+              style={{
+                width: STAGE_WIDTH,
+                height: STAGE_HEIGHT,
+                backgroundSize: activeBackground?.src ? "cover" : "20px 20px",
+                backgroundImage: activeBackground?.src ? `url(${activeBackground.src})` : undefined,
+              }}
+            >
+              {layers.map((layer) => (
+                <div
+                  key={layer.id}
+                  onPointerDown={(e) => startMove(e, layer)}
+                  className={`absolute select-none touch-none ${
+                    selectedId === layer.id ? "outline outline-2 outline-foreground" : ""
+                  }`}
+                  style={{ left: layer.x, top: layer.y, width: layer.width, height: layer.height }}
+                >
+                  <img
+                    src={layer.src}
+                    alt={layer.name}
+                    draggable={false}
+                    className="w-full h-full pointer-events-none"
                   />
-                )}
-              </div>
-            ))}
+                  {selectedId === layer.id && (
+                    <div
+                      onPointerDown={(e) => startResize(e, layer)}
+                      className="absolute -right-2 -bottom-2 h-4 w-4 rounded-full bg-foreground cursor-nwse-resize touch-none"
+                    />
+                  )}
+                </div>
+              ))}
+            </div>
           </div>
+
+          {layers.length > 0 && (
+            <div className="max-w-[667px] mx-auto space-y-1.5">
+              <h2 className="text-xs uppercase tracking-[0.15em] text-muted-foreground">
+                Layers (top to bottom)
+              </h2>
+              {layersTopFirst.map(({ layer, index }) => (
+                <div
+                  key={layer.id}
+                  onClick={() => setSelectedId(layer.id)}
+                  className={`flex items-center gap-2 rounded-lg border px-2 py-1.5 cursor-pointer ${
+                    selectedId === layer.id ? "border-foreground" : "border-input"
+                  }`}
+                >
+                  <img src={layer.src} alt={layer.name} className="h-8 w-8 rounded object-cover border border-input" />
+                  <span className="flex-1 text-xs truncate">{layer.name}</span>
+                  <button
+                    onClick={(e) => { e.stopPropagation(); moveLayer(index, "up"); }}
+                    disabled={index === layers.length - 1}
+                    title="Move up"
+                    className="text-xs px-1.5 py-0.5 rounded border border-input disabled:opacity-30"
+                  >
+                    ▲
+                  </button>
+                  <button
+                    onClick={(e) => { e.stopPropagation(); moveLayer(index, "down"); }}
+                    disabled={index === 0}
+                    title="Move down"
+                    className="text-xs px-1.5 py-0.5 rounded border border-input disabled:opacity-30"
+                  >
+                    ▼
+                  </button>
+                  <button
+                    onClick={(e) => { e.stopPropagation(); saveLayerToLibrary(layer); }}
+                    title="Save to your pieces"
+                    className="text-xs px-1.5 py-0.5 rounded border border-input"
+                  >
+                    Save
+                  </button>
+                  <button
+                    onClick={(e) => { e.stopPropagation(); deleteLayer(layer.id); }}
+                    title="Delete"
+                    className="text-xs px-1.5 py-0.5 rounded border border-input text-muted-foreground hover:text-destructive"
+                  >
+                    ✕
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </div>
