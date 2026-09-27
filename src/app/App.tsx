@@ -17,7 +17,7 @@ import CheckoutPage from "./pages/CheckoutPage";
 import CheckoutSuccessPage from "./pages/CheckoutSuccessPage";
 import AdminHomePage from "./pages/AdminHomePage";
 import AdminProductsPage from "./pages/AdminProductsPage";
-import MannequinStudioPage from "./pages/MannequinStudioPage";
+import LayerStudioPage from "./pages/LayerStudioPage";
 // MediaKitPage: built and working, held in draft — not routed yet.
 // Re-add the import above and the route below (/fashion/media-kit)
 // when ready to make it live.
@@ -67,7 +67,7 @@ export default function App() {
 
 <Route path="/admin" element={<AdminHomePage />} />
 <Route path="/admin/products" element={<AdminProductsPage />} />
-<Route path="/admin/studio" element={<MannequinStudioPage />} />
+<Route path="/admin/studio" element={<LayerStudioPage />} />
 </Routes>
       </div>
     </BrowserRouter>

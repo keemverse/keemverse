@@ -6,7 +6,7 @@ import { useAdminAuth } from "../lib/useAdminAuth";
 
 const TOOLS = [
   { to: "/admin/products", label: "Products", description: "Fashion Finds, Presets, Design Bundles catalog" },
-  { to: "/admin/studio", label: "Studio", description: "Mannequin outfit builder" },
+  { to: "/admin/studio", label: "Studio", description: "Import images, drag/resize, save or export" },
 ];
 
 export default function AdminHomePage() {
