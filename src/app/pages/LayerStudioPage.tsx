@@ -3,11 +3,15 @@ import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { useAdminAuth } from "../lib/useAdminAuth";
 import {
+  deleteLibraryPiece,
   deleteProject,
+  listLibraryPieces,
   listProjects,
+  saveLibraryPiece,
   saveProject,
   type Layer,
   type LayerProject,
+  type LibraryPiece,
 } from "../lib/layerProjectsDb";
 
 // The editing stage is drawn at half the final export resolution so drag/
@@ -63,13 +67,18 @@ export default function LayerStudioPage() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [projects, setProjects] = useState<LayerProject[]>([]);
   const [projectName, setProjectName] = useState("");
+  const [libraryPieces, setLibraryPieces] = useState<LibraryPiece[]>([]);
+  const [pieceName, setPieceName] = useState("");
   const [exporting, setExporting] = useState(false);
   const dragState = useRef<DragState | null>(null);
   const stageRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    if (unlocked) listProjects().then(setProjects);
+    if (unlocked) {
+      listProjects().then(setProjects);
+      listLibraryPieces().then(setLibraryPieces);
+    }
   }, [unlocked]);
 
   const handleImport = async (files: FileList | null) => {
@@ -127,6 +136,42 @@ export default function LayerStudioPage() {
     };
     setLayers((prev) => [...prev, layer]);
     setSelectedId(layer.id);
+  };
+
+  const saveSelectedToLibrary = async () => {
+    const name = pieceName.trim();
+    if (!name || !selectedId) return;
+    const layer = layers.find((l) => l.id === selectedId);
+    if (!layer) return;
+    const piece: LibraryPiece = {
+      id: name,
+      src: layer.src,
+      width: layer.width,
+      height: layer.height,
+      updatedAt: Date.now(),
+    };
+    await saveLibraryPiece(piece);
+    setLibraryPieces(await listLibraryPieces());
+    setPieceName("");
+  };
+
+  const addLibraryPiece = (piece: LibraryPiece) => {
+    const layer: Layer = {
+      id: crypto.randomUUID(),
+      name: piece.id,
+      src: piece.src,
+      x: (STAGE_WIDTH - piece.width) / 2,
+      y: (STAGE_HEIGHT - piece.height) / 2,
+      width: piece.width,
+      height: piece.height,
+    };
+    setLayers((prev) => [...prev, layer]);
+    setSelectedId(layer.id);
+  };
+
+  const removeLibraryPiece = async (id: string) => {
+    await deleteLibraryPiece(id);
+    setLibraryPieces(await listLibraryPieces());
   };
 
   const onPointerMove = useCallback((e: PointerEvent) => {
@@ -316,6 +361,34 @@ export default function LayerStudioPage() {
             </div>
           </div>
 
+          {libraryPieces.length > 0 && (
+            <div className="space-y-2">
+              <h2 className="text-xs uppercase tracking-[0.15em] text-muted-foreground">
+                Your pieces
+              </h2>
+              <div className="flex flex-wrap gap-2">
+                {libraryPieces.map((piece) => (
+                  <div key={piece.id} className="relative group">
+                    <button
+                      onClick={() => addLibraryPiece(piece)}
+                      title={piece.id}
+                      className="h-14 w-14 rounded-lg border border-input overflow-hidden bg-input-background"
+                    >
+                      <img src={piece.src} alt={piece.id} className="w-full h-full object-cover" />
+                    </button>
+                    <button
+                      onClick={() => removeLibraryPiece(piece.id)}
+                      title="Remove from library"
+                      className="absolute -top-1.5 -right-1.5 h-4 w-4 rounded-full bg-background border border-input text-[10px] leading-none flex items-center justify-center text-muted-foreground hover:text-destructive"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           {selectedLayer && (
             <div className="space-y-2">
               <h2 className="text-xs uppercase tracking-[0.15em] text-muted-foreground">
@@ -325,6 +398,18 @@ export default function LayerStudioPage() {
                 <Button variant="outline" onClick={bringToFront}>Bring to front</Button>
                 <Button variant="outline" onClick={sendToBack}>Send to back</Button>
                 <Button variant="outline" onClick={deleteSelected}>Delete</Button>
+              </div>
+              <div className="flex gap-2 pt-1">
+                <Input
+                  placeholder="Save this piece as…"
+                  value={pieceName}
+                  onChange={(e) => setPieceName(e.target.value)}
+                  onKeyDown={(e) => e.key === "Enter" && saveSelectedToLibrary()}
+                  className="h-9 text-sm"
+                />
+                <Button className="shrink-0" variant="outline" onClick={saveSelectedToLibrary} disabled={!pieceName.trim()}>
+                  Save piece
+                </Button>
               </div>
             </div>
           )}
