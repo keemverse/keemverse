@@ -11,6 +11,11 @@ export type Layer = {
   y: number;
   width: number;
   height: number;
+  // Set when this layer was added from a wardrobe/library group (not for
+  // plain imports) — lets the UI offer "swap variant" without touching
+  // position/size, by finding sibling variants under the same group.
+  groupCategory?: PieceCategory;
+  groupName?: string;
 };
 
 export type LayerProject = {

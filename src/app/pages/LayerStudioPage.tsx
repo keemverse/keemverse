@@ -129,7 +129,13 @@ export default function LayerStudioPage() {
     }
   }, [unlocked]);
 
-  const addLayer = (src: string, name: string, width: number, height: number) => {
+  const addLayer = (
+    src: string,
+    name: string,
+    width: number,
+    height: number,
+    group?: { category: PieceCategory; groupName: string }
+  ) => {
     const layer: Layer = {
       id: crypto.randomUUID(),
       name,
@@ -138,9 +144,17 @@ export default function LayerStudioPage() {
       y: (STAGE_HEIGHT - height) / 2,
       width,
       height,
+      groupCategory: group?.category,
+      groupName: group?.groupName,
     };
     setLayers((prev) => [...prev, layer]);
     setSelectedId(layer.id);
+  };
+
+  // Swaps a layer's image in place — keeps its exact position/size, just
+  // changes which variant (color/style) it points to.
+  const replaceLayerImage = (layerId: string, src: string, name: string) => {
+    setLayers((prev) => prev.map((l) => (l.id === layerId ? { ...l, src, name } : l)));
   };
 
   const handleImport = async (files: FileList | null) => {
@@ -161,12 +175,18 @@ export default function LayerStudioPage() {
     addLayer(piece.src, piece.name, img.naturalWidth * scale, img.naturalHeight * scale);
   };
 
-  const addWardrobeVariant = async (groupName: string, variant: WardrobeVariant) => {
+  const addWardrobeVariant = async (category: PieceCategory, groupName: string, variant: WardrobeVariant) => {
     const src = wardrobeSrc(variant.file);
     const img = await loadImage(src);
     const targetHeight = STAGE_HEIGHT * 0.55;
     const scale = targetHeight / img.naturalHeight;
-    addLayer(src, `${groupName} (${variant.label})`, img.naturalWidth * scale, img.naturalHeight * scale);
+    addLayer(
+      src,
+      `${groupName} (${variant.label})`,
+      img.naturalWidth * scale,
+      img.naturalHeight * scale,
+      { category, groupName }
+    );
   };
 
   const saveSelectedToLibrary = async () => {
@@ -191,7 +211,13 @@ export default function LayerStudioPage() {
   };
 
   const addLibraryPiece = (piece: LibraryPiece) => {
-    addLayer(piece.src, `${piece.groupName} (${piece.variantName})`, piece.width, piece.height);
+    addLayer(
+      piece.src,
+      `${piece.groupName} (${piece.variantName})`,
+      piece.width,
+      piece.height,
+      { category: piece.category || "other", groupName: piece.groupName || piece.id }
+    );
   };
 
   const removeLibraryPiece = async (id: string) => {
@@ -377,6 +403,27 @@ export default function LayerStudioPage() {
 
   const activeBackground = BACKGROUNDS.find((b) => b.id === background);
   const selectedLayer = layers.find((l) => l.id === selectedId) || null;
+
+  // Sibling variants of the selected layer's group (if it has one), so a
+  // color/style swap can replace just the image without touching position
+  // or size. Combines built-in wardrobe variants with the user's own saved
+  // variants under the same category + group name.
+  const swapVariants: { label: string; src: string }[] = [];
+  if (selectedLayer?.groupCategory && selectedLayer.groupName) {
+    const wardrobeGroup = WARDROBE.find(
+      (g) => g.category === selectedLayer.groupCategory && g.groupName === selectedLayer.groupName
+    );
+    if (wardrobeGroup) {
+      swapVariants.push(
+        ...wardrobeGroup.variants.map((v) => ({ label: v.label, src: wardrobeSrc(v.file) }))
+      );
+    }
+    for (const piece of libraryPieces) {
+      if (piece.category === selectedLayer.groupCategory && piece.groupName === selectedLayer.groupName) {
+        swapVariants.push({ label: piece.variantName, src: piece.src });
+      }
+    }
+  }
   // Reverse for display so the topmost layer (end of the array) is listed first.
   const layersTopFirst = [...layers].map((l, i) => ({ layer: l, index: i })).reverse();
 
@@ -459,7 +506,7 @@ export default function LayerStudioPage() {
                         {group.variants.map((variant) => (
                           <button
                             key={variant.label}
-                            onClick={() => addWardrobeVariant(group.groupName, variant)}
+                            onClick={() => addWardrobeVariant(cat.id, group.groupName, variant)}
                             title={`${group.groupName} — ${variant.label}`}
                             className="h-12 w-12 rounded-lg border border-input overflow-hidden bg-input-background"
                           >
@@ -502,6 +549,26 @@ export default function LayerStudioPage() {
               </div>
             );
           })}
+
+          {selectedLayer && swapVariants.length > 0 && (
+            <div className="space-y-2">
+              <h2 className="text-xs uppercase tracking-[0.15em] text-muted-foreground">
+                Swap variant (keeps position &amp; size)
+              </h2>
+              <div className="flex flex-wrap gap-2">
+                {swapVariants.map((v) => (
+                  <button
+                    key={v.label}
+                    onClick={() => replaceLayerImage(selectedLayer.id, v.src, `${selectedLayer.groupName} (${v.label})`)}
+                    title={v.label}
+                    className="h-12 w-12 rounded-lg border border-input overflow-hidden bg-input-background"
+                  >
+                    <img src={v.src} alt={v.label} className="w-full h-full object-cover" />
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
 
           {selectedLayer && (
             <div className="space-y-2 rounded-lg border border-input p-3">
