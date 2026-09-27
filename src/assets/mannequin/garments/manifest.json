@@ -1,0 +1,21 @@
+{
+  "_comment": "Each garment SVG is generated independently, so it never shares the body's exact framing/scale. transform (scale, tx, ty) is calibrated once per asset by matching the garment's own figure bounding box (full height, horizontal center) against the base body's bounding box in body-solo-front.svg (canvas 1333x2000). Apply as: transform=\"translate(tx,ty) scale(scale)\" on a <g> wrapping the garment's inner paths, layered on top of the body.",
+  "body": {
+    "file": "../body-solo-front.svg",
+    "canvasWidth": 1333,
+    "canvasHeight": 2000
+  },
+  "garments": {
+    "top-tshirt-blue": {
+      "file": "top-tshirt-blue.svg",
+      "slot": "top",
+      "sourceCanvasWidth": 682,
+      "sourceCanvasHeight": 1024,
+      "transform": {
+        "scale": 1.9687,
+        "tx": -4.72,
+        "ty": -12.22
+      }
+    }
+  }
+}
