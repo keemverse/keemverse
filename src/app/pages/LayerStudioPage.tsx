@@ -30,7 +30,7 @@ function readFileAsDataUrl(file: File): Promise<string> {
 // auto-loaded into every project. One click adds them as an ordinary layer
 // that can be dragged/resized/deleted like anything else.
 const STARTER_PIECES = [
-  { id: "body", name: "Body model", src: "/mannequin-library/body.svg", kind: "figure" as const },
+  { id: "body", name: "Body model", src: "/mannequin-library/body.webp", kind: "figure" as const },
   { id: "studio-1", name: "Studio background 1", src: "/mannequin-backgrounds/studio-bg-1.webp", kind: "background" as const },
   { id: "studio-2", name: "Studio background 2", src: "/mannequin-backgrounds/studio-bg-2.webp", kind: "background" as const },
 ];
