@@ -56,10 +56,13 @@ const STARTER_PIECES = [
   { id: "body", name: "Body model", src: "/mannequin-library/body.webp" },
 ];
 
+type ResizeAxis = "both" | "x" | "y";
+
 type DragState =
   | { kind: "move"; id: string; startPointerX: number; startPointerY: number; startX: number; startY: number }
   | {
       kind: "resize";
+      axis: ResizeAxis;
       id: string;
       startPointerX: number;
       startPointerY: number;
@@ -165,8 +168,17 @@ export default function LayerStudioPage() {
       );
     } else {
       const dx = e.clientX - drag.startPointerX;
-      const newWidth = Math.max(20, drag.startWidth + dx);
-      const newHeight = newWidth / drag.aspect;
+      const dy = e.clientY - drag.startPointerY;
+      let newWidth = drag.startWidth;
+      let newHeight = drag.startHeight;
+      if (drag.axis === "both") {
+        newWidth = Math.max(20, drag.startWidth + dx);
+        newHeight = newWidth / drag.aspect;
+      } else if (drag.axis === "x") {
+        newWidth = Math.max(20, drag.startWidth + dx);
+      } else {
+        newHeight = Math.max(20, drag.startHeight + dy);
+      }
       setLayers((prev) =>
         prev.map((l) => (l.id === drag.id ? { ...l, width: newWidth, height: newHeight } : l))
       );
@@ -194,10 +206,11 @@ export default function LayerStudioPage() {
     window.addEventListener("pointerup", onPointerUp);
   };
 
-  const startResize = (e: React.PointerEvent, layer: Layer) => {
+  const startResize = (e: React.PointerEvent, layer: Layer, axis: ResizeAxis) => {
     e.stopPropagation();
     dragState.current = {
       kind: "resize",
+      axis,
       id: layer.id,
       startPointerX: e.clientX,
       startPointerY: e.clientY,
@@ -528,10 +541,26 @@ export default function LayerStudioPage() {
                     className="w-full h-full pointer-events-none"
                   />
                   {selectedId === layer.id && (
-                    <div
-                      onPointerDown={(e) => startResize(e, layer)}
-                      className="absolute -right-2 -bottom-2 h-4 w-4 rounded-full bg-foreground cursor-nwse-resize touch-none"
-                    />
+                    <>
+                      {/* Corner handle: uniform scale, aspect locked */}
+                      <div
+                        onPointerDown={(e) => startResize(e, layer, "both")}
+                        title="Resize (keep proportions)"
+                        className="absolute -right-2 -bottom-2 h-4 w-4 rounded-full bg-foreground cursor-nwse-resize touch-none"
+                      />
+                      {/* Right-edge handle: stretch width only */}
+                      <div
+                        onPointerDown={(e) => startResize(e, layer, "x")}
+                        title="Stretch width"
+                        className="absolute -right-1.5 top-1/2 -translate-y-1/2 h-6 w-3 rounded-full bg-foreground/70 cursor-ew-resize touch-none"
+                      />
+                      {/* Bottom-edge handle: stretch height only */}
+                      <div
+                        onPointerDown={(e) => startResize(e, layer, "y")}
+                        title="Stretch height"
+                        className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-6 h-3 rounded-full bg-foreground/70 cursor-ns-resize touch-none"
+                      />
+                    </>
                   )}
                 </div>
               ))}
