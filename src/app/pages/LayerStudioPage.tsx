@@ -14,12 +14,18 @@ import {
 import { listPieces, createPiece, deletePiece, type ApiPiece } from "../lib/piecesApi";
 import { getLayouts, saveLayout, type LayoutMap } from "../lib/layoutsApi";
 
-// The editing stage is drawn at half the final export resolution so drag/
-// resize math stays in comfortable on-screen numbers; EXPORT_SCALE brings
-// it back up when rendering the downloaded PNG.
+// The editing stage's internal coordinate system — all layer x/y/width/
+// height and drag/resize math happen in these units, independent of how
+// large the stage is actually rendered on screen (see stageScale below).
+// EXPORT_SCALE brings it back up when rendering the downloaded PNG.
 const STAGE_WIDTH = 667;
 const STAGE_HEIGHT = 1000;
 const EXPORT_SCALE = 2;
+
+// The stage is capped at this on-screen width (scaled down to fit on
+// mobile too) so the workspace doesn't dominate the page — it no longer
+// renders at its full native 667px on every device.
+const DISPLAY_MAX_WIDTH = 380;
 
 function readFileAsDataUrl(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -125,8 +131,11 @@ export default function LayerStudioPage() {
   const [saveVariantName, setSaveVariantName] = useState("");
   const [saving, setSaving] = useState(false);
   const [exporting, setExporting] = useState(false);
+  const [stageScale, setStageScale] = useState(1);
   const dragState = useRef<DragState | null>(null);
+  const stageScaleRef = useRef(1);
   const stageRef = useRef<HTMLDivElement>(null);
+  const stageWrapperRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -136,6 +145,24 @@ export default function LayerStudioPage() {
       getLayouts(secret).then(setLayoutDefaults).catch(() => {});
     }
   }, [unlocked, secret]);
+
+  // Scales the stage down to fit its wrapper (capped at DISPLAY_MAX_WIDTH)
+  // so it's never wider than the viewport, on desktop or mobile. The
+  // internal STAGE_WIDTH/HEIGHT coordinate system layers are positioned in
+  // never changes — only how large that coordinate system renders on screen.
+  useEffect(() => {
+    if (!unlocked) return;
+    const updateScale = () => {
+      const w = stageWrapperRef.current?.clientWidth;
+      if (!w) return;
+      const scale = Math.min(1, w / STAGE_WIDTH);
+      stageScaleRef.current = scale;
+      setStageScale(scale);
+    };
+    updateScale();
+    window.addEventListener("resize", updateScale);
+    return () => window.removeEventListener("resize", updateScale);
+  }, [unlocked]);
 
   const addLayer = (
     src: string,
@@ -285,15 +312,20 @@ export default function LayerStudioPage() {
   const onPointerMove = useCallback((e: PointerEvent) => {
     const drag = dragState.current;
     if (!drag) return;
+    // Pointer coordinates are real screen pixels, but the stage may be
+    // rendered smaller than its native STAGE_WIDTH/HEIGHT (see stageScale)
+    // — divide deltas back into stage units so drag/resize stay 1:1 with
+    // the cursor regardless of display size.
+    const scale = stageScaleRef.current || 1;
     if (drag.kind === "move") {
-      const dx = e.clientX - drag.startPointerX;
-      const dy = e.clientY - drag.startPointerY;
+      const dx = (e.clientX - drag.startPointerX) / scale;
+      const dy = (e.clientY - drag.startPointerY) / scale;
       setLayers((prev) =>
         prev.map((l) => (l.id === drag.id ? { ...l, x: drag.startX + dx, y: drag.startY + dy } : l))
       );
     } else {
-      const dx = e.clientX - drag.startPointerX;
-      const dy = e.clientY - drag.startPointerY;
+      const dx = (e.clientX - drag.startPointerX) / scale;
+      const dy = (e.clientY - drag.startPointerY) / scale;
       let newWidth = drag.startWidth;
       let newHeight = drag.startHeight;
       if (drag.axis === "both") {
@@ -720,16 +752,26 @@ export default function LayerStudioPage() {
         <div className="space-y-4">
           <div className="flex justify-center">
             <div
-              ref={stageRef}
-              onPointerDown={() => setSelectedId(null)}
-              className="relative overflow-hidden rounded-2xl border border-input bg-[repeating-conic-gradient(#00000010_0_25%,transparent_0_50%)] bg-cover bg-center"
+              ref={stageWrapperRef}
+              className="w-full"
               style={{
-                width: STAGE_WIDTH,
-                height: STAGE_HEIGHT,
-                backgroundSize: activeBackground?.src ? "cover" : "20px 20px",
-                backgroundImage: activeBackground?.src ? `url(${activeBackground.src})` : undefined,
+                maxWidth: DISPLAY_MAX_WIDTH,
+                height: STAGE_HEIGHT * stageScale,
+                overflow: "hidden",
               }}
             >
+              <div
+                ref={stageRef}
+                onPointerDown={() => setSelectedId(null)}
+                className="relative overflow-hidden rounded-2xl border border-input bg-[repeating-conic-gradient(#00000010_0_25%,transparent_0_50%)] bg-cover bg-center origin-top-left"
+                style={{
+                  width: STAGE_WIDTH,
+                  height: STAGE_HEIGHT,
+                  transform: `scale(${stageScale})`,
+                  backgroundSize: activeBackground?.src ? "cover" : "20px 20px",
+                  backgroundImage: activeBackground?.src ? `url(${activeBackground.src})` : undefined,
+                }}
+              >
               {layers.map((layer) => (
                 <div
                   key={layer.id}
@@ -769,11 +811,12 @@ export default function LayerStudioPage() {
                   )}
                 </div>
               ))}
+              </div>
             </div>
           </div>
 
           {layers.length > 0 && (
-            <div className="max-w-[667px] mx-auto space-y-1.5">
+            <div className="mx-auto space-y-1.5" style={{ maxWidth: DISPLAY_MAX_WIDTH }}>
               <h2 className="text-xs uppercase tracking-[0.15em] text-muted-foreground">
                 Layers (top to bottom)
               </h2>
