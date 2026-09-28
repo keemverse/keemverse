@@ -519,23 +519,135 @@ export default function LayerStudioPage() {
   return (
     <div className="min-h-screen bg-background text-foreground px-5 md:px-8 py-10">
       <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-[300px_1fr] gap-8">
-        <div className="space-y-6">
+        {/* Title + Import: always first, both on mobile (order-1) and desktop (top of the left column). */}
+        <div className="order-1 md:col-start-1 md:row-start-1 space-y-2">
           <h1 className="font-serif text-2xl">Layer Studio</h1>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            multiple
+            className="hidden"
+            onChange={(e) => handleImport(e.target.files)}
+          />
+          <Button className="w-full" onClick={() => fileInputRef.current?.click()}>
+            Import image(s)
+          </Button>
+        </div>
 
-          <div className="space-y-2">
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/*"
-              multiple
-              className="hidden"
-              onChange={(e) => handleImport(e.target.files)}
-            />
-            <Button className="w-full" onClick={() => fileInputRef.current?.click()}>
-              Import image(s)
-            </Button>
+        {/* Canvas + layers: second on mobile, right column (spanning both rows) on desktop. */}
+        <div className="order-2 md:order-none md:col-start-2 md:row-start-1 md:row-span-2 space-y-4">
+          <div className="flex justify-center">
+            <div
+              ref={stageWrapperRef}
+              className="w-full"
+              style={{
+                maxWidth: DISPLAY_MAX_WIDTH,
+                height: STAGE_HEIGHT * stageScale,
+                overflow: "hidden",
+              }}
+            >
+              <div
+                ref={stageRef}
+                onPointerDown={() => setSelectedId(null)}
+                className="relative overflow-hidden rounded-2xl border border-input bg-[repeating-conic-gradient(#00000010_0_25%,transparent_0_50%)] bg-cover bg-center origin-top-left"
+                style={{
+                  width: STAGE_WIDTH,
+                  height: STAGE_HEIGHT,
+                  transform: `scale(${stageScale})`,
+                  backgroundSize: activeBackground?.src ? "cover" : "20px 20px",
+                  backgroundImage: activeBackground?.src ? `url(${activeBackground.src})` : undefined,
+                }}
+              >
+              {layers.map((layer) => (
+                <div
+                  key={layer.id}
+                  onPointerDown={(e) => startMove(e, layer)}
+                  className={`absolute select-none touch-none ${
+                    selectedId === layer.id ? "outline outline-2 outline-foreground" : ""
+                  }`}
+                  style={{ left: layer.x, top: layer.y, width: layer.width, height: layer.height }}
+                >
+                  <img
+                    src={layer.src}
+                    alt={layer.name}
+                    draggable={false}
+                    className="w-full h-full pointer-events-none"
+                  />
+                  {selectedId === layer.id && (
+                    <>
+                      {/* Corner handle: uniform scale, aspect locked */}
+                      <div
+                        onPointerDown={(e) => startResize(e, layer, "both")}
+                        title="Resize (keep proportions)"
+                        className="absolute -right-2 -bottom-2 h-4 w-4 rounded-full bg-foreground cursor-nwse-resize touch-none"
+                      />
+                      {/* Right-edge handle: stretch width only */}
+                      <div
+                        onPointerDown={(e) => startResize(e, layer, "x")}
+                        title="Stretch width"
+                        className="absolute -right-1.5 top-1/2 -translate-y-1/2 h-6 w-3 rounded-full bg-foreground/70 cursor-ew-resize touch-none"
+                      />
+                      {/* Bottom-edge handle: stretch height only */}
+                      <div
+                        onPointerDown={(e) => startResize(e, layer, "y")}
+                        title="Stretch height"
+                        className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-6 h-3 rounded-full bg-foreground/70 cursor-ns-resize touch-none"
+                      />
+                    </>
+                  )}
+                </div>
+              ))}
+              </div>
+            </div>
           </div>
 
+          {layers.length > 0 && (
+            <div className="mx-auto space-y-1.5" style={{ maxWidth: DISPLAY_MAX_WIDTH }}>
+              <h2 className="text-xs uppercase tracking-[0.15em] text-muted-foreground">
+                Layers (top to bottom)
+              </h2>
+              {layersTopFirst.map(({ layer, index }) => (
+                <div
+                  key={layer.id}
+                  onClick={() => setSelectedId(layer.id)}
+                  className={`flex items-center gap-2 rounded-lg border px-2 py-1.5 cursor-pointer ${
+                    selectedId === layer.id ? "border-foreground" : "border-input"
+                  }`}
+                >
+                  <img src={layer.src} alt={layer.name} className="h-8 w-8 rounded object-cover border border-input" />
+                  <span className="flex-1 text-xs truncate">{layer.name}</span>
+                  <button
+                    onClick={(e) => { e.stopPropagation(); moveLayer(index, "up"); }}
+                    disabled={index === layers.length - 1}
+                    title="Move up"
+                    className="text-xs px-1.5 py-0.5 rounded border border-input disabled:opacity-30"
+                  >
+                    ▲
+                  </button>
+                  <button
+                    onClick={(e) => { e.stopPropagation(); moveLayer(index, "down"); }}
+                    disabled={index === 0}
+                    title="Move down"
+                    className="text-xs px-1.5 py-0.5 rounded border border-input disabled:opacity-30"
+                  >
+                    ▼
+                  </button>
+                  <button
+                    onClick={(e) => { e.stopPropagation(); deleteLayer(layer.id); }}
+                    title="Delete"
+                    className="text-xs px-1.5 py-0.5 rounded border border-input text-muted-foreground hover:text-destructive"
+                  >
+                    ✕
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Everything else: third on mobile, bottom of the left column on desktop. */}
+        <div className="order-3 md:col-start-1 md:row-start-2 space-y-6">
           <div className="space-y-2">
             <h2 className="text-xs uppercase tracking-[0.15em] text-muted-foreground">
               Background
@@ -749,115 +861,6 @@ export default function LayerStudioPage() {
           </Button>
         </div>
 
-        <div className="space-y-4">
-          <div className="flex justify-center">
-            <div
-              ref={stageWrapperRef}
-              className="w-full"
-              style={{
-                maxWidth: DISPLAY_MAX_WIDTH,
-                height: STAGE_HEIGHT * stageScale,
-                overflow: "hidden",
-              }}
-            >
-              <div
-                ref={stageRef}
-                onPointerDown={() => setSelectedId(null)}
-                className="relative overflow-hidden rounded-2xl border border-input bg-[repeating-conic-gradient(#00000010_0_25%,transparent_0_50%)] bg-cover bg-center origin-top-left"
-                style={{
-                  width: STAGE_WIDTH,
-                  height: STAGE_HEIGHT,
-                  transform: `scale(${stageScale})`,
-                  backgroundSize: activeBackground?.src ? "cover" : "20px 20px",
-                  backgroundImage: activeBackground?.src ? `url(${activeBackground.src})` : undefined,
-                }}
-              >
-              {layers.map((layer) => (
-                <div
-                  key={layer.id}
-                  onPointerDown={(e) => startMove(e, layer)}
-                  className={`absolute select-none touch-none ${
-                    selectedId === layer.id ? "outline outline-2 outline-foreground" : ""
-                  }`}
-                  style={{ left: layer.x, top: layer.y, width: layer.width, height: layer.height }}
-                >
-                  <img
-                    src={layer.src}
-                    alt={layer.name}
-                    draggable={false}
-                    className="w-full h-full pointer-events-none"
-                  />
-                  {selectedId === layer.id && (
-                    <>
-                      {/* Corner handle: uniform scale, aspect locked */}
-                      <div
-                        onPointerDown={(e) => startResize(e, layer, "both")}
-                        title="Resize (keep proportions)"
-                        className="absolute -right-2 -bottom-2 h-4 w-4 rounded-full bg-foreground cursor-nwse-resize touch-none"
-                      />
-                      {/* Right-edge handle: stretch width only */}
-                      <div
-                        onPointerDown={(e) => startResize(e, layer, "x")}
-                        title="Stretch width"
-                        className="absolute -right-1.5 top-1/2 -translate-y-1/2 h-6 w-3 rounded-full bg-foreground/70 cursor-ew-resize touch-none"
-                      />
-                      {/* Bottom-edge handle: stretch height only */}
-                      <div
-                        onPointerDown={(e) => startResize(e, layer, "y")}
-                        title="Stretch height"
-                        className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-6 h-3 rounded-full bg-foreground/70 cursor-ns-resize touch-none"
-                      />
-                    </>
-                  )}
-                </div>
-              ))}
-              </div>
-            </div>
-          </div>
-
-          {layers.length > 0 && (
-            <div className="mx-auto space-y-1.5" style={{ maxWidth: DISPLAY_MAX_WIDTH }}>
-              <h2 className="text-xs uppercase tracking-[0.15em] text-muted-foreground">
-                Layers (top to bottom)
-              </h2>
-              {layersTopFirst.map(({ layer, index }) => (
-                <div
-                  key={layer.id}
-                  onClick={() => setSelectedId(layer.id)}
-                  className={`flex items-center gap-2 rounded-lg border px-2 py-1.5 cursor-pointer ${
-                    selectedId === layer.id ? "border-foreground" : "border-input"
-                  }`}
-                >
-                  <img src={layer.src} alt={layer.name} className="h-8 w-8 rounded object-cover border border-input" />
-                  <span className="flex-1 text-xs truncate">{layer.name}</span>
-                  <button
-                    onClick={(e) => { e.stopPropagation(); moveLayer(index, "up"); }}
-                    disabled={index === layers.length - 1}
-                    title="Move up"
-                    className="text-xs px-1.5 py-0.5 rounded border border-input disabled:opacity-30"
-                  >
-                    ▲
-                  </button>
-                  <button
-                    onClick={(e) => { e.stopPropagation(); moveLayer(index, "down"); }}
-                    disabled={index === 0}
-                    title="Move down"
-                    className="text-xs px-1.5 py-0.5 rounded border border-input disabled:opacity-30"
-                  >
-                    ▼
-                  </button>
-                  <button
-                    onClick={(e) => { e.stopPropagation(); deleteLayer(layer.id); }}
-                    title="Delete"
-                    className="text-xs px-1.5 py-0.5 rounded border border-input text-muted-foreground hover:text-destructive"
-                  >
-                    ✕
-                  </button>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
       </div>
     </div>
   );
