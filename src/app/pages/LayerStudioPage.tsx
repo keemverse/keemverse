@@ -12,6 +12,7 @@ import {
   type PieceCategory,
 } from "../lib/layerProjectsDb";
 import { listPieces, createPiece, deletePiece, type ApiPiece } from "../lib/piecesApi";
+import { getLayouts, saveLayout, type LayoutMap } from "../lib/layoutsApi";
 
 // The editing stage is drawn at half the final export resolution so drag/
 // resize math stays in comfortable on-screen numbers; EXPORT_SCALE brings
@@ -50,7 +51,13 @@ const BACKGROUNDS = [
 // auto-loaded into every project. One click adds them as an ordinary layer
 // that can be dragged/resized/deleted like anything else.
 const STARTER_PIECES = [
-  { id: "body", name: "Body model", src: "/mannequin-library/body.webp" },
+  {
+    id: "body",
+    name: "Body model",
+    src: "/mannequin-library/body.webp",
+    category: "other" as PieceCategory,
+    groupName: "Body model",
+  },
 ];
 
 // Ghost-mannequin garments shipped with the site itself (bundled assets, not
@@ -111,6 +118,8 @@ export default function LayerStudioPage() {
   const [projects, setProjects] = useState<LayerProject[]>([]);
   const [projectName, setProjectName] = useState("");
   const [libraryPieces, setLibraryPieces] = useState<ApiPiece[]>([]);
+  const [layoutDefaults, setLayoutDefaults] = useState<LayoutMap>({});
+  const [savingLayout, setSavingLayout] = useState(false);
   const [saveCategory, setSaveCategory] = useState<PieceCategory>("other");
   const [saveGroupName, setSaveGroupName] = useState("");
   const [saveVariantName, setSaveVariantName] = useState("");
@@ -124,6 +133,7 @@ export default function LayerStudioPage() {
     if (unlocked) {
       listProjects().then(setProjects);
       listPieces(secret).then(setLibraryPieces).catch(() => {});
+      getLayouts(secret).then(setLayoutDefaults).catch(() => {});
     }
   }, [unlocked, secret]);
 
@@ -134,12 +144,23 @@ export default function LayerStudioPage() {
     height: number,
     group?: { category: PieceCategory; groupName: string }
   ) => {
+    let x = (STAGE_WIDTH - width) / 2;
+    let y = (STAGE_HEIGHT - height) / 2;
+    if (group) {
+      const remembered = layoutDefaults[`${group.category}:${group.groupName}`];
+      if (remembered) {
+        x = remembered.x;
+        y = remembered.y;
+        width = remembered.width;
+        height = remembered.height;
+      }
+    }
     const layer: Layer = {
       id: crypto.randomUUID(),
       name,
       src,
-      x: (STAGE_WIDTH - width) / 2,
-      y: (STAGE_HEIGHT - height) / 2,
+      x,
+      y,
       width,
       height,
       groupCategory: group?.category,
@@ -147,6 +168,24 @@ export default function LayerStudioPage() {
     };
     setLayers((prev) => [...prev, layer]);
     setSelectedId(layer.id);
+  };
+
+  const rememberSelectedPosition = async () => {
+    const layer = layers.find((l) => l.id === selectedId);
+    if (!layer?.groupCategory || !layer.groupName) return;
+    setSavingLayout(true);
+    try {
+      const key = `${layer.groupCategory}:${layer.groupName}`;
+      const updated = await saveLayout(secret, key, {
+        x: layer.x,
+        y: layer.y,
+        width: layer.width,
+        height: layer.height,
+      });
+      setLayoutDefaults(updated);
+    } finally {
+      setSavingLayout(false);
+    }
   };
 
   // Swaps a layer's image in place — keeps its exact position/size, just
@@ -170,7 +209,13 @@ export default function LayerStudioPage() {
     const img = await loadImage(piece.src);
     const targetHeight = STAGE_HEIGHT * 0.9;
     const scale = targetHeight / img.naturalHeight;
-    addLayer(piece.src, piece.name, img.naturalWidth * scale, img.naturalHeight * scale);
+    addLayer(
+      piece.src,
+      piece.name,
+      img.naturalWidth * scale,
+      img.naturalHeight * scale,
+      { category: piece.category, groupName: piece.groupName }
+    );
   };
 
   const addWardrobeVariant = async (category: PieceCategory, groupName: string, variant: WardrobeVariant) => {
@@ -561,6 +606,19 @@ export default function LayerStudioPage() {
               </div>
             );
           })}
+
+          {selectedLayer?.groupCategory && selectedLayer.groupName && (
+            <Button
+              className="w-full"
+              variant="outline"
+              onClick={rememberSelectedPosition}
+              disabled={savingLayout}
+            >
+              {savingLayout
+                ? "Remembering…"
+                : `Remember this position for "${selectedLayer.groupName}"`}
+            </Button>
+          )}
 
           {selectedLayer && swapVariants.length > 0 && (
             <div className="space-y-2">
