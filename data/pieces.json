@@ -20,5 +20,16 @@
     "width": 252.4271844660194,
     "height": 260,
     "updatedAt": "2026-09-28T15:22:24.796Z"
+  },
+  {
+    "id": "5ba72e03-581d-4991-bd59-67101eec401d",
+    "category": "top",
+    "groupName": "Zipper_Leather_Jacket",
+    "variantName": "Red",
+    "imageUrl": "https://raw.githubusercontent.com/keemverse/keemverse/main/data/piece-assets/5ba72e03-581d-4991-bd59-67101eec401d.webp",
+    "imagePath": "data/piece-assets/5ba72e03-581d-4991-bd59-67101eec401d.webp",
+    "width": 252.4271844660194,
+    "height": 260,
+    "updatedAt": "2026-09-28T15:22:42.010Z"
   }
 ]
