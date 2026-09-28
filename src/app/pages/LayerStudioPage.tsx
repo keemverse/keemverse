@@ -3,18 +3,15 @@ import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { useAdminAuth } from "../lib/useAdminAuth";
 import {
-  deleteLibraryPiece,
   deleteProject,
-  listLibraryPieces,
   listProjects,
-  saveLibraryPiece,
   saveProject,
   PIECE_CATEGORIES,
   type Layer,
   type LayerProject,
-  type LibraryPiece,
   type PieceCategory,
 } from "../lib/layerProjectsDb";
+import { listPieces, createPiece, deletePiece, type ApiPiece } from "../lib/piecesApi";
 
 // The editing stage is drawn at half the final export resolution so drag/
 // resize math stays in comfortable on-screen numbers; EXPORT_SCALE brings
@@ -106,17 +103,18 @@ type DragState =
     };
 
 export default function LayerStudioPage() {
-  const { unlocked, checking, error, checkSecret } = useAdminAuth();
+  const { secret, unlocked, checking, error, checkSecret } = useAdminAuth();
   const [secretInput, setSecretInput] = useState("");
   const [layers, setLayers] = useState<Layer[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [background, setBackground] = useState(BACKGROUNDS[0].id);
   const [projects, setProjects] = useState<LayerProject[]>([]);
   const [projectName, setProjectName] = useState("");
-  const [libraryPieces, setLibraryPieces] = useState<LibraryPiece[]>([]);
+  const [libraryPieces, setLibraryPieces] = useState<ApiPiece[]>([]);
   const [saveCategory, setSaveCategory] = useState<PieceCategory>("other");
   const [saveGroupName, setSaveGroupName] = useState("");
   const [saveVariantName, setSaveVariantName] = useState("");
+  const [saving, setSaving] = useState(false);
   const [exporting, setExporting] = useState(false);
   const dragState = useRef<DragState | null>(null);
   const stageRef = useRef<HTMLDivElement>(null);
@@ -125,9 +123,9 @@ export default function LayerStudioPage() {
   useEffect(() => {
     if (unlocked) {
       listProjects().then(setProjects);
-      listLibraryPieces().then(setLibraryPieces);
+      listPieces(secret).then(setLibraryPieces).catch(() => {});
     }
-  }, [unlocked]);
+  }, [unlocked, secret]);
 
   const addLayer = (
     src: string,
@@ -194,25 +192,39 @@ export default function LayerStudioPage() {
     const groupName = saveGroupName.trim();
     const variantName = saveVariantName.trim() || "Default";
     if (!layer || !groupName) return;
-    const piece: LibraryPiece = {
-      id: `${saveCategory}:${groupName}:${variantName}`,
-      category: saveCategory,
-      groupName,
-      variantName,
-      src: layer.src,
-      width: layer.width,
-      height: layer.height,
-      updatedAt: Date.now(),
-    };
-    await saveLibraryPiece(piece);
-    setLibraryPieces(await listLibraryPieces());
-    setSaveGroupName("");
-    setSaveVariantName("");
+    // The layer's src may already be a plain URL (wardrobe/starter pieces)
+    // rather than a data URL (fresh imports) — the API only accepts data
+    // URLs to upload, so convert via canvas if needed.
+    let imageDataUrl = layer.src;
+    if (!imageDataUrl.startsWith("data:")) {
+      const img = await loadImage(layer.src);
+      const canvas = document.createElement("canvas");
+      canvas.width = img.naturalWidth;
+      canvas.height = img.naturalHeight;
+      canvas.getContext("2d")!.drawImage(img, 0, 0);
+      imageDataUrl = canvas.toDataURL("image/png");
+    }
+    setSaving(true);
+    try {
+      await createPiece(secret, {
+        category: saveCategory,
+        groupName,
+        variantName,
+        imageDataUrl,
+        width: layer.width,
+        height: layer.height,
+      });
+      setLibraryPieces(await listPieces(secret));
+      setSaveGroupName("");
+      setSaveVariantName("");
+    } finally {
+      setSaving(false);
+    }
   };
 
-  const addLibraryPiece = (piece: LibraryPiece) => {
+  const addLibraryPiece = (piece: ApiPiece) => {
     addLayer(
-      piece.src,
+      piece.imageUrl,
       `${piece.groupName} (${piece.variantName})`,
       piece.width,
       piece.height,
@@ -221,8 +233,8 @@ export default function LayerStudioPage() {
   };
 
   const removeLibraryPiece = async (id: string) => {
-    await deleteLibraryPiece(id);
-    setLibraryPieces(await listLibraryPieces());
+    await deletePiece(secret, id);
+    setLibraryPieces(await listPieces(secret));
   };
 
   const onPointerMove = useCallback((e: PointerEvent) => {
@@ -370,7 +382,7 @@ export default function LayerStudioPage() {
       const inCategory = libraryPieces.filter(
         (p) => (p.category || "other") === cat.id
       );
-      const groups = new Map<string, LibraryPiece[]>();
+      const groups = new Map<string, ApiPiece[]>();
       for (const piece of inCategory) {
         const key = piece.groupName || piece.id;
         if (!groups.has(key)) groups.set(key, []);
@@ -420,7 +432,7 @@ export default function LayerStudioPage() {
     }
     for (const piece of libraryPieces) {
       if (piece.category === selectedLayer.groupCategory && piece.groupName === selectedLayer.groupName) {
-        swapVariants.push({ label: piece.variantName, src: piece.src });
+        swapVariants.push({ label: piece.variantName, src: piece.imageUrl });
       }
     }
   }
@@ -530,7 +542,7 @@ export default function LayerStudioPage() {
                                 title={`${piece.groupName} — ${piece.variantName}`}
                                 className="h-12 w-12 rounded-lg border border-input overflow-hidden bg-input-background"
                               >
-                                <img src={piece.src} alt={piece.variantName} className="w-full h-full object-cover" />
+                                <img src={piece.imageUrl} alt={piece.variantName} className="w-full h-full object-cover" />
                               </button>
                               <button
                                 onClick={() => removeLibraryPiece(piece.id)}
@@ -597,8 +609,8 @@ export default function LayerStudioPage() {
                 onKeyDown={(e) => e.key === "Enter" && saveSelectedToLibrary()}
                 className="h-9 text-sm"
               />
-              <Button className="w-full" onClick={saveSelectedToLibrary} disabled={!saveGroupName.trim()}>
-                Save piece
+              <Button className="w-full" onClick={saveSelectedToLibrary} disabled={!saveGroupName.trim() || saving}>
+                {saving ? "Saving…" : "Save piece"}
               </Button>
             </div>
           )}
