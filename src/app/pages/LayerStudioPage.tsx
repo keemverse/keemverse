@@ -39,6 +39,11 @@ function readFileAsDataUrl(file: File): Promise<string> {
 function loadImage(src: string): Promise<HTMLImageElement> {
   return new Promise((resolve, reject) => {
     const img = new Image();
+    // Saved pieces now load from raw.githubusercontent.com (cross-origin) —
+    // without this, drawing them onto the export canvas taints it and
+    // canvas.toDataURL() throws silently, breaking the PNG download.
+    // Harmless for same-origin/data-URL sources.
+    img.crossOrigin = "anonymous";
     img.onload = () => resolve(img);
     img.onerror = reject;
     img.src = src;
@@ -449,6 +454,9 @@ export default function LayerStudioPage() {
       a.href = url;
       a.download = `layer-studio-${Date.now()}.png`;
       a.click();
+    } catch (err) {
+      console.error("PNG export failed:", err);
+      alert("Download failed — one of the images couldn't be exported. Try again, or let me know if it keeps happening.");
     } finally {
       setExporting(false);
     }
