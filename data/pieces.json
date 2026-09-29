@@ -119,5 +119,16 @@
     "width": 159.2920353982301,
     "height": 260,
     "updatedAt": "2026-09-29T12:47:55.995Z"
+  },
+  {
+    "id": "5dc2bb98-10d6-41cf-9e57-7f38994474d4",
+    "category": "footwear",
+    "groupName": "Black and red sneackers",
+    "variantName": "Default",
+    "imageUrl": "https://raw.githubusercontent.com/keemverse/keemverse/main/data/piece-assets/5dc2bb98-10d6-41cf-9e57-7f38994474d4.webp",
+    "imagePath": "data/piece-assets/5dc2bb98-10d6-41cf-9e57-7f38994474d4.webp",
+    "width": 250.63852506938733,
+    "height": 90.82666666666667,
+    "updatedAt": "2026-09-29T14:01:15.324Z"
   }
 ]
