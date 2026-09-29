@@ -108,5 +108,16 @@
     "width": 159.2920353982301,
     "height": 260,
     "updatedAt": "2026-09-29T12:47:13.037Z"
+  },
+  {
+    "id": "c9297d22-17a5-4227-a68f-2dbdd2355adb",
+    "category": "bottom",
+    "groupName": "Barrel Jeans",
+    "variantName": "Black",
+    "imageUrl": "https://raw.githubusercontent.com/keemverse/keemverse/main/data/piece-assets/c9297d22-17a5-4227-a68f-2dbdd2355adb.webp",
+    "imagePath": "data/piece-assets/c9297d22-17a5-4227-a68f-2dbdd2355adb.webp",
+    "width": 159.2920353982301,
+    "height": 260,
+    "updatedAt": "2026-09-29T12:47:55.995Z"
   }
 ]
