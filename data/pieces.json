@@ -53,5 +53,16 @@
     "width": 159.2920353982301,
     "height": 260,
     "updatedAt": "2026-09-29T12:45:05.374Z"
+  },
+  {
+    "id": "f80c1eba-8995-4923-be6d-0aa44469ae23",
+    "category": "bottom",
+    "groupName": "Barrel Jeans",
+    "variantName": "Mid Wash",
+    "imageUrl": "https://raw.githubusercontent.com/keemverse/keemverse/main/data/piece-assets/f80c1eba-8995-4923-be6d-0aa44469ae23.webp",
+    "imagePath": "data/piece-assets/f80c1eba-8995-4923-be6d-0aa44469ae23.webp",
+    "width": 159.2920353982301,
+    "height": 260,
+    "updatedAt": "2026-09-29T12:45:43.131Z"
   }
 ]
