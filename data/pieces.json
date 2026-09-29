@@ -97,5 +97,16 @@
     "width": 159.2920353982301,
     "height": 260,
     "updatedAt": "2026-09-29T12:46:54.539Z"
+  },
+  {
+    "id": "c008bc3d-2788-4550-b7e2-c9d5a15e33f4",
+    "category": "bottom",
+    "groupName": "Barrel Jeans",
+    "variantName": "Chocolate",
+    "imageUrl": "https://raw.githubusercontent.com/keemverse/keemverse/main/data/piece-assets/c008bc3d-2788-4550-b7e2-c9d5a15e33f4.webp",
+    "imagePath": "data/piece-assets/c008bc3d-2788-4550-b7e2-c9d5a15e33f4.webp",
+    "width": 159.2920353982301,
+    "height": 260,
+    "updatedAt": "2026-09-29T12:47:13.037Z"
   }
 ]
