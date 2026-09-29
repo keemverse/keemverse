@@ -42,5 +42,16 @@
     "width": 159.2920353982301,
     "height": 260,
     "updatedAt": "2026-09-29T12:44:24.217Z"
+  },
+  {
+    "id": "a2308d76-bd32-4fb5-a67f-ca53871134bb",
+    "category": "bottom",
+    "groupName": "Barrel Jeans",
+    "variantName": "Indigo",
+    "imageUrl": "https://raw.githubusercontent.com/keemverse/keemverse/main/data/piece-assets/a2308d76-bd32-4fb5-a67f-ca53871134bb.webp",
+    "imagePath": "data/piece-assets/a2308d76-bd32-4fb5-a67f-ca53871134bb.webp",
+    "width": 159.2920353982301,
+    "height": 260,
+    "updatedAt": "2026-09-29T12:45:05.374Z"
   }
 ]
