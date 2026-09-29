@@ -812,7 +812,7 @@ export default function LayerStudioPage() {
 
           {selectedLayer?.groupCategory && selectedLayer.groupName && (
             <Button
-              className="w-full"
+              className="w-full h-auto min-h-9 py-2 whitespace-normal text-center leading-snug"
               variant="outline"
               onClick={rememberSelectedPosition}
               disabled={savingLayout}
@@ -844,7 +844,11 @@ export default function LayerStudioPage() {
           )}
 
           {selectedLayer && (
-            <Button className="w-full" variant="outline" onClick={() => setSaveToLibraryOpen(true)}>
+            <Button
+              className="w-full h-auto min-h-9 py-2 whitespace-normal text-center leading-snug"
+              variant="outline"
+              onClick={() => setSaveToLibraryOpen(true)}
+            >
               Save "{selectedLayer.name}" to library
             </Button>
           )}
