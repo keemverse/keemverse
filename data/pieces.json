@@ -31,5 +31,16 @@
     "width": 252.4271844660194,
     "height": 260,
     "updatedAt": "2026-09-28T15:22:42.010Z"
+  },
+  {
+    "id": "9de87e0a-0136-4f0e-b182-3c22eea96a6c",
+    "category": "bottom",
+    "groupName": "Barrel Jeans",
+    "variantName": "washed grey",
+    "imageUrl": "https://raw.githubusercontent.com/keemverse/keemverse/main/data/piece-assets/9de87e0a-0136-4f0e-b182-3c22eea96a6c.webp",
+    "imagePath": "data/piece-assets/9de87e0a-0136-4f0e-b182-3c22eea96a6c.webp",
+    "width": 159.2920353982301,
+    "height": 260,
+    "updatedAt": "2026-09-29T12:44:24.217Z"
   }
 ]
