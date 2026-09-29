@@ -695,11 +695,12 @@ export default function LayerStudioPage() {
             const savedCat = groupedLibrary.find((c) => c.id === cat.id);
             if (wardrobeGroups.length === 0 && !savedCat) return null;
             return (
-              <div key={cat.id} className="space-y-2">
-                <h2 className="text-xs uppercase tracking-[0.15em] text-muted-foreground">
+              <details key={cat.id} className="space-y-2 group">
+                <summary className="text-xs uppercase tracking-[0.15em] text-muted-foreground cursor-pointer select-none list-none flex items-center gap-1.5">
+                  <span className="inline-block transition-transform group-open:rotate-90">▶</span>
                   {cat.label}
-                </h2>
-                <div className="space-y-2">
+                </summary>
+                <div className="space-y-2 pt-2">
                   {wardrobeGroups.map((group) => (
                     <div key={group.groupName}>
                       <p className="text-[11px] text-muted-foreground mb-1">{group.groupName}</p>
@@ -747,7 +748,7 @@ export default function LayerStudioPage() {
                     ))}
                   </div>
                 )}
-              </div>
+              </details>
             );
           })}
 
