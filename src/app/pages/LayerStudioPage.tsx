@@ -105,7 +105,7 @@ const WARDROBE: WardrobeGroup[] = [
   },
 ];
 
-type ResizeAxis = "both" | "x" | "y";
+type ResizeAxis = "both" | "right" | "left" | "bottom" | "top";
 
 type DragState =
   | { kind: "move"; id: string; startPointerX: number; startPointerY: number; startX: number; startY: number }
@@ -115,6 +115,8 @@ type DragState =
       id: string;
       startPointerX: number;
       startPointerY: number;
+      startX: number;
+      startY: number;
       startWidth: number;
       startHeight: number;
       aspect: number;
@@ -333,16 +335,27 @@ export default function LayerStudioPage() {
       const dy = (e.clientY - drag.startPointerY) / scale;
       let newWidth = drag.startWidth;
       let newHeight = drag.startHeight;
+      let newX = drag.startX;
+      let newY = drag.startY;
       if (drag.axis === "both") {
         newWidth = Math.max(20, drag.startWidth + dx);
         newHeight = newWidth / drag.aspect;
-      } else if (drag.axis === "x") {
+      } else if (drag.axis === "right") {
         newWidth = Math.max(20, drag.startWidth + dx);
-      } else {
+      } else if (drag.axis === "left") {
+        // Left edge moves with the cursor; right edge stays fixed, so x
+        // shifts by the same amount the width shrinks/grows.
+        newWidth = Math.max(20, drag.startWidth - dx);
+        newX = drag.startX + (drag.startWidth - newWidth);
+      } else if (drag.axis === "bottom") {
         newHeight = Math.max(20, drag.startHeight + dy);
+      } else {
+        // "top": bottom edge stays fixed.
+        newHeight = Math.max(20, drag.startHeight - dy);
+        newY = drag.startY + (drag.startHeight - newHeight);
       }
       setLayers((prev) =>
-        prev.map((l) => (l.id === drag.id ? { ...l, width: newWidth, height: newHeight } : l))
+        prev.map((l) => (l.id === drag.id ? { ...l, x: newX, y: newY, width: newWidth, height: newHeight } : l))
       );
     }
   }, []);
@@ -356,6 +369,7 @@ export default function LayerStudioPage() {
   const startMove = (e: React.PointerEvent, layer: Layer) => {
     e.stopPropagation();
     setSelectedId(layer.id);
+    if (layer.locked) return;
     dragState.current = {
       kind: "move",
       id: layer.id,
@@ -370,12 +384,15 @@ export default function LayerStudioPage() {
 
   const startResize = (e: React.PointerEvent, layer: Layer, axis: ResizeAxis) => {
     e.stopPropagation();
+    if (layer.locked) return;
     dragState.current = {
       kind: "resize",
       axis,
       id: layer.id,
       startPointerX: e.clientX,
       startPointerY: e.clientY,
+      startX: layer.x,
+      startY: layer.y,
       startWidth: layer.width,
       startHeight: layer.height,
       aspect: layer.width / layer.height,
@@ -387,6 +404,10 @@ export default function LayerStudioPage() {
   const deleteLayer = (id: string) => {
     setLayers((prev) => prev.filter((l) => l.id !== id));
     setSelectedId((prev) => (prev === id ? null : prev));
+  };
+
+  const toggleLock = (id: string) => {
+    setLayers((prev) => prev.map((l) => (l.id === id ? { ...l, locked: !l.locked } : l)));
   };
 
   // index is the layer's position in the `layers` array (end of array = top
@@ -582,7 +603,12 @@ export default function LayerStudioPage() {
                     draggable={false}
                     className="w-full h-full pointer-events-none"
                   />
-                  {selectedId === layer.id && (
+                  {selectedId === layer.id && layer.locked && (
+                    <div className="absolute inset-0 flex items-center justify-center bg-background/40 rounded pointer-events-none">
+                      <span className="text-xs bg-background/90 border border-input rounded-full px-2 py-0.5">🔒 Locked</span>
+                    </div>
+                  )}
+                  {selectedId === layer.id && !layer.locked && (
                     <>
                       {/* Corner handle: uniform scale, aspect locked */}
                       <div
@@ -590,17 +616,29 @@ export default function LayerStudioPage() {
                         title="Resize (keep proportions)"
                         className="absolute -right-2 -bottom-2 h-4 w-4 rounded-full bg-foreground cursor-nwse-resize touch-none"
                       />
-                      {/* Right-edge handle: stretch width only */}
+                      {/* Right-edge handle: stretch width, left edge fixed */}
                       <div
-                        onPointerDown={(e) => startResize(e, layer, "x")}
-                        title="Stretch width"
+                        onPointerDown={(e) => startResize(e, layer, "right")}
+                        title="Stretch width (right)"
                         className="absolute -right-1.5 top-1/2 -translate-y-1/2 h-6 w-3 rounded-full bg-foreground/70 cursor-ew-resize touch-none"
                       />
-                      {/* Bottom-edge handle: stretch height only */}
+                      {/* Left-edge handle: stretch width, right edge fixed */}
                       <div
-                        onPointerDown={(e) => startResize(e, layer, "y")}
-                        title="Stretch height"
+                        onPointerDown={(e) => startResize(e, layer, "left")}
+                        title="Stretch width (left)"
+                        className="absolute -left-1.5 top-1/2 -translate-y-1/2 h-6 w-3 rounded-full bg-foreground/70 cursor-ew-resize touch-none"
+                      />
+                      {/* Bottom-edge handle: stretch height, top edge fixed */}
+                      <div
+                        onPointerDown={(e) => startResize(e, layer, "bottom")}
+                        title="Stretch height (bottom)"
                         className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-6 h-3 rounded-full bg-foreground/70 cursor-ns-resize touch-none"
+                      />
+                      {/* Top-edge handle: stretch height, bottom edge fixed */}
+                      <div
+                        onPointerDown={(e) => startResize(e, layer, "top")}
+                        title="Stretch height (top)"
+                        className="absolute -top-1.5 left-1/2 -translate-x-1/2 w-6 h-3 rounded-full bg-foreground/70 cursor-ns-resize touch-none"
                       />
                     </>
                   )}
@@ -625,6 +663,13 @@ export default function LayerStudioPage() {
                 >
                   <img src={layer.src} alt={layer.name} className="h-8 w-8 rounded object-cover border border-input" />
                   <span className="flex-1 text-xs truncate">{layer.name}</span>
+                  <button
+                    onClick={(e) => { e.stopPropagation(); toggleLock(layer.id); }}
+                    title={layer.locked ? "Unlock" : "Lock position"}
+                    className={`text-xs px-1.5 py-0.5 rounded border border-input ${layer.locked ? "bg-foreground text-background" : ""}`}
+                  >
+                    {layer.locked ? "🔒" : "🔓"}
+                  </button>
                   <button
                     onClick={(e) => { e.stopPropagation(); moveLayer(index, "up"); }}
                     disabled={index === layers.length - 1}

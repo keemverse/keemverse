@@ -16,6 +16,10 @@ export type Layer = {
   // position/size, by finding sibling variants under the same group.
   groupCategory?: PieceCategory;
   groupName?: string;
+  // When true, drag/resize handles are disabled for this layer — protects
+  // a piece that's already positioned correctly from being bumped while
+  // working with other layers on the canvas.
+  locked?: boolean;
 };
 
 export type LayerProject = {
