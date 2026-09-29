@@ -64,5 +64,16 @@
     "width": 159.2920353982301,
     "height": 260,
     "updatedAt": "2026-09-29T12:45:43.131Z"
+  },
+  {
+    "id": "e55c3082-737f-499c-b0fb-3da775d5b1f5",
+    "category": "bottom",
+    "groupName": "Barrel Jeans",
+    "variantName": "Maroon",
+    "imageUrl": "https://raw.githubusercontent.com/keemverse/keemverse/main/data/piece-assets/e55c3082-737f-499c-b0fb-3da775d5b1f5.webp",
+    "imagePath": "data/piece-assets/e55c3082-737f-499c-b0fb-3da775d5b1f5.webp",
+    "width": 159.2920353982301,
+    "height": 260,
+    "updatedAt": "2026-09-29T12:46:04.166Z"
   }
 ]
