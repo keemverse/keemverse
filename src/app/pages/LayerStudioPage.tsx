@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../components/ui/dialog";
 import { useAdminAuth } from "../lib/useAdminAuth";
 import {
   deleteProject,
@@ -137,6 +138,8 @@ export default function LayerStudioPage() {
   const [saveGroupName, setSaveGroupName] = useState("");
   const [saveVariantName, setSaveVariantName] = useState("");
   const [saving, setSaving] = useState(false);
+  const [saveToLibraryOpen, setSaveToLibraryOpen] = useState(false);
+  const [saveProjectOpen, setSaveProjectOpen] = useState(false);
   const [exporting, setExporting] = useState(false);
   const [stageScale, setStageScale] = useState(1);
   const dragState = useRef<DragState | null>(null);
@@ -296,6 +299,7 @@ export default function LayerStudioPage() {
       setLibraryPieces(await listPieces(secret));
       setSaveGroupName("");
       setSaveVariantName("");
+      setSaveToLibraryOpen(false);
     } finally {
       setSaving(false);
     }
@@ -430,6 +434,7 @@ export default function LayerStudioPage() {
     await saveProject(project);
     setProjects(await listProjects());
     setProjectName("");
+    setSaveProjectOpen(false);
   };
 
   const loadProject = (project: LayerProject) => {
@@ -839,54 +844,15 @@ export default function LayerStudioPage() {
           )}
 
           {selectedLayer && (
-            <div className="space-y-2 rounded-lg border border-input p-3">
-              <h2 className="text-xs uppercase tracking-[0.15em] text-muted-foreground">
-                Save "{selectedLayer.name}" to library
-              </h2>
-              <select
-                value={saveCategory}
-                onChange={(e) => setSaveCategory(e.target.value as PieceCategory)}
-                className="w-full h-9 text-sm rounded-md border border-input bg-background px-2"
-              >
-                {PIECE_CATEGORIES.map((c) => (
-                  <option key={c.id} value={c.id}>{c.label}</option>
-                ))}
-              </select>
-              <Input
-                placeholder="Piece name (e.g. Hoodie)"
-                value={saveGroupName}
-                onChange={(e) => setSaveGroupName(e.target.value)}
-                className="h-9 text-sm"
-              />
-              <Input
-                placeholder="Variant (e.g. Grey) — optional"
-                value={saveVariantName}
-                onChange={(e) => setSaveVariantName(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && saveSelectedToLibrary()}
-                className="h-9 text-sm"
-              />
-              <Button className="w-full" onClick={saveSelectedToLibrary} disabled={!saveGroupName.trim() || saving}>
-                {saving ? "Saving…" : "Save piece"}
-              </Button>
-            </div>
+            <Button className="w-full" variant="outline" onClick={() => setSaveToLibraryOpen(true)}>
+              Save "{selectedLayer.name}" to library
+            </Button>
           )}
 
           <div className="space-y-2">
-            <h2 className="text-xs uppercase tracking-[0.15em] text-muted-foreground">
+            <Button className="w-full" variant="outline" onClick={() => setSaveProjectOpen(true)}>
               Save project
-            </h2>
-            <div className="flex gap-2">
-              <Input
-                placeholder="Project name"
-                value={projectName}
-                onChange={(e) => setProjectName(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && saveCurrentProject()}
-                className="h-9 text-sm"
-              />
-              <Button className="shrink-0" onClick={saveCurrentProject} disabled={!projectName.trim()}>
-                Save
-              </Button>
-            </div>
+            </Button>
             {projects.length > 0 && (
               <div className="space-y-1.5 pt-1">
                 {projects.map((p) => (
@@ -916,6 +882,61 @@ export default function LayerStudioPage() {
         </div>
 
       </div>
+
+      <Dialog open={saveToLibraryOpen} onOpenChange={setSaveToLibraryOpen}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle>Save "{selectedLayer?.name}" to library</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3">
+            <select
+              value={saveCategory}
+              onChange={(e) => setSaveCategory(e.target.value as PieceCategory)}
+              className="w-full h-9 text-sm rounded-md border border-input bg-background px-2"
+            >
+              {PIECE_CATEGORIES.map((c) => (
+                <option key={c.id} value={c.id}>{c.label}</option>
+              ))}
+            </select>
+            <Input
+              placeholder="Piece name (e.g. Hoodie)"
+              value={saveGroupName}
+              onChange={(e) => setSaveGroupName(e.target.value)}
+              className="h-9 text-sm"
+            />
+            <Input
+              placeholder="Variant (e.g. Grey) — optional"
+              value={saveVariantName}
+              onChange={(e) => setSaveVariantName(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && saveSelectedToLibrary()}
+              className="h-9 text-sm"
+            />
+            <Button className="w-full" onClick={saveSelectedToLibrary} disabled={!saveGroupName.trim() || saving}>
+              {saving ? "Saving…" : "Save piece"}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={saveProjectOpen} onOpenChange={setSaveProjectOpen}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle>Save project</DialogTitle>
+          </DialogHeader>
+          <div className="flex gap-2">
+            <Input
+              placeholder="Project name"
+              value={projectName}
+              onChange={(e) => setProjectName(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && saveCurrentProject()}
+              className="h-9 text-sm"
+            />
+            <Button className="shrink-0" onClick={saveCurrentProject} disabled={!projectName.trim()}>
+              Save
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
