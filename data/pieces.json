@@ -86,5 +86,16 @@
     "width": 159.2920353982301,
     "height": 260,
     "updatedAt": "2026-09-29T12:46:23.155Z"
+  },
+  {
+    "id": "c6ac61cf-62a9-482f-80cd-aa037dc8da31",
+    "category": "bottom",
+    "groupName": "Barrel Jeans",
+    "variantName": "Ecru",
+    "imageUrl": "https://raw.githubusercontent.com/keemverse/keemverse/main/data/piece-assets/c6ac61cf-62a9-482f-80cd-aa037dc8da31.webp",
+    "imagePath": "data/piece-assets/c6ac61cf-62a9-482f-80cd-aa037dc8da31.webp",
+    "width": 159.2920353982301,
+    "height": 260,
+    "updatedAt": "2026-09-29T12:46:54.539Z"
   }
 ]
