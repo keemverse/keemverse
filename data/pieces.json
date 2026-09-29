@@ -75,5 +75,16 @@
     "width": 159.2920353982301,
     "height": 260,
     "updatedAt": "2026-09-29T12:46:04.166Z"
+  },
+  {
+    "id": "5cec6546-763e-4281-be56-464dfed2a0a4",
+    "category": "bottom",
+    "groupName": "Barrel Jeans",
+    "variantName": "Light Wash",
+    "imageUrl": "https://raw.githubusercontent.com/keemverse/keemverse/main/data/piece-assets/5cec6546-763e-4281-be56-464dfed2a0a4.webp",
+    "imagePath": "data/piece-assets/5cec6546-763e-4281-be56-464dfed2a0a4.webp",
+    "width": 159.2920353982301,
+    "height": 260,
+    "updatedAt": "2026-09-29T12:46:23.155Z"
   }
 ]
