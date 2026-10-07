@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { AdminNav } from "../components/AdminNav";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../components/ui/dialog";
@@ -552,6 +553,9 @@ export default function LayerStudioPage() {
 
   return (
     <div className="min-h-screen bg-background text-foreground px-5 md:px-8 py-10">
+      <div className="max-w-5xl mx-auto mb-6">
+        <AdminNav />
+      </div>
       <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-[300px_1fr] gap-8">
         {/* Title + Import: always first, both on mobile (order-1) and desktop (top of the left column). */}
         <div className="order-1 md:col-start-1 md:row-start-1 space-y-2">

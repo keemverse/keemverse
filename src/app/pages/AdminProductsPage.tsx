@@ -1,4 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { parseQuickAdd, type QuickAddItem } from "../lib/quickAdd";
+import { AdminNav } from "../components/AdminNav";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import {
@@ -44,7 +46,7 @@ const STATUSES: Product["status"][] = ["Live", "Sold Out", "Hidden"];
 
 type SortKey = "manual" | "name" | "price" | "status" | "created_at";
 const SORT_LABELS: Record<SortKey, string> = {
-  manual: "Manual order (drag to reorder)",
+  manual: "Site order (position 1 shows first)",
   name: "Name (A–Z)",
   price: "Price (low → high)",
   status: "Status",
@@ -58,8 +60,15 @@ const numericPrice = (price: string | null) => {
 // anyone actually wants from a "sort by status" — the thing that's
 // sellable right now belongs first.
 const STATUS_RANK: Record<Product["status"], number> = { Live: 0, "Sold Out": 1, Hidden: 2 };
+// The public pages sort by display_order (rows without one go last), but
+// the API returns newest-first — so without this the admin list jumped
+// back to date order after every "Save order" and never showed what
+// visitors actually see. Stable sort, so unordered rows stay newest-first.
+const sortBySiteOrder = (list: Product[]) =>
+  [...list].sort((a, b) => (a.display_order ?? 999999) - (b.display_order ?? 999999));
+
 const sortProducts = (list: Product[], key: SortKey) => {
-  if (key === "manual") return list; // as returned by the API (display_order-friendly, drag reflects this)
+  if (key === "manual") return list; // already in site order (see sortBySiteOrder)
   const sorted = [...list];
   if (key === "name") sorted.sort((a, b) => a.name.localeCompare(b.name));
   if (key === "price") sorted.sort((a, b) => numericPrice(a.price) - numericPrice(b.price));
@@ -103,6 +112,76 @@ const EMPTY_FORM = {
   purchase_link: "",
 };
 
+// Every Fashion Find points at one shared Temu storefront on purpose —
+// Temu's per-product affiliate flow forces a gift/invite funnel — so the
+// real per-product link lives in direct_product_link instead.
+const TEMU_STOREFRONT = "https://temu.to/k/enxcis8g6rg";
+
+type FormState = typeof EMPTY_FORM;
+
+const defaultsFor = (type: Product["type"]): FormState =>
+  type === "fashion_find"
+    ? { ...EMPTY_FORM, type, source: "Temu", affiliate_link: TEMU_STOREFRONT }
+    : { ...EMPTY_FORM, type };
+
+const itemToForm = (item: QuickAddItem): FormState => {
+  const base = defaultsFor("fashion_find");
+  const status = STATUSES.find((s) => s === item.status) ?? base.status;
+  return {
+    ...base,
+    name: item.name,
+    price: item.price ?? "",
+    category: item.category ?? "",
+    rating: item.rating ?? "",
+    tags: item.tags ?? "",
+    description: item.description ?? "",
+    why_picked: item.why_picked ?? "",
+    image_url: item.image_url ?? "",
+    direct_product_link: item.direct_product_link ?? "",
+    source: item.source || base.source,
+    affiliate_link: item.affiliate_link || base.affiliate_link,
+    status,
+  };
+};
+
+// Only the fields that apply to this type — no point writing
+// "why_picked": "" onto a preset row.
+const buildPayload = (f: FormState) => {
+  const shared = {
+    type: f.type,
+    name: f.name,
+    price: f.price,
+    description: f.description,
+    tags: f.tags,
+    status: f.status,
+    featured: f.featured,
+  };
+  return isDigitalProduct(f.type)
+    ? {
+        ...shared,
+        image_url: f.thumbnail, // keep the site's generic image_url in sync
+        collection: f.collection,
+        thumbnail: f.thumbnail,
+        banner: f.banner,
+        whats_included: f.whats_included,
+        installation: f.installation,
+        compatible_with: f.compatible_with,
+        display_order: f.display_order ? Number(f.display_order) : null,
+        drive_file_id: f.drive_file_id,
+        purchase_link: f.purchase_link || null,
+      }
+    : {
+        ...shared,
+        image_url: f.image_url,
+        source: f.source,
+        category: f.category,
+        why_picked: f.why_picked,
+        rating: f.rating ? Number(f.rating) : null,
+        affiliate_link: f.affiliate_link,
+        direct_product_link: f.direct_product_link,
+      };
+};
+
 // Internal-only tool — gated by a shared secret (same pattern as the
 // KEEMVERSE Sheets bridge), not a full auth system. Fine for a single
 // primary user; revisit if this ever needs more than one editor.
@@ -116,12 +195,21 @@ export default function AdminProductsPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [form, setForm] = useState(EMPTY_FORM);
+  const [form, setForm] = useState<FormState>(() => defaultsFor("fashion_find"));
+  const [quickText, setQuickText] = useState("");
+  const [bulkBusy, setBulkBusy] = useState(false);
+  const [bulkMsg, setBulkMsg] = useState("");
   const [error, setError] = useState("");
   const [formOpen, setFormOpen] = useState(false);
   const [sortKey, setSortKey] = useState<SortKey>("manual");
   const [orderDirty, setOrderDirty] = useState(false);
   const [savingOrder, setSavingOrder] = useState(false);
+
+  const quickItems = useMemo(() => parseQuickAdd(quickText), [quickText]);
+  const categoryOptions = useMemo(
+    () => Array.from(new Set(products.map((p) => p.category).filter(Boolean))) as string[],
+    [products]
+  );
 
   const headers = () => ({
     "Content-Type": "application/json",
@@ -147,7 +235,7 @@ export default function AdminProductsPage() {
         return;
       }
       if (!res.ok) throw new Error(await res.text());
-      setProducts(await res.json());
+      setProducts(sortBySiteOrder(await res.json()));
       setUnlocked(true);
     } catch (e: any) {
       setError(e.message || "Failed to load products");
@@ -168,8 +256,47 @@ export default function AdminProductsPage() {
   };
 
   const resetForm = (type: Product["type"] = typeFilter) => {
-    setForm({ ...EMPTY_FORM, type });
+    setForm(defaultsFor(type));
     setEditingId(null);
+    setQuickText("");
+    setBulkMsg("");
+  };
+
+  // One pasted item fills the form so image/link can be checked before
+  // saving; several items are created straight away, one at a time (each
+  // is its own commit to data/products.json, so they can't race).
+  const fillFromQuick = () => {
+    if (quickItems.length !== 1) return;
+    setForm(itemToForm(quickItems[0]));
+    setQuickText("");
+    setBulkMsg("");
+  };
+
+  const addAllQuick = async () => {
+    setBulkBusy(true);
+    setError("");
+    let added = 0;
+    try {
+      for (const item of quickItems) {
+        setBulkMsg(`Adding ${added + 1} of ${quickItems.length}…`);
+        const res = await fetch("/api/products", {
+          method: "POST",
+          headers: headers(),
+          body: JSON.stringify(buildPayload(itemToForm(item))),
+        });
+        if (!res.ok) throw new Error(await res.text());
+        added++;
+      }
+      resetForm();
+      setFormOpen(false);
+      load(typeFilter);
+    } catch (e: any) {
+      setBulkMsg("");
+      setError(`Added ${added} of ${quickItems.length} — stopped at "${quickItems[added]?.name}": ${e.message || "failed"}`);
+      load(typeFilter);
+    } finally {
+      setBulkBusy(false);
+    }
   };
 
   const openNew = () => {
@@ -209,42 +336,7 @@ export default function AdminProductsPage() {
 
   const save = async () => {
     setError("");
-    // Only send the fields that apply to this type — no point writing
-    // "why_picked": "" onto a preset row.
-    const digital = isDigitalProduct(form.type);
-    const shared = {
-      type: form.type,
-      name: form.name,
-      price: form.price,
-      description: form.description,
-      tags: form.tags,
-      status: form.status,
-      featured: form.featured,
-    };
-    const payload = digital
-      ? {
-          ...shared,
-          image_url: form.thumbnail, // keep the site's generic image_url in sync
-          collection: form.collection,
-          thumbnail: form.thumbnail,
-          banner: form.banner,
-          whats_included: form.whats_included,
-          installation: form.installation,
-          compatible_with: form.compatible_with,
-          display_order: form.display_order ? Number(form.display_order) : null,
-          drive_file_id: form.drive_file_id,
-          purchase_link: form.purchase_link || null,
-        }
-      : {
-          ...shared,
-          image_url: form.image_url,
-          source: form.source,
-          category: form.category,
-          why_picked: form.why_picked,
-          rating: form.rating ? Number(form.rating) : null,
-          affiliate_link: form.affiliate_link,
-          direct_product_link: form.direct_product_link,
-        };
+    const payload = buildPayload(form);
 
     try {
       const res = await fetch(
@@ -289,14 +381,14 @@ export default function AdminProductsPage() {
     setOrderDirty(true);
   };
 
-  const saveOrder = async () => {
+  const persistOrder = async (list: Product[]) => {
     setSavingOrder(true);
     setError("");
     try {
       const res = await fetch(`/api/products?reorder=1`, {
         method: "PATCH",
         headers: headers(),
-        body: JSON.stringify({ ids: products.map((p) => p.id) }),
+        body: JSON.stringify({ ids: list.map((p) => p.id) }),
       });
       if (!res.ok) throw new Error(await res.text());
       setOrderDirty(false);
@@ -306,6 +398,18 @@ export default function AdminProductsPage() {
     } finally {
       setSavingOrder(false);
     }
+  };
+
+  const saveOrder = () => persistOrder(products);
+
+  // The promo shortcut: whatever you're pushing this week goes to position
+  // 1 in one click and saves immediately — no arrow-by-arrow shuffling.
+  const moveToTop = (id: string) => {
+    const target = products.find((p) => p.id === id);
+    if (!target) return;
+    const next = [target, ...products.filter((p) => p.id !== id)];
+    setProducts(next);
+    persistOrder(next);
   };
 
   if (!unlocked) {
@@ -334,6 +438,7 @@ export default function AdminProductsPage() {
   return (
     <div className="min-h-screen bg-background text-foreground px-5 md:px-8 py-10">
       <div className="max-w-5xl mx-auto space-y-8">
+        <AdminNav />
         <h1 className="font-serif text-2xl">Product Catalog</h1>
 
         <div className="flex items-center justify-between gap-2 flex-wrap">
@@ -376,6 +481,51 @@ export default function AdminProductsPage() {
             </DialogHeader>
 
             <div className="space-y-3">
+          {!editingId && !digital && (
+            <div className="rounded-md border border-dashed border-input p-3 space-y-2">
+              <p className="text-xs uppercase tracking-[0.15em] text-muted-foreground">
+                Quick add — paste a block
+              </p>
+              <textarea
+                className="w-full rounded-md border border-input bg-input-background px-3 py-2 text-sm font-mono"
+                placeholder={"name: …\nprice: ₦…\ncategory: …\ntags: a, b, c\ndescription: …\nwhy: …\nimage: https://…\nlink: https://…\n---   (separate several items)"}
+                rows={4}
+                value={quickText}
+                onChange={(e) => setQuickText(e.target.value)}
+              />
+              {quickItems.length > 0 && (
+                <ul className="space-y-0.5 text-xs text-muted-foreground">
+                  {quickItems.map((q, i) => (
+                    <li key={i}>
+                      {q.name} — {q.price || "no price"}
+                      {!q.image_url && " · no image URL"}
+                      {!q.direct_product_link && " · no direct link"}
+                    </li>
+                  ))}
+                </ul>
+              )}
+              <div className="flex items-center gap-2">
+                {quickItems.length === 1 && (
+                  <Button size="sm" type="button" onClick={fillFromQuick}>
+                    Fill form
+                  </Button>
+                )}
+                {quickItems.length > 1 && (
+                  <Button size="sm" type="button" onClick={addAllQuick} disabled={bulkBusy}>
+                    {bulkBusy ? "Adding…" : `Add ${quickItems.length} items`}
+                  </Button>
+                )}
+                {bulkMsg && <span className="text-xs text-muted-foreground">{bulkMsg}</span>}
+              </div>
+            </div>
+          )}
+
+          <datalist id="category-options">
+            {categoryOptions.map((c) => (
+              <option key={c} value={c} />
+            ))}
+          </datalist>
+
           <div className="grid grid-cols-2 gap-3">
             <Input placeholder="Name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
             <Input placeholder="Price (e.g. ₦4,586)" value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} />
@@ -392,7 +542,7 @@ export default function AdminProductsPage() {
             ) : (
               <>
                 <Input placeholder="Source (e.g. Temu)" value={form.source} onChange={(e) => setForm({ ...form, source: e.target.value })} />
-                <Input placeholder="Category" value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} />
+                <Input placeholder="Category" list="category-options" value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} />
                 <Input placeholder="Image URL" value={form.image_url} onChange={(e) => setForm({ ...form, image_url: e.target.value })} className="col-span-2" />
                 <Input placeholder="Affiliate/checkout link" value={form.affiliate_link} onChange={(e) => setForm({ ...form, affiliate_link: e.target.value })} className="col-span-2" />
                 <Input placeholder="Direct product link" value={form.direct_product_link} onChange={(e) => setForm({ ...form, direct_product_link: e.target.value })} className="col-span-2" />
@@ -492,6 +642,13 @@ export default function AdminProductsPage() {
           )}
         </div>
 
+        {typeFilter === "fashion_find" && sortKey === "manual" && (
+          <p className="text-xs text-muted-foreground">
+            Position 1 is the first card in All Finds. Tick "Featured" on an item to also show it in the
+            Featured row at the very top of the page.
+          </p>
+        )}
+
         {/* List */}
         <div className="space-y-2">
           {loading ? (
@@ -502,9 +659,12 @@ export default function AdminProductsPage() {
             sortProducts(products, sortKey).map((p, i) => (
               <div
                 key={p.id}
-                className="flex items-center justify-between border border-input rounded-md px-4 py-3"
+                className="flex flex-col gap-3 border border-input rounded-md px-4 py-3 sm:flex-row sm:items-center sm:justify-between"
               >
                 <div className="flex items-center gap-3 min-w-0">
+                  {sortKey === "manual" && (
+                    <span className="w-5 shrink-0 text-right text-xs text-muted-foreground">{i + 1}</span>
+                  )}
                   {sortKey === "manual" && (
                     <div className="flex flex-col shrink-0">
                       <button
@@ -535,7 +695,17 @@ export default function AdminProductsPage() {
                     </p>
                   </div>
                 </div>
-                <div className="flex gap-2 shrink-0">
+                <div className="flex gap-2 shrink-0 self-end sm:self-auto">
+                  {sortKey === "manual" && (
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => moveToTop(p.id)}
+                      disabled={i === 0 || savingOrder}
+                    >
+                      ↑ Top
+                    </Button>
+                  )}
                   <Button size="sm" variant="outline" onClick={() => startEdit(p)}>
                     Edit
                   </Button>
