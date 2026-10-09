@@ -5,9 +5,10 @@ import { ComingSoonModal } from '../components/ComingSoonModal';
 import { ImageWithFallback } from '../components/figma/ImageWithFallback';
 import { GeometricBackdrop } from '../components/GeometricBackdrop';
 import { UpworkIcon, BehanceIcon } from '../components/Icons';
-import UniverseShopCard from "../components/UniverseShopCard";
-import { CRAFT, CRAFT_DARK } from '../lib/theme';
-import { getCatalogProducts } from '../lib/products';
+import { DesignTile } from '../components/DesignTile';
+import { CountdownTeaser } from '../components/CountdownTeaser';
+import { getDesigns, DEV_SAMPLE_DESIGNS, type Design } from '../lib/designs';
+import { DIGITAL_CRAFT_LAUNCH_AT } from '../lib/launch';
 import craftPageHero from '../../imports/craft-quality-hero_2.webp';
 import artistPaletteIcon from '../../imports/icons3d/artist-palette-3d.png';
 import briefcaseIcon from '../../imports/icons3d/briefcase-3d.png';
@@ -15,20 +16,14 @@ import briefcaseIcon from '../../imports/icons3d/briefcase-3d.png';
 const services = [
   {
     icon: artistPaletteIcon,
-    title: 'Graphics & Print Asset Creation',
-    desc: 'From concept to production-ready artwork — including cleanup and optimization of low-quality files.',
+    title: 'Custom Art & Apparel Graphics',
+    desc: 'Original illustrations and apparel artwork for creators and small brands, from first sketch to final files.',
   },
   {
     icon: briefcaseIcon,
-    title: 'Creative Consultation & Support',
-    desc: 'Professional guidance for apparel, print, and creative projects.',
+    title: 'Creative Direction & Consultation',
+    desc: 'Help shaping the look of an apparel line, merch, or creative project.',
   },
-];
-
-const stats = [
-  { value: '4+', label: 'Years Experience' },
-  { value: '3k+', label: 'Projects & Optimizations' },
-  { value: '99.9%', label: 'Quality Guarantee' },
 ];
 
 function SectionDivider({ label }: { label: string }) {
@@ -43,18 +38,22 @@ function SectionDivider({ label }: { label: string }) {
 
 export function DigitalCraftPage() {
   const [comingSoon, setComingSoon] = useState<string | null>(null);
-  const [shop, setShop] = useState<any[]>([]);
+  const [designs, setDesigns] = useState<Design[]>([]);
+
+  // Dev-only layout preview: open /digital-craft?preview=designs while running
+  // `pnpm dev`. Production builds never show it (DEV_SAMPLE_DESIGNS is empty).
+  const previewing =
+    import.meta.env.DEV && new URLSearchParams(window.location.search).get('preview') === 'designs';
 
   useEffect(() => {
-    getCatalogProducts("design_bundle")
-      .then((data) => {
-        const sorted = [...data].sort(
-          (a, b) => (a.display_order ?? 999) - (b.display_order ?? 999)
-        );
-        setShop(sorted);
-      })
-      .catch(console.error);
+    getDesigns().then(setDesigns);
   }, []);
+
+  // The grid appears only once the launch date (lib/launch.ts) has passed and
+  // there is at least one real design. Until then: the opening-soon teaser.
+  const launched = DIGITAL_CRAFT_LAUNCH_AT !== null && Date.now() >= Date.parse(DIGITAL_CRAFT_LAUNCH_AT);
+  const showGrid = previewing || (launched && designs.length > 0);
+  const gridDesigns = previewing ? DEV_SAMPLE_DESIGNS : designs;
 
   return (
     <div className="relative min-h-screen bg-background text-foreground">
@@ -78,7 +77,7 @@ export function DigitalCraftPage() {
             <div className="relative w-full overflow-hidden rounded-3xl aspect-[4/3] md:aspect-[16/9]" style={{ maxHeight: '70vh' }}>
               <ImageWithFallback
                 src={craftPageHero}
-                alt="Digital Craft — production-ready artwork"
+                alt="Digital Craft — art and apparel"
                 className="w-full h-full object-cover"
               />
 
@@ -103,7 +102,7 @@ export function DigitalCraftPage() {
   className="text-white leading-tight whitespace-nowrap"
   style={{ fontFamily: 'Georgia, serif', fontSize: 'clamp(0.85rem, 5vw, 3.5rem)' }}
 >
-  Designing for production quality
+  Art you can wear
 </h1>
                 </motion.div>
               </div>
@@ -124,36 +123,16 @@ export function DigitalCraftPage() {
     fontSize: 'clamp(1.75rem, 3.5vw, 2.5rem)',
   }}
 >
-  I help creators, apparel brands, and print businesses solve design and production problems.
+  I make original art and apparel graphics for creators and small brands.
 </h2>
 
 {/* Supporting statement */}
-<p className="text-muted-foreground leading-loose text-base md:text-lg mb-10">
-  From custom graphics and production-ready artwork to print file optimization
-  and repair, I help apparel brands, creators, and print businesses deliver
-  creative designs, clean files, and better prints.
+<p className="text-muted-foreground leading-loose text-base md:text-lg">
+  From custom illustrations to artwork made for apparel, I help creators and
+  small brands turn an idea into something people want to wear.
 </p>
 
             </div>
-
-{/* Stats below — quiet supporting row, not a competing card block */}
-            <div className="mt-10 flex items-start justify-center gap-6 md:gap-10 max-w-md mx-auto">
-              {stats.map((s, i) => (
-                <div key={s.label} className="flex items-center gap-6 md:gap-10">
-                  {i > 0 && <div className="h-8 w-px border-border" />}
-                  <div className="flex flex-col items-center text-center">
-                    <span className="font-bold text-foreground text-base md:text-lg">
-                      {s.value}
-                    </span>
-                    <span className="text-[10px] md:text-xs text-muted-foreground uppercase tracking-wider leading-tight mt-0.5">
-                      {s.label}
-                    </span>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* Supporting tagline */}
           </section>
 
           {/* ── WORK WITH ME ── */}
@@ -201,34 +180,19 @@ export function DigitalCraftPage() {
             </div>
           </section>
 
-          {/* ── SHOP ── */}
+          {/* ── DESIGNS ── */}
           <section className="mt-24">
-            <SectionDivider label="Shop" />
+            <SectionDivider label="Designs" />
 
-            <p className="text-center text-sm text-muted-foreground mb-8">
-              Curated. Created. Designed for your world.
-            </p>
-
-            <div className="grid grid-cols-2 gap-3 md:gap-8 max-w-5xl mx-auto">
-              {shop.map((item, i) => {
-                const isReady = Boolean(item.purchase_link);
-                return (
-                  <UniverseShopCard
-                    key={item.id}
-                    title={item.name}
-                    description={item.description}
-                    image={item.thumbnail || item.image_url}
-                    cta={isReady ? "Shop Now" : "Coming Soon"}
-                    href={isReady ? item.purchase_link : "#"}
-                    tag={isReady ? "LIVE" : "PENDING"}
-                    index={i}
-                    onOpen={() => setComingSoon(item.name)}
-                    accent={CRAFT}
-                    accentDark={CRAFT_DARK}
-                  />
-                );
-              })}
-            </div>
+            {showGrid ? (
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-x-3 gap-y-8 md:gap-x-8 md:gap-y-12 max-w-5xl mx-auto">
+                {gridDesigns.map((design, i) => (
+                  <DesignTile key={design.id} design={design} index={i} />
+                ))}
+              </div>
+            ) : (
+              <CountdownTeaser launchAt={DIGITAL_CRAFT_LAUNCH_AT} />
+            )}
           </section>
 
         </div>

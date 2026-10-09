@@ -29,7 +29,7 @@ export async function getRateCard() {
 
 // Catalog backend (GitHub-file store via /api/products) — Fashion Finds
 // and Presets both read from here now. See docs/admin-products-setup.md.
-type CatalogType = "fashion_find" | "preset" | "design_bundle";
+type CatalogType = "fashion_find" | "preset" | "design_bundle" | "design";
 
 export async function getCatalogProducts(type: CatalogType) {
   const response = await fetch(`/api/products?type=${type}`);
