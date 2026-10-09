@@ -1,71 +1,95 @@
-import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { ImageWithFallback } from './figma/ImageWithFallback';
-import { ComingSoonModal } from './ComingSoonModal';
 import { socials } from '../lib/socials';
 import logImg from '../../imports/log.png';
 
+const explore = [
+  { to: '/fashion', label: 'Fashion' },
+  { to: '/fashion/finds', label: 'Fashion Finds' },
+  { to: '/fashion/presets', label: 'Lightroom Presets' },
+  { to: '/digital-craft', label: 'Digital Craft' },
+];
+
+const help = [
+  { to: '/about', label: 'About' },
+  { to: '/contact', label: 'Contact' },
+  { to: '/refund-policy', label: 'Refund & Delivery' },
+  { to: '/privacy-policy', label: 'Privacy Policy' },
+  { to: '/terms', label: 'Terms' },
+];
+
+function FooterLinks({ title, links }: { title: string; links: { to: string; label: string }[] }) {
+  return (
+    <nav aria-label={title}>
+      <h2 className="text-xs font-bold tracking-[0.2em] uppercase text-foreground/70 mb-4">{title}</h2>
+      <ul className="flex flex-col gap-3">
+        {links.map((l) => (
+          <li key={l.to}>
+            <Link
+              to={l.to}
+              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+            >
+              {l.label}
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  );
+}
+
 export function SocialFooter() {
-  const [comingSoon, setComingSoon] = useState<string | null>(null);
+  // Pending socials (href '#') stay out of the footer until they are real,
+  // so there are no dead icons.
+  const liveSocials = socials.filter((s) => s.href !== '#');
 
   return (
-    <footer className="mt-24 py-20 px-6">
-      <ComingSoonModal
-        open={!!comingSoon}
-        onClose={() => setComingSoon(null)}
-        title={comingSoon ? `${comingSoon} — Coming Soon` : 'Coming Soon'}
-        description="This link isn't set up yet — check back soon."
-      />
+    <footer className="mt-24 border-t border-border px-6 pt-14 pb-10">
+      <div className="max-w-5xl mx-auto">
+        <div className="grid grid-cols-2 gap-x-6 gap-y-10 md:grid-cols-[1.4fr_1fr_1fr_1fr] md:gap-x-10">
+          <div className="col-span-2 md:col-span-1">
+            <ImageWithFallback
+              src={logImg}
+              alt="KEEMVERSE"
+              className="h-9 w-auto object-contain"
+            />
+            <p
+              className="mt-5 text-xs tracking-[0.2em] uppercase text-muted-foreground"
+              style={{ fontFamily: 'Georgia, serif' }}
+            >
+              Create · Build · Inspire
+            </p>
+            <p className="mt-4 text-sm text-muted-foreground leading-relaxed max-w-xs">
+              Fashion finds, presets, and original art and apparel. Designed in Nigeria.
+            </p>
+          </div>
 
-      <div className="max-w-2xl mx-auto flex flex-col items-center text-center gap-10">
-        <p
-          className="text-sm md:text-base tracking-[0.2em] uppercase text-muted-foreground"
-          style={{ fontFamily: 'Georgia, serif' }}
-        >
-          Create · Build · Inspire
-        </p>
+          <FooterLinks title="Explore" links={explore} />
+          <FooterLinks title="Help" links={help} />
 
-        <div>
-          <div className="flex gap-4 justify-center">
-            {socials.map((s) => {
-              const isPending = s.href === '#';
-              return (
+          <div className="col-span-2 md:col-span-1">
+            <h2 className="text-xs font-bold tracking-[0.2em] uppercase text-foreground/70 mb-4">
+              Follow
+            </h2>
+            <div className="flex gap-3">
+              {liveSocials.map((s) => (
                 <a
                   key={s.name}
                   href={s.href}
-                  target={!isPending ? '_blank' : undefined}
-                  rel={!isPending ? 'noopener noreferrer' : undefined}
-                  onClick={
-                    isPending
-                      ? (e) => {
-                          e.preventDefault();
-                          setComingSoon(s.name);
-                        }
-                      : undefined
-                  }
+                  target="_blank"
+                  rel="noopener noreferrer"
                   aria-label={s.name}
-                  className="w-14 h-14 rounded-2xl flex items-center justify-center border border-border bg-card text-foreground/80 hover:bg-muted hover:text-foreground transition-all"
+                  className="w-11 h-11 rounded-xl flex items-center justify-center border border-border bg-card text-foreground/80 hover:bg-muted hover:text-foreground transition-colors"
                 >
                   <s.icon className="w-5 h-5" />
                 </a>
-              );
-            })}
+              ))}
+            </div>
+            <p className="mt-4 text-sm text-muted-foreground">@soft_keem</p>
           </div>
         </div>
 
-        <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs text-muted-foreground">
-          <a href="/about" className="hover:text-foreground transition-colors">About</a>
-          <a href="/contact" className="hover:text-foreground transition-colors">Contact</a>
-          <a href="/refund-policy" className="hover:text-foreground transition-colors">Refund &amp; Delivery</a>
-          <a href="/privacy-policy" className="hover:text-foreground transition-colors">Privacy Policy</a>
-          <a href="/terms" className="hover:text-foreground transition-colors">Terms</a>
-        </div>
-
-        <div className="flex flex-col items-center gap-4 opacity-40 text-sm">
-          <ImageWithFallback
-            src={logImg}
-            alt="KEEMVERSE"
-            className="h-6 w-auto object-contain"
-          />
+        <div className="mt-12 pt-6 border-t border-border text-xs text-muted-foreground">
           <p>© {new Date().getFullYear()} KEEMVERSE. All rights reserved.</p>
         </div>
       </div>
