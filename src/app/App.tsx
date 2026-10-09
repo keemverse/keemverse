@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
+import { Analytics } from '@vercel/analytics/react';
 
 import { NavBar } from './components/NavBar';
 import { useTheme } from './lib/useTheme';
@@ -70,6 +71,7 @@ export default function App() {
 <Route path="/admin/studio" element={<LayerStudioPage />} />
 </Routes>
       </div>
+      <Analytics />
     </BrowserRouter>
   );
 }
