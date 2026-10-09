@@ -2,3 +2,7 @@ node_modules
 .vscode
 .vercel
 .env*
+
+# account recovery codes must never live in the repo
+vercel_recovery-codes.txt
+recovery-codes*.txt
