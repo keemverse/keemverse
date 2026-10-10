@@ -76,16 +76,25 @@ Set up (Vercel project > Settings > Environment Variables, Production):
 
 | Variable | Value |
 |---|---|
-| `EDITOR_SECRET` | a long random secret, different from `ADMIN_SECRET` |
-| `EDITOR_NAME` | the person's name, e.g. `Ini` (shown in commit history) |
+| `EDITORS` | one entry per helper, `name:secret`, comma-separated, e.g. `Ini:k3x9...,Tola:p8w2...` |
+
+Every secret must be long, random, different from `ADMIN_SECRET` and from each
+other, and must not contain a comma or a colon (the generator command in
+the setup steps produces safe ones). The older single-helper pair
+`EDITOR_SECRET` + `EDITOR_NAME` still works and counts as one more editor.
+
+**Adding someone:** append `,Name:their-secret` to `EDITORS` and redeploy.
+**Removing someone:** delete their entry and redeploy; only their login stops.
+People do not need Vercel or GitHub accounts, and nothing here uses a Vercel
+team seat.
 
 Then redeploy (any push to `main` does it; env var changes only apply to new
 deployments). She opens `/admin`, enters the editor secret, and sees only the
 Products screen with a Status picker and a Price box per row.
 
-- **Audit trail:** her edits show in GitHub history as `Update product: <name> (by Ini)`.
-- **Revoke:** delete `EDITOR_SECRET` in Vercel and redeploy; her login stops working.
-- **Rotate:** change `EDITOR_SECRET` and redeploy; send her the new one privately.
+- **Audit trail:** each edit shows in GitHub history as `Update product: <name> (by Ini)`,
+  using that person's name from `EDITORS`.
+- **Revoke / rotate:** edit that person's entry in `EDITORS` and redeploy.
 - **Not available to editors:** `/admin/studio`, creating, deleting, and every
   field other than `status` and `price`. Reordering is allowed (it only
   writes `display_order`).

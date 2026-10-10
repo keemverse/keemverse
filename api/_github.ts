@@ -65,17 +65,46 @@ function secretMatches(provided: unknown, expected: string | undefined) {
 }
 
 export type Role = "admin" | "editor";
+export type Identity = { role: Role; name: string };
 
-// Two logins share the x-admin-secret header:
-//   ADMIN_SECRET  -> "admin":  everything
-//   EDITOR_SECRET -> "editor": a helper who may only change a product's status
-//                    and price (enforced in api/products.ts, not just hidden
-//                    in the page). Leave EDITOR_SECRET unset to disable it.
-export function getRole(req: HeaderReq): Role | null {
+// Everyone signs in with their own secret in the x-admin-secret header:
+//   ADMIN_SECRET -> "admin": everything
+//   EDITORS      -> any number of helpers, as comma-separated name:secret pairs,
+//                   e.g.  Ini:abc123,Tola:xyz789  (names and secrets must not
+//                   contain a comma or a colon). Each is an "editor": may only
+//                   change a product's status, price and order (enforced in
+//                   api/products.ts, not just hidden in the page).
+//   EDITOR_SECRET + EDITOR_NAME -> one more editor, kept for the single-helper
+//                   setup. Leave all of these unset to disable editors.
+// To add or remove a person, edit EDITORS in Vercel and redeploy. No code change.
+function editors(): { name: string; secret: string }[] {
+  const list: { name: string; secret: string }[] = [];
+  for (const part of (process.env.EDITORS || "").split(",")) {
+    const i = part.indexOf(":");
+    if (i < 1) continue;
+    const name = part.slice(0, i).trim();
+    const secret = part.slice(i + 1).trim();
+    if (name && secret) list.push({ name, secret });
+  }
+  if (process.env.EDITOR_SECRET) {
+    list.push({ name: process.env.EDITOR_NAME || "editor", secret: process.env.EDITOR_SECRET });
+  }
+  return list;
+}
+
+export function getIdentity(req: HeaderReq): Identity | null {
   const provided = req.headers["x-admin-secret"];
-  if (secretMatches(provided, process.env.ADMIN_SECRET)) return "admin";
-  if (secretMatches(provided, process.env.EDITOR_SECRET)) return "editor";
-  return null;
+  if (secretMatches(provided, process.env.ADMIN_SECRET)) return { role: "admin", name: "admin" };
+  let found: Identity | null = null;
+  for (const e of editors()) {
+    // check every entry (no early exit) so timing doesn't reveal list position
+    if (secretMatches(provided, e.secret) && !found) found = { role: "editor", name: e.name };
+  }
+  return found;
+}
+
+export function getRole(req: HeaderReq): Role | null {
+  return getIdentity(req)?.role ?? null;
 }
 
 // Admin-only gate, used by every endpoint that has no editor role
@@ -84,10 +113,6 @@ export function isAuthorizedAdmin(req: HeaderReq) {
   return getRole(req) === "admin";
 }
 
-// Name written into commit messages for edits made with the editor login.
-export function editorName() {
-  return process.env.EDITOR_NAME || "editor";
-}
 
 // Generic versions of readProducts/writeProducts for any JSON file in the
 // repo — used by api/pieces.ts to store the Layer Studio piece library

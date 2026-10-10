@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 import { randomUUID } from "crypto";
-import { readProducts, writeProducts, getRole, editorName } from "./_github.js";
+import { readProducts, writeProducts, getIdentity } from "./_github.js";
 
 // Fields that only the admin UI needs. They stay in data/products.json but are
 // never sent to the public site: a Drive file id is the thing that delivers a
@@ -27,12 +27,13 @@ const STATUSES = ["Live", "Hidden", "Sold Out"];
 //          reorder in the admin UI), rather than one PATCH per row
 //   DELETE /api/products?id=<id>                         — admin, delete
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-  const role = getRole(req);
+  const who = getIdentity(req);
+  const role = who?.role ?? null;
 
   if (req.method === "GET" && req.query.whoami === "1") {
     if (!role) return res.status(401).json({ error: "Unauthorized" });
     res.setHeader("Cache-Control", "no-store");
-    return res.status(200).json({ role, name: role === "editor" ? editorName() : "admin" });
+    return res.status(200).json({ role, name: who!.name });
   }
 
   if (req.method === "GET") {
@@ -102,7 +103,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       const updated = products.map((p) =>
         order.has(p.id) ? { ...p, display_order: order.get(p.id), updated_at: now } : p
       );
-      const by = role === "editor" ? ` (by ${editorName()})` : "";
+      const by = role === "editor" ? ` (by ${who!.name})` : "";
       await writeProducts(updated, sha, `Reorder ${ids.length} products${by}`);
       return res.status(200).json({ success: true, count: ids.length });
     } catch (err: any) {
@@ -151,7 +152,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       };
       const updated = [...products];
       updated[index] = updatedProduct;
-      const by = role === "editor" ? ` (by ${editorName()})` : "";
+      const by = role === "editor" ? ` (by ${who!.name})` : "";
       await writeProducts(updated, sha, `Update product: ${updatedProduct.name}${by}`);
       return res.status(200).json(role === "admin" ? updatedProduct : toPublic(updatedProduct));
     } catch (err: any) {
