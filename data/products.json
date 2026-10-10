@@ -16,7 +16,7 @@
     "status": "Live",
     "featured": false,
     "created_at": "2026-07-19T00:00:00+00:00",
-    "updated_at": "2026-10-10T23:43:51.528Z",
+    "updated_at": "2026-10-10T23:48:46.967Z",
     "display_order": 19
   },
   {
@@ -36,7 +36,7 @@
     "status": "Live",
     "featured": false,
     "created_at": "2026-07-20T00:00:00+00:00",
-    "updated_at": "2026-10-10T23:43:51.528Z",
+    "updated_at": "2026-10-10T23:48:46.967Z",
     "display_order": 9
   },
   {
@@ -56,7 +56,7 @@
     "status": "Live",
     "featured": false,
     "created_at": "2026-07-19T00:00:00+00:00",
-    "updated_at": "2026-10-10T23:43:51.528Z",
+    "updated_at": "2026-10-10T23:48:46.967Z",
     "display_order": 20
   },
   {
@@ -76,7 +76,7 @@
     "status": "Live",
     "featured": false,
     "created_at": "2026-07-19T00:00:00+00:00",
-    "updated_at": "2026-10-10T23:43:51.528Z",
+    "updated_at": "2026-10-10T23:48:46.967Z",
     "display_order": 21
   },
   {
@@ -96,7 +96,7 @@
     "status": "Live",
     "featured": false,
     "created_at": "2026-07-20T00:00:00+00:00",
-    "updated_at": "2026-10-10T23:43:51.528Z",
+    "updated_at": "2026-10-10T23:48:46.967Z",
     "display_order": 10
   },
   {
@@ -116,7 +116,7 @@
     "status": "Live",
     "featured": false,
     "created_at": "2026-07-19T00:00:00+00:00",
-    "updated_at": "2026-10-10T23:43:51.528Z",
+    "updated_at": "2026-10-10T23:48:46.967Z",
     "display_order": 22
   },
   {
@@ -136,7 +136,7 @@
     "status": "Sold Out",
     "featured": false,
     "created_at": "2026-07-19T00:00:00+00:00",
-    "updated_at": "2026-10-10T23:43:51.528Z",
+    "updated_at": "2026-10-10T23:48:46.967Z",
     "display_order": 23
   },
   {
@@ -156,7 +156,7 @@
     "status": "Sold Out",
     "featured": false,
     "created_at": "2026-07-19T00:00:00+00:00",
-    "updated_at": "2026-10-10T23:43:51.528Z",
+    "updated_at": "2026-10-10T23:48:46.967Z",
     "display_order": 24
   },
   {
@@ -176,7 +176,7 @@
     "status": "Hidden",
     "featured": false,
     "created_at": "2026-07-27T00:00:00+00:00",
-    "updated_at": "2026-10-10T23:43:51.528Z",
+    "updated_at": "2026-10-10T23:48:46.967Z",
     "display_order": 8
   },
   {
@@ -196,7 +196,7 @@
     "status": "Hidden",
     "featured": false,
     "created_at": "2026-07-20T00:00:00+00:00",
-    "updated_at": "2026-10-10T23:43:51.528Z",
+    "updated_at": "2026-10-10T23:48:46.967Z",
     "display_order": 11
   },
   {
@@ -216,7 +216,7 @@
     "status": "Hidden",
     "featured": false,
     "created_at": "2026-07-19T00:00:00+00:00",
-    "updated_at": "2026-10-10T23:43:51.528Z",
+    "updated_at": "2026-10-10T23:48:46.967Z",
     "display_order": 25
   },
   {
@@ -236,7 +236,7 @@
     "status": "Hidden",
     "featured": false,
     "created_at": "2026-07-19T00:00:00+00:00",
-    "updated_at": "2026-10-10T23:43:51.528Z",
+    "updated_at": "2026-10-10T23:48:46.967Z",
     "display_order": 26
   },
   {
@@ -256,7 +256,7 @@
     "status": "Live",
     "featured": false,
     "created_at": "2026-07-19T00:00:00+00:00",
-    "updated_at": "2026-10-10T23:43:51.528Z",
+    "updated_at": "2026-10-10T23:48:46.967Z",
     "display_order": 6
   },
   {
@@ -276,7 +276,7 @@
     "status": "Hidden",
     "featured": false,
     "created_at": "2026-07-20T00:00:00+00:00",
-    "updated_at": "2026-10-10T23:43:51.528Z",
+    "updated_at": "2026-10-10T23:48:46.967Z",
     "display_order": 12
   },
   {
@@ -296,7 +296,7 @@
     "status": "Hidden",
     "featured": false,
     "created_at": "2026-07-19T00:00:00+00:00",
-    "updated_at": "2026-10-10T23:43:51.528Z",
+    "updated_at": "2026-10-10T23:48:46.967Z",
     "display_order": 27
   },
   {
@@ -316,7 +316,7 @@
     "status": "Live",
     "featured": false,
     "created_at": "2026-07-19T00:00:00+00:00",
-    "updated_at": "2026-10-10T23:43:51.528Z",
+    "updated_at": "2026-10-10T23:48:46.967Z",
     "display_order": 5
   },
   {
@@ -336,7 +336,7 @@
     "status": "Hidden",
     "featured": false,
     "created_at": "2026-07-15T00:00:00+00:00",
-    "updated_at": "2026-10-10T23:43:51.528Z",
+    "updated_at": "2026-10-10T23:48:46.967Z",
     "display_order": 34
   },
   {
@@ -356,7 +356,7 @@
     "status": "Hidden",
     "featured": false,
     "created_at": "2026-07-20T00:00:00+00:00",
-    "updated_at": "2026-10-10T23:43:51.528Z",
+    "updated_at": "2026-10-10T23:48:46.967Z",
     "display_order": 13
   },
   {
@@ -376,7 +376,7 @@
     "status": "Hidden",
     "featured": false,
     "created_at": "2026-07-20T00:00:00+00:00",
-    "updated_at": "2026-10-10T23:43:51.528Z",
+    "updated_at": "2026-10-10T23:48:46.967Z",
     "display_order": 14
   },
   {
@@ -396,7 +396,7 @@
     "status": "Hidden",
     "featured": false,
     "created_at": "2026-07-19T00:00:00+00:00",
-    "updated_at": "2026-10-10T23:43:51.528Z",
+    "updated_at": "2026-10-10T23:48:46.967Z",
     "display_order": 28
   },
   {
@@ -416,7 +416,7 @@
     "status": "Hidden",
     "featured": false,
     "created_at": "2026-07-19T00:00:00+00:00",
-    "updated_at": "2026-10-10T23:43:51.528Z",
+    "updated_at": "2026-10-10T23:48:46.967Z",
     "display_order": 29
   },
   {
@@ -436,7 +436,7 @@
     "status": "Hidden",
     "featured": false,
     "created_at": "2026-07-15T00:00:00+00:00",
-    "updated_at": "2026-10-10T23:43:51.528Z",
+    "updated_at": "2026-10-10T23:48:46.967Z",
     "display_order": 3
   },
   {
@@ -456,7 +456,7 @@
     "status": "Hidden",
     "featured": false,
     "created_at": "2026-07-20T00:00:00+00:00",
-    "updated_at": "2026-10-10T23:43:51.528Z",
+    "updated_at": "2026-10-10T23:48:46.967Z",
     "display_order": 15
   },
   {
@@ -476,7 +476,7 @@
     "status": "Hidden",
     "featured": false,
     "created_at": "2026-07-20T00:00:00+00:00",
-    "updated_at": "2026-10-10T23:43:51.528Z",
+    "updated_at": "2026-10-10T23:48:46.967Z",
     "display_order": 16
   },
   {
@@ -496,8 +496,8 @@
     "status": "Live",
     "featured": false,
     "created_at": "2026-07-19T00:00:00+00:00",
-    "updated_at": "2026-10-10T23:48:39.011Z",
-    "display_order": 1
+    "updated_at": "2026-10-10T23:48:46.967Z",
+    "display_order": 2
   },
   {
     "id": "0f20f6bf-0393-490f-b6ab-4b3fc13943bf",
@@ -516,7 +516,7 @@
     "status": "Hidden",
     "featured": false,
     "created_at": "2026-07-19T00:00:00+00:00",
-    "updated_at": "2026-10-10T23:43:51.528Z",
+    "updated_at": "2026-10-10T23:48:46.967Z",
     "display_order": 30
   },
   {
@@ -536,7 +536,7 @@
     "status": "Hidden",
     "featured": false,
     "created_at": "2026-07-19T00:00:00+00:00",
-    "updated_at": "2026-10-10T23:43:51.528Z",
+    "updated_at": "2026-10-10T23:48:46.967Z",
     "display_order": 31
   },
   {
@@ -556,7 +556,7 @@
     "status": "Hidden",
     "featured": false,
     "created_at": "2026-07-19T00:00:00+00:00",
-    "updated_at": "2026-10-10T23:43:51.528Z",
+    "updated_at": "2026-10-10T23:48:46.967Z",
     "display_order": 32
   },
   {
@@ -576,7 +576,7 @@
     "status": "Hidden",
     "featured": false,
     "created_at": "2026-07-20T00:00:00+00:00",
-    "updated_at": "2026-10-10T23:43:51.528Z",
+    "updated_at": "2026-10-10T23:48:46.967Z",
     "display_order": 17
   },
   {
@@ -596,7 +596,7 @@
     "status": "Hidden",
     "featured": false,
     "created_at": "2026-07-20T00:00:00+00:00",
-    "updated_at": "2026-10-10T23:43:51.528Z",
+    "updated_at": "2026-10-10T23:48:46.967Z",
     "display_order": 18
   },
   {
@@ -616,7 +616,7 @@
     "status": "Hidden",
     "featured": false,
     "created_at": "2026-07-19T00:00:00+00:00",
-    "updated_at": "2026-10-10T23:43:51.528Z",
+    "updated_at": "2026-10-10T23:48:46.967Z",
     "display_order": 33
   },
   {
@@ -776,7 +776,7 @@
     "affiliate_link": "https://temu.to/k/enxcis8g6rg",
     "direct_product_link": "https://www.temu.com/goods.html?goods_id=601104329023553",
     "created_at": "2026-10-08T00:01:06.919Z",
-    "updated_at": "2026-10-10T23:43:51.528Z",
+    "updated_at": "2026-10-10T23:48:46.967Z",
     "display_order": 4
   },
   {
@@ -796,7 +796,7 @@
     "direct_product_link": "https://temu.to/k/en7f4zcq3op",
     "id": "e4900d2b-11de-4fbe-99d2-ecf3df2a8649",
     "created_at": "2026-10-10T23:38:45.273Z",
-    "updated_at": "2026-10-10T23:43:51.528Z",
+    "updated_at": "2026-10-10T23:48:46.967Z",
     "display_order": 7
   },
   {
@@ -816,8 +816,8 @@
     "direct_product_link": "https://temu.to/k/en7f4zcq3op",
     "id": "76e4dec1-a077-48c0-a3f7-16d8515709b6",
     "created_at": "2026-10-10T23:43:14.121Z",
-    "updated_at": "2026-10-10T23:43:51.528Z",
-    "display_order": 2
+    "updated_at": "2026-10-10T23:48:46.967Z",
+    "display_order": 1
   },
   {
     "type": "fashion_find",
@@ -836,6 +836,7 @@
     "direct_product_link": "https://temu.to/k/en7f4zcq3op",
     "id": "ce96f5ab-b7db-4f69-80d5-46a64e0baacf",
     "created_at": "2026-10-10T23:46:55.374Z",
-    "updated_at": "2026-10-10T23:46:55.374Z"
+    "updated_at": "2026-10-10T23:48:46.967Z",
+    "display_order": 35
   }
 ]
