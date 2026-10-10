@@ -133,6 +133,33 @@ function handleVerify(e) {
     return jsonResponse({ ok: false, error: 'No file configured for this preset yet.' });
   }
 
+  // 2b. The payment must be FOR this item (the reference is built as
+  //     keemverse-<itemId>-<time>-<rand>) and in the item's currency.
+  //     Without this, one payment could unlock every item priced the same.
+  if (String(txRef).indexOf('keemverse-' + itemId + '-') !== 0) {
+    return jsonResponse({ ok: false, error: 'This payment is not for this item.' });
+  }
+  var expectedCurrency = /\$/.test(String(row[cPrice])) ? 'USD' : 'NGN';
+  if (currency !== expectedCurrency) {
+    return jsonResponse({ ok: false, error: 'Currency mismatch.' });
+  }
+
+  // 2c. Calling verify again for the same payment and item (a refresh, or a
+  //     replay) returns the link already issued instead of minting a new one.
+  var dlSheet = ss.getSheetByName('Downloads');
+  var dlRows  = dlSheet.getDataRange().getValues();
+  var dh      = dlRows[0];
+  var dTok = dh.indexOf('Token'), dRef = dh.indexOf('Order Ref'),
+      dItem = dh.indexOf('Item'), dRev = dh.indexOf('Revoked');
+  for (var k = 1; k < dlRows.length; k++) {
+    if (String(dlRows[k][dRef]) === String(txRef) && String(dlRows[k][dItem]) === String(itemId)) {
+      if (String(dlRows[k][dRev]).toUpperCase() === 'TRUE') {
+        return jsonResponse({ ok: false, error: 'This link has been disabled. Contact support.' });
+      }
+      return jsonResponse({ ok: true, downloadUrl: webAppUrl + '?action=download&token=' + dlRows[k][dTok] });
+    }
+  }
+
   // 3. Mint a token and log it to the Downloads index.
   var token   = Utilities.getUuid();
   var now     = new Date();
