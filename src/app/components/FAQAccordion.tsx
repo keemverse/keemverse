@@ -17,7 +17,7 @@ interface FAQAccordionProps {
 // Layout and behaviour after the Arena v2 prototype's FAQ: centred label and
 // heading, hairline-divided rows, a round + toggle that turns into × when
 // open, and an answer that slides open. Shared by every FAQ on the site.
-import { CRAFT as STATE } from "../lib/theme";
+import { FASHION as STATE } from "../lib/theme";
 
 export default function FAQAccordion({ label, heading, faqs, accent = "#D98E2B" }: FAQAccordionProps) {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
