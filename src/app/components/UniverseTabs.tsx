@@ -23,7 +23,7 @@ export default function UniverseTabs({
         value={activeTab}
         onChange={(e) => onChange(e.target.value)}
         aria-label="Filter by category"
-        className="w-full appearance-none rounded-full border border-border bg-card px-4 md:px-5 py-3 pr-8 md:pr-10 text-sm font-medium text-foreground/80 outline-none transition-all duration-300 ease-[cubic-bezier(.22,1,.36,1)] focus:-translate-y-0.5 focus:border-foreground/30 cursor-pointer"
+        className="w-full appearance-none rounded-full border border-border bg-input-background px-4 md:px-5 py-3 pr-8 md:pr-10 text-sm font-medium text-foreground/80 outline-none transition-all duration-300 ease-[cubic-bezier(.22,1,.36,1)] focus:-translate-y-0.5 focus:border-foreground/30 cursor-pointer"
       >
         {tabs.map((tab) => (
           <option key={tab} value={tab}>

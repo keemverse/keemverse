@@ -12,7 +12,7 @@ import {
 
 type Product = {
   id: string;
-  type: "fashion_find" | "preset" | "design_bundle";
+  type: "fashion_find" | "preset" | "design_bundle" | "design" | "design_pack";
   name: string;
   price: string | null;
   image_url: string | null;
@@ -37,11 +37,18 @@ type Product = {
   display_order: number | null;
   drive_file_id: string | null;
   purchase_link: string | null;
+  // Digital Craft: design (art/apparel) and design_pack (downloadable art)
+  tag: string | null;
+  code: string | null;
+  blurb: string | null;
+  swatches: string[] | null;
+  includes: string[] | null;
+  formats: string[] | null;
   created_at?: string;
   updated_at?: string;
 };
 
-const TYPES: Product["type"][] = ["fashion_find", "preset", "design_bundle"];
+const TYPES: Product["type"][] = ["fashion_find", "preset", "design_bundle", "design", "design_pack"];
 const STATUSES: Product["status"][] = ["Live", "Sold Out", "Hidden"];
 
 type SortKey = "manual" | "name" | "price" | "status" | "created_at";
@@ -84,7 +91,16 @@ const sortProducts = (list: Product[], key: SortKey) => {
 // flow), so they share one field set instead — What's Included,
 // Installation, Compatible With, a Drive File Id, none of which a Temu
 // find has any use for.
-const isDigitalProduct = (type: Product["type"]) => type !== "fashion_find";
+const isDigitalProduct = (type: Product["type"]) => type === "preset" || type === "design_bundle";
+// Digital Craft items have their own field set: a design (art or apparel, shown on
+// the garment studio and bought through a marketplace or print partner) and a
+// design pack (a downloadable set of art, delivered like a preset).
+const isCraftItem = (type: Product["type"]) => type === "design" || type === "design_pack";
+// "#FF4B1F, #15171A" -> ["#FF4B1F", "#15171A"]; anything that is not a hex colour is dropped.
+const parseSwatches = (s: string) =>
+  s.split(/[,\s]+/).map((c) => c.trim()).filter((c) => /^#[0-9a-f]{3,8}$/i.test(c));
+const parseLines = (s: string) => s.split(/\r?\n/).map((l) => l.trim()).filter(Boolean);
+const parseCommas = (s: string) => s.split(",").map((l) => l.trim()).filter(Boolean);
 
 const EMPTY_FORM = {
   type: "fashion_find" as Product["type"],
@@ -110,6 +126,12 @@ const EMPTY_FORM = {
   display_order: "",
   drive_file_id: "",
   purchase_link: "",
+  tag: "",
+  code: "",
+  blurb: "",
+  swatches: "",
+  includes: "",
+  formats: "",
 };
 
 // Every Fashion Find points at one shared Temu storefront on purpose —
@@ -156,6 +178,31 @@ const buildPayload = (f: FormState) => {
     status: f.status,
     featured: f.featured,
   };
+  if (isCraftItem(f.type)) {
+    const common = {
+      ...shared,
+      image_url: f.image_url,
+      thumbnail: f.thumbnail || null,
+      collection: f.collection || null,
+      display_order: f.display_order ? Number(f.display_order) : null,
+      purchase_link: f.purchase_link || null,
+    };
+    return f.type === "design"
+      ? {
+          ...common,
+          category: f.category || null,
+          tag: f.tag || null,
+          code: f.code || null,
+          blurb: f.blurb || null,
+          swatches: parseSwatches(f.swatches),
+        }
+      : {
+          ...common,
+          includes: parseLines(f.includes),
+          formats: parseCommas(f.formats),
+          drive_file_id: f.drive_file_id || null,
+        };
+  }
   return isDigitalProduct(f.type)
     ? {
         ...shared,
@@ -331,6 +378,12 @@ export default function AdminProductsPage() {
       display_order: p.display_order?.toString() || "",
       drive_file_id: p.drive_file_id || "",
       purchase_link: p.purchase_link || "",
+      tag: p.tag || "",
+      code: p.code || "",
+      blurb: p.blurb || "",
+      swatches: (p.swatches ?? []).join(", "),
+      includes: (p.includes ?? []).join("\n"),
+      formats: (p.formats ?? []).join(", "),
     });
   };
 
@@ -434,6 +487,8 @@ export default function AdminProductsPage() {
   }
 
   const digital = isDigitalProduct(form.type);
+  const craft = isCraftItem(form.type);
+  const craftDesign = form.type === "design";
 
   return (
     <div className="min-h-screen bg-background text-foreground px-5 md:px-8 py-10">
@@ -442,7 +497,7 @@ export default function AdminProductsPage() {
         <h1 className="font-serif text-2xl">Product Catalog</h1>
 
         <div className="flex items-center justify-between gap-2 flex-wrap">
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             {TYPES.map((t) => (
               <button
                 key={t}
@@ -481,7 +536,7 @@ export default function AdminProductsPage() {
             </DialogHeader>
 
             <div className="space-y-3">
-          {!editingId && !digital && (
+          {!editingId && form.type === "fashion_find" && (
             <div className="rounded-md border border-dashed border-input p-3 space-y-2">
               <p className="text-xs uppercase tracking-[0.15em] text-muted-foreground">
                 Quick add — paste a block
@@ -530,7 +585,37 @@ export default function AdminProductsPage() {
             <Input placeholder="Name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
             <Input placeholder="Price (e.g. ₦4,586)" value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} />
 
-            {digital ? (
+            {craft ? (
+              <>
+                <Input placeholder="Collection (filter chips show when there are 2+)" value={form.collection} onChange={(e) => setForm({ ...form, collection: e.target.value })} />
+                <Input placeholder="Display order (1, 2, 3…)" value={form.display_order} onChange={(e) => setForm({ ...form, display_order: e.target.value })} />
+                <Input placeholder="Image URL (the art)" value={form.image_url} onChange={(e) => setForm({ ...form, image_url: e.target.value })} className="col-span-2" />
+                <Input placeholder="Thumbnail URL (optional, smaller copy)" value={form.thumbnail} onChange={(e) => setForm({ ...form, thumbnail: e.target.value })} className="col-span-2" />
+                {craftDesign ? (
+                  <>
+                    <select
+                      className="h-9 rounded-md border border-input bg-input-background px-3 text-sm"
+                      value={form.category}
+                      onChange={(e) => setForm({ ...form, category: e.target.value })}
+                    >
+                      <option value="">Kind of design…</option>
+                      <option value="apparel">Apparel</option>
+                      <option value="art">Art</option>
+                    </select>
+                    <Input placeholder="Tag on the card (e.g. New drop)" value={form.tag} onChange={(e) => setForm({ ...form, tag: e.target.value })} />
+                    <Input placeholder="Code (e.g. KV-001)" value={form.code} onChange={(e) => setForm({ ...form, code: e.target.value })} />
+                    <Input placeholder="Colours, hex, comma-separated (#FF4B1F, #15171A)" value={form.swatches} onChange={(e) => setForm({ ...form, swatches: e.target.value })} />
+                    <Input placeholder="One-line hover blurb" value={form.blurb} onChange={(e) => setForm({ ...form, blurb: e.target.value })} className="col-span-2" />
+                  </>
+                ) : (
+                  <>
+                    <Input placeholder="File types (PNG, SVG)" value={form.formats} onChange={(e) => setForm({ ...form, formats: e.target.value })} className="col-span-2" />
+                    <Input placeholder="Drive File Id (the download)" value={form.drive_file_id} onChange={(e) => setForm({ ...form, drive_file_id: e.target.value })} className="col-span-2" />
+                  </>
+                )}
+                <Input placeholder="Buy link (marketplace listing or checkout, optional)" value={form.purchase_link} onChange={(e) => setForm({ ...form, purchase_link: e.target.value })} className="col-span-2" />
+              </>
+            ) : digital ? (
               <>
                 <Input placeholder="Collection (e.g. Editorial)" value={form.collection} onChange={(e) => setForm({ ...form, collection: e.target.value })} />
                 <Input placeholder="Display order (1, 2, 3…)" value={form.display_order} onChange={(e) => setForm({ ...form, display_order: e.target.value })} />
@@ -570,7 +655,17 @@ export default function AdminProductsPage() {
             onChange={(e) => setForm({ ...form, description: e.target.value })}
           />
 
-          {digital ? (
+          {craft ? (
+            craftDesign ? null : (
+              <textarea
+                className="w-full rounded-md border border-input bg-input-background px-3 py-2 text-sm"
+                placeholder="What's inside (one item per line)"
+                rows={3}
+                value={form.includes}
+                onChange={(e) => setForm({ ...form, includes: e.target.value })}
+              />
+            )
+          ) : digital ? (
             <>
               <textarea
                 className="w-full rounded-md border border-input bg-input-background px-3 py-2 text-sm"

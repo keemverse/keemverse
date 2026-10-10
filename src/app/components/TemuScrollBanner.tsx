@@ -1,6 +1,6 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
-import { FASHION, FASHION_DARK } from "../lib/theme";
+import { FASHION, SAND } from "../lib/theme";
 
 interface TemuScrollBannerProps {
   products: any[];
@@ -138,10 +138,10 @@ export default function TemuScrollBanner({
           href={storefrontUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="group/button inline-flex items-center gap-1.5 md:gap-2 rounded-full px-4 py-2 md:px-7 md:py-3 text-[11px] md:text-xs font-semibold tracking-[0.15em] text-white shadow-[0_10px_24px_-6px_rgba(217,142,43,.5)] transition-all duration-300 ease-[cubic-bezier(.22,1,.36,1)] hover:-translate-y-0.5 whitespace-nowrap"
-          style={{ backgroundColor: FASHION }}
-          onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = FASHION_DARK)}
-          onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = FASHION)}
+          className="group/button inline-flex items-center gap-1.5 md:gap-2 rounded-full px-4 py-2 md:px-7 md:py-3 text-[11px] md:text-xs font-semibold tracking-[0.15em] text-[#14120F] border border-black/10 shadow-[0_10px_24px_-14px_rgba(20,18,15,.45)] transition-all duration-300 ease-[cubic-bezier(.22,1,.36,1)] hover:-translate-y-0.5 whitespace-nowrap"
+          style={{ backgroundColor: SAND }}
+          onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = FASHION)}
+          onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = SAND)}
         >
           View All Temu Finds
           <span className="transition-transform group-hover/button:translate-x-1">→</span>

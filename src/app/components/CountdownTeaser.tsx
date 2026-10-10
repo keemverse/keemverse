@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { CRAFT } from '../lib/theme';
+import { CRAFT, accentText } from '../lib/theme';
 
 function split(ms: number) {
   const total = Math.max(0, Math.floor(ms / 1000));
@@ -18,7 +18,17 @@ const pad = (n: number) => String(n).padStart(2, '0');
  * message; with a date it adds a live countdown. The parent decides what to
  * show once the date has passed.
  */
-export function CountdownTeaser({ launchAt }: { launchAt: string | null }) {
+export function CountdownTeaser({
+  launchAt,
+  eyebrow = 'New designs',
+  heading = 'Opening soon.',
+  body = "Original art and apparel, designed by me. I'm getting everything ready so it feels right the moment it opens.",
+}: {
+  launchAt: string | null;
+  eyebrow?: string;
+  heading?: string;
+  body?: string;
+}) {
   const target = launchAt ? Date.parse(launchAt) : NaN;
   const hasDate = Number.isFinite(target);
   const [now, setNow] = useState(() => Date.now());
@@ -35,22 +45,21 @@ export function CountdownTeaser({ launchAt }: { launchAt: string | null }) {
     : null;
 
   return (
-    <div className="max-w-xl mx-auto text-center py-6 md:py-10">
+    <div className="relative isolate max-w-xl mx-auto text-center py-6 md:py-10">
+      <div aria-hidden="true" className="pointer-events-none absolute -right-4 -top-2 -z-10 h-32 w-32 halftone text-[#A18C6B]/35 [mask-image:linear-gradient(225deg,black,transparent_70%)]" />
       <p
-        className="text-xs font-bold tracking-[0.25em] uppercase mb-5"
-        style={{ color: CRAFT }}
+        className="text-xs font-bold tracking-[0.25em] uppercase mb-5 text-amber-ink"
       >
-        New designs
+        {eyebrow}
       </p>
       <h3
         className="text-foreground leading-snug mb-4"
         style={{ fontFamily: 'Georgia, serif', fontSize: 'clamp(1.75rem, 4vw, 2.5rem)' }}
       >
-        Opening soon.
+        {heading}
       </h3>
       <p className="text-muted-foreground leading-relaxed text-sm md:text-base max-w-md mx-auto">
-        Original art and apparel, designed by me and made to order. I'm getting
-        everything ready so it feels right the moment it opens.
+        {body}
       </p>
 
       {left && (

@@ -2,3 +2,153 @@
 @source '../**/*.{js,ts,jsx,tsx}';
 
 @import 'tw-animate-css';
+
+/* Textures lifted from the Arena prototype for the Digital Craft page. They
+   use currentColor, so they follow the theme (light and dark) and any text
+   colour utility. */
+@utility halftone {
+  background-image: radial-gradient(currentColor 1px, transparent 1.3px);
+  background-size: 9px 9px;
+}
+
+@utility halftone-lg {
+  background-image: radial-gradient(currentColor 1.6px, transparent 1.8px);
+  background-size: 16px 16px;
+}
+
+@utility blueprint {
+  background-image:
+    linear-gradient(to right, color-mix(in srgb, currentColor 12%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in srgb, currentColor 12%, transparent) 1px, transparent 1px);
+  background-size: 42px 42px;
+}
+
+@utility ink-edge {
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, currentColor 8%, transparent),
+    0 1px 0 0 color-mix(in srgb, currentColor 4%, transparent);
+}
+
+/* Highlighter under a word. Colour comes from --marker-color (teal by default). */
+@utility marker {
+  background-image: linear-gradient(
+    to top,
+    color-mix(in srgb, var(--marker-color, #b8da53) var(--marker-strength, 55%), transparent) 0 var(--marker-height, 42%),
+    transparent var(--marker-height, 42%)
+  );
+}
+
+/* Keeps a block in the light palette even when the site is in dark mode (for
+   a light card sitting on a dark band). Mirrors the light tokens in theme.css. */
+.force-light {
+  --background: #FBFAF7;
+  --foreground: #1D1C19;
+  --card: #F2ECDD;
+  --card-foreground: #1D1C19;
+  --popover: #FBFAF7;
+  --popover-foreground: #1D1C19;
+  --primary: #ECE5D9;
+  --primary-foreground: #1D1C19;
+  --secondary: #F8F2E6;
+  --secondary-foreground: #1D1C19;
+  --muted: #F8F2E6;
+  --muted-foreground: #6B6459;
+  --accent: #F2ECDD;
+  --accent-foreground: #1D1C19;
+  --destructive: #C0392B;
+  --border: #E4DCCB;
+  --input: #E4DCCB;
+  --input-background: #FFFCF6;
+  color: var(--foreground);
+  color-scheme: light;
+}
+
+/* Infinite-scroll strip (Digital Craft). Two identical groups side by side,
+   moved by exactly half their combined width, so the loop is seamless.
+   Pauses on hover and stops entirely for reduced motion. */
+@keyframes dc-marquee {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(-50%, 0, 0); }
+}
+.dc-marquee-track { animation: dc-marquee 48s linear infinite; }
+.dc-marquee:hover .dc-marquee-track { animation-play-state: paused; }
+@media (prefers-reduced-motion: reduce) {
+  .dc-marquee-track { animation: none; }
+}
+
+/* Craft accent helpers: --craft-ink is the text-safe lime-family colour. */
+:root { --craft: #1FA396; --craft-ink: #0F7D72; --fashion-ink: #8A5410; --craft-display: #1A9E91; --fashion-display: #C97F1A; }
+.dark { --craft-ink: #3CC4B6; --fashion-ink: #D98E2B; --craft-display: #2FBFB0; --fashion-display: #D98E2B; }
+
+/* Evenly spaced dot grid for solid colour surfaces (lifted from the Arena
+   prototype). Takes its colour from currentColor, so pair it with a text
+   colour and a low opacity. */
+@utility dotgrid {
+  background-image: radial-gradient(currentColor 1.1px, transparent 1.5px);
+  background-size: 22px 22px;
+  background-position: 11px 11px;
+}
+
+/* Soft diagonal light across a glass card, like a reflection. */
+@utility sheen {
+  position: relative;
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    background: linear-gradient(125deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.03) 28%, transparent 55%);
+  }
+}
+
+/* Warm paper fields. Search boxes, dropdowns and form inputs all use the
+   bg-input-background token, which is cream in both modes (like the custom-design
+   card). In dark mode their text and borders must be ink on cream, not the page's
+   light text. Unlayered, so it wins over the utility classes on the elements. */
+.dark [class*="bg-input-background"]:not(.force-light *) {
+  color: #1D1C19;
+  border-color: #D8CDB8;
+}
+.dark [class*="bg-input-background"]:not(.force-light *)::placeholder,
+.dark [class*="bg-input-background"]:not(.force-light *) ::placeholder {
+  color: #8A8272;
+}
+.dark [class*="bg-input-background"]:not(.force-light *) svg,
+.dark [class*="bg-input-background"]:not(.force-light *) .text-muted-foreground {
+  color: #6B6459;
+}
+
+/* Depth: a field sits slightly sunk into its surface, and focus lifts it with a
+   warm ring. Applies to every field that uses the bg-input-background token. */
+[class*="bg-input-background"] {
+  box-shadow: inset 0 1px 2px rgba(70, 52, 20, 0.09), 0 1px 0 rgba(255, 255, 255, 0.55);
+}
+.dark [class*="bg-input-background"]:not(.force-light *) {
+  box-shadow: inset 0 1px 2px rgba(70, 52, 20, 0.14);
+}
+[class*="bg-input-background"]:focus,
+[class*="bg-input-background"]:focus-within {
+  border-color: #A18C6B;
+  box-shadow: inset 0 1px 2px rgba(70, 52, 20, 0.06), 0 0 0 3px rgba(161, 140, 107, 0.28);
+}
+
+/* The accent pair is used by ROLE on every page, not by universe:
+   teal = signal and structure (eyebrow labels, status dots, links, selected state, focus),
+   amber = action and value (button hover, prices, one emphasis word).
+   Both are the readable "ink" versions, so they pass contrast as small text. */
+@utility text-teal-ink {
+  color: var(--craft-ink);
+}
+@utility text-amber-ink {
+  color: var(--fashion-ink);
+}
+
+/* Large display words keep the brighter pair (3:1 or better on ivory, the large-text
+   threshold); small text uses the deeper -ink versions above. */
+@utility text-teal-display {
+  color: var(--craft-display);
+}
+@utility text-amber-display {
+  color: var(--fashion-display);
+}

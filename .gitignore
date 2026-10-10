@@ -2,3 +2,6 @@ node_modules
 .vscode
 .vercel
 .env*
+
+# local-only sample art for layout previews (never committed or deployed)
+.dev-samples/

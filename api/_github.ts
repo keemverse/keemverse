@@ -4,6 +4,8 @@
 // request sees the true current state immediately (never waits on a
 // Vercel redeploy, since that API is hit fresh on every call).
 
+import { timingSafeEqual } from "crypto";
+
 const DATA_PATH = "data/products.json";
 
 function config() {
@@ -55,7 +57,11 @@ export async function writeProducts(products: any[], sha: string, message: strin
 export function isAuthorizedAdmin(req: { headers: Record<string, string | string[] | undefined> }) {
   const provided = req.headers["x-admin-secret"];
   const expected = process.env.ADMIN_SECRET;
-  return Boolean(expected) && provided === expected;
+  if (!expected || typeof provided !== "string") return false;
+  // Constant-time compare so response timing can't leak how much of the secret matched.
+  const a = Buffer.from(provided);
+  const b = Buffer.from(expected);
+  return a.length === b.length && timingSafeEqual(a, b);
 }
 
 // Generic versions of readProducts/writeProducts for any JSON file in the

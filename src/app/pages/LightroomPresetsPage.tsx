@@ -181,7 +181,7 @@ export default function LightroomPresetsPage() {
                   setQuery("");
                   setActiveTab("All");
                 }}
-                className="mt-8 rounded-full bg-foreground px-6 py-3 text-sm uppercase tracking-[0.18em] text-background hover:opacity-90 transition"
+                className="mt-8 rounded-full border border-black/10 bg-[#D8C9B0] px-6 py-3 text-sm uppercase tracking-[0.18em] text-[#14120F] shadow-[inset_0_1px_0_rgba(255,255,255,0.45)] hover:brightness-95 transition"
               >
                 Clear Search
               </button>

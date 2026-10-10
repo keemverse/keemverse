@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 
 // Garment silhouette paths + print-area rects. Pure layout data —
@@ -34,7 +34,7 @@ const GARMENT_TYPES = [
   { id: 'tote', label: 'Tote' },
 ];
 
-const GARMENT_COLORS = [
+export const GARMENT_COLORS = [
   { id: 'bone', label: 'Bone', hex: '#EDE9DF', dark: false },
   { id: 'black', label: 'Washed black', hex: '#1A1C1F', dark: true },
   { id: 'sand', label: 'Sand', hex: '#D6C6A8', dark: false },
@@ -135,8 +135,29 @@ function GarmentPreview({
  * artwork as the sample set; swap `designs` for the actual pack once
  * Printable Graphics / Apparel Design Packs are live.
  */
-export function GarmentStudio({ designs }: { designs: StudioDesign[] }) {
-  const [designId, setDesignId] = useState(designs[0]?.id);
+export function GarmentStudio({
+  designs,
+  designId: controlledId,
+  onDesignChange,
+  layout = 'wide',
+  code,
+  cta,
+}: {
+  designs: StudioDesign[];
+  /** Optional: let a parent (e.g. the design grid) drive which design is shown. */
+  designId?: string;
+  onDesignChange?: (id: string) => void;
+  /** 'panel' is the compact side panel used next to the design grid. */
+  layout?: 'wide' | 'panel';
+  code?: string;
+  cta?: ReactNode;
+}) {
+  const [innerId, setInnerId] = useState(designs[0]?.id);
+  const designId = controlledId ?? innerId;
+  const setDesignId = (id: string) => {
+    setInnerId(id);
+    onDesignChange?.(id);
+  };
   const [garment, setGarment] = useState('tee');
   const [colorId, setColorId] = useState('bone');
 
@@ -144,6 +165,57 @@ export function GarmentStudio({ designs }: { designs: StudioDesign[] }) {
   const color = GARMENT_COLORS.find((c) => c.id === colorId) ?? GARMENT_COLORS[0];
 
   if (!design) return null;
+
+  if (layout === 'panel') {
+    return (
+      <div className="overflow-hidden rounded-3xl border border-border bg-card shadow-sm">
+        <div className="flex items-center justify-between bg-foreground px-5 py-2.5 text-background">
+          <span className="text-[11px] font-bold tracking-[0.2em] uppercase">Try it on</span>
+          {code && <span className="text-[11px] tracking-[0.14em] opacity-70">{code}</span>}
+        </div>
+        <div className="p-5">
+          <div className="relative mx-auto w-full max-w-[230px]">
+            <GarmentPreview design={design} garment={garment} color={color} />
+          </div>
+          <p className="mt-2 text-center text-sm font-semibold text-foreground">{design.name}</p>
+
+          <p className="mt-5 mb-2 text-[11px] font-bold tracking-[0.2em] uppercase text-muted-foreground">Garment</p>
+          <div className="flex flex-wrap gap-1.5">
+            {GARMENT_TYPES.map((g) => (
+              <button
+                key={g.id}
+                type="button"
+                onClick={() => setGarment(g.id)}
+                aria-pressed={g.id === garment}
+                className={`px-3.5 py-1.5 rounded-full text-xs font-semibold border transition-colors ${
+                  g.id === garment ? 'bg-foreground text-background border-foreground' : 'bg-card text-muted-foreground border-border hover:border-foreground/40'
+                }`}
+              >
+                {g.label}
+              </button>
+            ))}
+          </div>
+
+          <p className="mt-4 mb-2 text-[11px] font-bold tracking-[0.2em] uppercase text-muted-foreground">Colourway</p>
+          <div className="flex flex-wrap gap-2.5">
+            {GARMENT_COLORS.map((c) => (
+              <button
+                key={c.id}
+                type="button"
+                onClick={() => setColorId(c.id)}
+                aria-label={c.label}
+                aria-pressed={c.id === colorId}
+                className={`w-8 h-8 rounded-full border-2 transition-transform ${c.id === colorId ? 'border-foreground scale-110' : 'border-border'}`}
+                style={{ backgroundColor: c.hex }}
+              />
+            ))}
+          </div>
+
+          {cta && <div className="mt-6">{cta}</div>}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="rounded-[28px] border border-border bg-card p-6 md:p-10 shadow-sm">

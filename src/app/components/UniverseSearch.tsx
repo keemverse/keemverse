@@ -15,7 +15,7 @@ export default function UniverseSearch({
 }: UniverseSearchProps) {
   return (
     <div className={`relative min-w-0 flex-1 ${className}`}>
-      <div className="flex items-center rounded-full border border-border bg-card px-5 py-3 transition-all duration-300 ease-[cubic-bezier(.22,1,.36,1)] focus-within:-translate-y-0.5 focus-within:border-foreground/30">
+      <div className="flex items-center rounded-full border border-border bg-input-background px-5 py-3 transition-all duration-300 ease-[cubic-bezier(.22,1,.36,1)] focus-within:-translate-y-0.5 focus-within:border-foreground/30">
         <svg
           className="w-5 h-5 text-muted-foreground mr-3 shrink-0"
           viewBox="0 0 24 24"
@@ -34,7 +34,7 @@ export default function UniverseSearch({
           value={value}
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
-          className="flex-1 bg-transparent outline-none text-foreground placeholder:text-muted-foreground text-sm md:text-base"
+          className="flex-1 bg-transparent outline-none text-inherit placeholder:text-muted-foreground text-sm md:text-base"
         />
 
         {value && (

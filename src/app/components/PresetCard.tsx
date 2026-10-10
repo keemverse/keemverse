@@ -49,7 +49,7 @@ export default function PresetCard({
           {name}
         </h3>
 
-        <p className="mt-3 text-lg font-semibold text-foreground">
+        <p className="mt-3 text-lg font-semibold text-amber-ink">
           {price}
         </p>
       </div>

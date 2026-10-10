@@ -9,7 +9,7 @@ import { PillButton } from '../components/ui/PillButton';
 import { AccentPillButton } from '../components/ui/AccentPillButton';
 import { BurgerMenu } from '../components/ui/BurgerMenu';
 import { GeometricBackdrop } from '../components/GeometricBackdrop';
-import { FASHION, FASHION_DARK, CRAFT, CRAFT_DARK } from '../lib/theme';
+import { FASHION, FASHION_DARK, CRAFT, CRAFT_DARK, accentText } from '../lib/theme';
 import fashionPageHero from '../../imports/IMG_7304.webp';
 import craftPageHero from '../../imports/craft-quality-hero_2.webp';
 import keemverseWordmark from '../../imports/keemverse-wordmark.svg';
@@ -158,7 +158,7 @@ function HeroHeadline() {
             viewport={{ once: true, margin: '0px 0px -80px 0px' }}
             transition={{ duration: 0.9, ease: [0.65, 0, 0.35, 1] }}
           >
-            One <span style={{ color: FASHION }}>creator</span>
+            One <span className="text-amber-display">creator</span>
           </motion.span>
         </span>
         <span className="block overflow-hidden pb-[0.1em]">
@@ -169,7 +169,7 @@ function HeroHeadline() {
             viewport={{ once: true, margin: '0px 0px -80px 0px' }}
             transition={{ duration: 0.9, delay: 0.35, ease: [0.65, 0, 0.35, 1] }}
           >
-            two <span style={{ color: CRAFT }}>crafts</span>
+            two <span className="text-teal-display">crafts</span>
           </motion.span>
         </span>
       </h1>

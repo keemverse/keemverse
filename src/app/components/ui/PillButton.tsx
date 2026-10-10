@@ -1,4 +1,5 @@
 import type { ReactNode, MouseEvent } from 'react';
+import { onAccent, accentText, SAND } from '../../lib/theme';
 
 interface PillButtonProps {
   children: ReactNode;
@@ -12,7 +13,7 @@ interface PillButtonProps {
   groupHover?: boolean;
   className?: string;
   /** Pass a universe's accent + accentDark (from lib/theme.ts) to
-   * render this pill as a solid Fashion-amber or Craft-teal fill
+   * render this pill in Soft Sand that fills with the universe accent on hover
    * instead of the neutral beige default. Omit for the neutral style. */
   accent?: string;
   accentDark?: string;
@@ -54,16 +55,19 @@ export function PillButton({
     isGhost
       ? 'bg-transparent'
       : isAccent
-      ? 'text-white border-transparent'
+      ? 'border-transparent'
       : `border-border bg-primary text-primary-foreground shadow-[inset_0_1px_0_rgba(255,255,255,.9),0_8px_20px_rgba(0,0,0,.06)] dark:shadow-[inset_0_1px_0_rgba(255,255,255,.06),0_8px_20px_rgba(0,0,0,.3)] ${neutralHover}`
   } ${className}`;
 
   const accentStyle = isGhost
-    ? { borderColor: accent, color: accent }
+    ? { borderColor: accent, color: accentText(accent!) }
     : isAccent
     ? {
-        backgroundColor: accent,
-        boxShadow: `inset 0 1px 0 rgba(255,255,255,.25), 0 8px 20px -4px ${accent}80`,
+        // Soft Sand at rest; the universe accent fills in on hover
+        backgroundColor: SAND,
+        color: '#14120F',
+        borderColor: 'rgba(20,18,15,.10)',
+        boxShadow: 'inset 0 1px 0 rgba(255,255,255,.45), 0 8px 20px -10px rgba(20,18,15,.4)',
       }
     : undefined;
 
@@ -72,21 +76,21 @@ export function PillButton({
         onMouseEnter: (e: MouseEvent<HTMLElement>) => {
           const el = e.currentTarget as HTMLElement;
           el.style.backgroundColor = accent!;
-          el.style.color = '#fff';
+          el.style.color = onAccent(accent!);
         },
         onMouseLeave: (e: MouseEvent<HTMLElement>) => {
           const el = e.currentTarget as HTMLElement;
           el.style.backgroundColor = 'transparent';
-          el.style.color = accent!;
+          el.style.color = accentText(accent!);
         },
       }
     : isAccent
     ? {
         onMouseEnter: (e: MouseEvent<HTMLElement>) => {
-          (e.currentTarget as HTMLElement).style.backgroundColor = accentDark || accent!;
+          (e.currentTarget as HTMLElement).style.backgroundColor = accent!;
         },
         onMouseLeave: (e: MouseEvent<HTMLElement>) => {
-          (e.currentTarget as HTMLElement).style.backgroundColor = accent!;
+          (e.currentTarget as HTMLElement).style.backgroundColor = SAND;
         },
       }
     : {};

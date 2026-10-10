@@ -1,4 +1,5 @@
 import FAQAccordion from "./FAQAccordion";
+import { FASHION } from "../lib/theme";
 
 const faqs = [
   {
@@ -35,6 +36,7 @@ export default function FashionFAQ() {
       label="FAQ"
       heading="Things You Might Want To Know"
       faqs={faqs}
+      accent={FASHION}
     />
   );
 }

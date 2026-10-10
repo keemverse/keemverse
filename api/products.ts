@@ -2,6 +2,11 @@ import type { VercelRequest, VercelResponse } from "@vercel/node";
 import { randomUUID } from "crypto";
 import { readProducts, writeProducts, isAuthorizedAdmin } from "./_github.js";
 
+// Fields that only the admin UI needs. They stay in data/products.json but are
+// never sent to the public site: a Drive file id is the thing that delivers a
+// paid download, so it must not be readable by every visitor.
+const toPublic = ({ drive_file_id: _drive, ...rest }: Record<string, any>) => rest;
+
 // One endpoint, backed by data/products.json in this repo (read/written
 // via the GitHub Contents API — see api/_github.ts):
 //   GET    /api/products?type=fashion_find              — public, Live rows only
@@ -25,8 +30,16 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       const { products } = await readProducts();
       let result = products;
       if (typeof type === "string") result = result.filter((p) => p.type === type);
-      if (!wantsAll) result = result.filter((p) => p.status === "Live");
+      if (!wantsAll) result = result.filter((p) => p.status === "Live").map(toPublic);
       result.sort((a, b) => (b.created_at || "").localeCompare(a.created_at || ""));
+
+      // Public reads are cached at the edge for a minute (and served stale
+      // while refreshing) so a traffic spike doesn't hit the GitHub API once
+      // per visitor. Admin reads must always be fresh.
+      res.setHeader(
+        "Cache-Control",
+        wantsAll ? "no-store" : "public, max-age=0, s-maxage=60, stale-while-revalidate=300"
+      );
       return res.status(200).json(result);
     } catch (err: any) {
       return res.status(500).json({ error: err.message });
@@ -41,7 +54,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     try {
       const { products, sha } = await readProducts();
       const now = new Date().toISOString();
-      const newProduct = { id: randomUUID(), ...req.body, created_at: now, updated_at: now };
+      // id and timestamps are set here, after the body, so a request can't override them
+      const newProduct = { ...req.body, id: randomUUID(), created_at: now, updated_at: now };
       const updated = [...products, newProduct];
       await writeProducts(updated, sha, `Add product: ${newProduct.name}`);
       return res.status(201).json(newProduct);
@@ -79,7 +93,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       const index = products.findIndex((p) => p.id === id);
       if (index === -1) return res.status(404).json({ error: "Not found" });
 
-      const updatedProduct = { ...products[index], ...req.body, id, updated_at: new Date().toISOString() };
+      const updatedProduct = {
+        ...products[index],
+        ...req.body,
+        id,
+        created_at: products[index].created_at,
+        updated_at: new Date().toISOString(),
+      };
       const updated = [...products];
       updated[index] = updatedProduct;
       await writeProducts(updated, sha, `Update product: ${updatedProduct.name}`);
@@ -96,8 +116,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     try {
       const { products, sha } = await readProducts();
       const target = products.find((p) => p.id === id);
+      if (!target) return res.status(404).json({ error: "Not found" });
       const updated = products.filter((p) => p.id !== id);
-      await writeProducts(updated, sha, `Delete product: ${target?.name || id}`);
+      await writeProducts(updated, sha, `Delete product: ${target.name || id}`);
       return res.status(204).end();
     } catch (err: any) {
       return res.status(500).json({ error: err.message });

@@ -60,7 +60,7 @@ export function SocialFooter() {
               Create · Build · Inspire
             </p>
             <p className="mt-4 text-sm text-muted-foreground leading-relaxed max-w-xs">
-              Fashion finds, presets, and original art and apparel. Designed in Nigeria.
+              Fashion finds, presets, and original art and apparel.
             </p>
           </div>
 
