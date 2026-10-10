@@ -58,7 +58,7 @@ export function DigitalCraftHero({
               textWrap: 'balance',
             }}
           >
-            Wear <span className="text-amber-display">art</span> you won't find{' '}
+            Original <span className="text-amber-display">art</span> you won't find{' '}
             <span className="text-teal-display">anywhere else.</span>
           </motion.h1>
 
@@ -68,7 +68,7 @@ export function DigitalCraftHero({
             transition={{ duration: 0.6, delay: 0.16 }}
             className="mt-6 max-w-md text-base leading-relaxed text-muted-foreground md:mt-7 md:text-[17px]"
           >
-            Tired of the same prints everywhere? I'm Keem, and I make original art for creators and small
+            Tired of the same prints everywhere? I'm Keem, and I make art for creators and small
             brands. <strong className="text-foreground font-semibold">Wear it</strong>,{' '}
             <strong className="text-foreground font-semibold">download it</strong>, or{' '}
             <strong className="text-foreground font-semibold">have something made just for you</strong>.
