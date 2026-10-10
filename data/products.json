@@ -778,5 +778,24 @@
     "created_at": "2026-10-08T00:01:06.919Z",
     "updated_at": "2026-10-08T00:01:17.129Z",
     "display_order": 1
+  },
+  {
+    "type": "fashion_find",
+    "name": "Starry Sky Multi-Layer Alloy Pant Chain",
+    "price": "₦4,543",
+    "description": "A multi-layer alloy waist chain with star, moon and planet charms, made to hang off belt loops and add detail to plain trousers.",
+    "tags": "pant chain, wallet chain, waist chain, layered chain, alloy, streetwear, men's accessories, star charm, black pants, statement",
+    "status": "Live",
+    "featured": false,
+    "image_url": "https://img.kwcdn.com/product/fancy/f994eaae-9df6-41b2-8ca8-5facba675d0d.jpg?imageView2/2/w/800/q/70/format/avif",
+    "source": "Temu",
+    "category": "Accessories",
+    "why_picked": "Adds a detail to plain black pants without changing the rest of the outfit.",
+    "rating": 5,
+    "affiliate_link": "https://temu.to/k/enxcis8g6rg",
+    "direct_product_link": "https://temu.to/k/en7f4zcq3op",
+    "id": "e4900d2b-11de-4fbe-99d2-ecf3df2a8649",
+    "created_at": "2026-10-10T23:38:45.273Z",
+    "updated_at": "2026-10-10T23:38:45.273Z"
   }
 ]
