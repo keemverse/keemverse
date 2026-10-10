@@ -3,11 +3,13 @@ import { AnimatePresence, motion } from 'motion/react';
 import { CRAFT_DARK } from '../lib/theme';
 import { Btn } from './CraftUI';
 
-// Commission a design: a short brief that opens WhatsApp with the message
-// ready to send. Structure follows the Arena v1 "Request as a service" form
-// (completeness meter, inline errors, success state), but nothing here
-// promises a turnaround, price, or ticket: there is no server behind it, so
-// nothing is sent until the person taps send in WhatsApp.
+// Commission a design: a short brief. On submit it is saved privately through
+// /api/requests (a private Sheet plus an email alert to the owner, never the
+// public repo), then the person is handed to WhatsApp with the same message
+// filled in. If saving fails, WhatsApp still works, so nothing is lost.
+// Structure follows the Arena v1 "Request as a service" form (completeness
+// meter, inline errors, success state). Nothing here promises a turnaround,
+// price, or ticket.
 
 const WHATSAPP_NUMBER = '2349167174194';
 
@@ -23,6 +25,8 @@ type Fields = {
   brief: string;
   refs: string;
 };
+
+type SaveState = 'saved' | 'failed';
 
 const EMPTY: Fields = { name: '', contact: '', project: '', garment: 'Not sure yet', deadline: '', brief: '', refs: '' };
 
@@ -50,6 +54,10 @@ export function CustomDesignForm() {
   const [f, setF] = useState<Fields>(EMPTY);
   const [errors, setErrors] = useState<Partial<Record<keyof Fields, string>>>({});
   const [ready, setReady] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [save, setSave] = useState<{ state: SaveState; ref?: string } | null>(null);
+  // Honeypot: real visitors never see or fill this; bots do.
+  const [trap, setTrap] = useState('');
 
   const set = (k: keyof Fields, v: string) => {
     setF((p) => ({ ...p, [k]: v }));
@@ -71,9 +79,29 @@ export function CustomDesignForm() {
     return Object.keys(e).length === 0;
   };
 
-  const onSubmit = (ev: FormEvent) => {
+  const onSubmit = async (ev: FormEvent) => {
     ev.preventDefault();
-    if (validate()) setReady(true);
+    if (!validate() || sending) return;
+    setSending(true);
+    try {
+      const res = await fetch('/api/requests', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...f, garment: f.project === 'Clothing design' ? f.garment : '', website: trap }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (res.ok && data.ok) setSave({ state: 'saved', ref: data.ref });
+      else if (res.status === 400 && data.fields) {
+        // the server's checks are the same as ours; show them if they disagree
+        setErrors(data.fields);
+        setSending(false);
+        return;
+      } else setSave({ state: 'failed' });
+    } catch {
+      setSave({ state: 'failed' });
+    }
+    setSending(false);
+    setReady(true);
   };
 
   const waHref = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message(f))}`;
@@ -105,14 +133,27 @@ export function CustomDesignForm() {
             className="text-center py-6"
           >
             <h3 className="text-foreground mb-3" style={{ fontFamily: 'Georgia, serif', fontSize: '1.75rem' }}>
-              Your message is ready.
+              {save?.state === 'saved' ? 'Got it.' : 'Your message is ready.'}
             </h3>
             <p className="text-muted-foreground text-sm leading-relaxed max-w-md mx-auto mb-8">
-              Tap below to open WhatsApp with it filled in. Nothing is sent until you press send there.
+              {save?.state === 'saved' ? (
+                <>
+                  I've saved your request{save.ref ? ` (${save.ref})` : ''} and I'll reply to you. For a faster answer, you
+                  can also send it on WhatsApp.
+                </>
+              ) : (
+                <>
+                  I couldn't save it here just now, so please send it on WhatsApp and I'll see it there. Nothing is sent
+                  until you press send.
+                </>
+              )}
             </p>
             <Btn href={waHref} external size="lg" icon={<span aria-hidden="true">→</span>}>
               Send on WhatsApp
             </Btn>
+            {save?.state === 'saved' && (
+              <p className="mt-5 text-xs text-muted-foreground">Your note is saved privately so I can reply. It isn't shared.</p>
+            )}
             <div className="mt-6">
               <button
                 type="button"
@@ -210,9 +251,18 @@ export function CustomDesignForm() {
               )}
             </div>
 
+            {/* honeypot: hidden from people and screen readers, bots fill it in */}
+            <div aria-hidden="true" className="absolute -left-[9999px] top-auto h-0 w-0 overflow-hidden">
+              <label htmlFor="cm-website">Leave this empty</label>
+              <input id="cm-website" tabIndex={-1} autoComplete="off" value={trap} onChange={(e) => setTrap(e.target.value)} />
+            </div>
+
             <Btn type="submit" variant="dark" size="lg" className="self-start" icon={<span aria-hidden="true">→</span>}>
-              Continue
+              {sending ? 'Sending…' : 'Continue'}
             </Btn>
+            <p className="-mt-2 text-xs text-muted-foreground">
+              Your note is saved privately so I can reply to you.
+            </p>
           </motion.form>
         )}
       </AnimatePresence>
