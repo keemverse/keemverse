@@ -5,3 +5,7 @@ node_modules
 
 # local-only sample art for layout previews (never committed or deployed)
 .dev-samples/
+
+# account recovery codes must never live in the repo
+vercel_recovery-codes.txt
+recovery-codes*.txt
