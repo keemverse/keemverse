@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { parseQuickAdd, type QuickAddItem } from "../lib/quickAdd";
 import { AdminNav } from "../components/AdminNav";
 import { Button } from "../components/ui/button";
@@ -872,6 +872,22 @@ function EditorView({
   const [busyId, setBusyId] = useState<string | null>(null);
   const [savedId, setSavedId] = useState<string | null>(null);
   const [err, setErr] = useState("");
+  // Local order: arrows change it here, "Save order" sends it. Reloads after a
+  // price/status save keep any unsaved reordering instead of throwing it away.
+  const [order, setOrder] = useState<Product[]>(products);
+  const [orderDirty, setOrderDirty] = useState(false);
+  const [savingOrder, setSavingOrder] = useState(false);
+  const dirtyRef = useRef(false);
+  dirtyRef.current = orderDirty;
+  useEffect(() => {
+    setOrder((prev) =>
+      dirtyRef.current ? prev.map((p) => products.find((x) => x.id === p.id) ?? p) : products
+    );
+  }, [products]);
+  // switching type starts from that type's saved order
+  useEffect(() => {
+    setOrderDirty(false);
+  }, [typeFilter]);
 
   const draftFor = (p: Product) => drafts[p.id] ?? { status: p.status, price: p.price ?? "" };
   const dirty = (p: Product) => {
@@ -880,6 +896,46 @@ function EditorView({
   };
   const setDraft = (p: Product, patch: Partial<{ status: Product["status"]; price: string }>) =>
     setDrafts((prev) => ({ ...prev, [p.id]: { ...draftFor(p), ...patch } }));
+
+  const move = (index: number, direction: -1 | 1) => {
+    const target = index + direction;
+    if (target < 0 || target >= order.length) return;
+    setOrder((prev) => {
+      const next = [...prev];
+      [next[index], next[target]] = [next[target], next[index]];
+      return next;
+    });
+    setOrderDirty(true);
+  };
+
+  const persistOrder = async (list: Product[]) => {
+    setSavingOrder(true);
+    setErr("");
+    try {
+      const res = await fetch("/api/products?reorder=1", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json", "x-admin-secret": secret },
+        body: JSON.stringify({ ids: list.map((p) => p.id) }),
+      });
+      if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error || "Could not save the order");
+      setOrderDirty(false);
+      dirtyRef.current = false;
+      onSaved();
+    } catch (e: any) {
+      setErr(e.message || "Could not save the order");
+    } finally {
+      setSavingOrder(false);
+    }
+  };
+
+  // the promo shortcut: whatever is being pushed this week goes to position 1
+  const toTop = (id: string) => {
+    const target = order.find((p) => p.id === id);
+    if (!target) return;
+    const next = [target, ...order.filter((p) => p.id !== id)];
+    setOrder(next);
+    persistOrder(next);
+  };
 
   const save = async (p: Product) => {
     const d = draftFor(p);
@@ -921,7 +977,7 @@ function EditorView({
         <div>
           <h1 className="font-serif text-2xl">Products</h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            You can change whether a product is Live, Hidden or Sold Out, and its price. Everything else is managed by Keem.
+            You can change whether a product is Live, Hidden or Sold Out, its price, and the order it appears in. Everything else is managed by Keem.
           </p>
         </div>
 
@@ -942,13 +998,22 @@ function EditorView({
 
         {(err || loadError) && <p className="text-sm text-destructive">{err || loadError}</p>}
 
+        {orderDirty && (
+          <div className="flex items-center gap-3">
+            <Button size="sm" onClick={() => persistOrder(order)} disabled={savingOrder}>
+              {savingOrder ? "Saving…" : "Save order"}
+            </Button>
+            <span className="text-xs text-muted-foreground">Position 1 shows first on the site.</span>
+          </div>
+        )}
+
         {loading ? (
           <p className="text-sm text-muted-foreground">Loading…</p>
-        ) : products.length === 0 ? (
+        ) : order.length === 0 ? (
           <p className="text-sm text-muted-foreground">No {typeFilter.replace("_", " ")} rows yet.</p>
         ) : (
           <div className="space-y-2">
-            {products.map((p) => {
+            {order.map((p, i) => {
               const d = draftFor(p);
               return (
                 <div
@@ -956,12 +1021,36 @@ function EditorView({
                   className="flex flex-col gap-3 border border-input rounded-md px-4 py-3 sm:flex-row sm:items-center sm:justify-between"
                 >
                   <div className="flex items-center gap-3 min-w-0">
+                    <span className="w-5 shrink-0 text-right text-xs text-muted-foreground">{i + 1}</span>
+                    <div className="flex flex-col shrink-0">
+                      <button
+                        type="button"
+                        onClick={() => move(i, -1)}
+                        disabled={i === 0}
+                        aria-label={`Move ${p.name} up`}
+                        className="text-muted-foreground disabled:opacity-30 leading-none px-1"
+                      >
+                        ▲
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => move(i, 1)}
+                        disabled={i === order.length - 1}
+                        aria-label={`Move ${p.name} down`}
+                        className="text-muted-foreground disabled:opacity-30 leading-none px-1"
+                      >
+                        ▼
+                      </button>
+                    </div>
                     {(p.image_url || p.thumbnail) && (
                       <img src={p.image_url || p.thumbnail || ""} alt="" className="w-10 h-10 rounded object-cover shrink-0" />
                     )}
                     <p className="truncate">{p.name}</p>
                   </div>
                   <div className="flex flex-wrap items-center gap-2 shrink-0">
+                    <Button size="sm" variant="outline" onClick={() => toTop(p.id)} disabled={i === 0 || savingOrder}>
+                      ↑ Top
+                    </Button>
                     <select
                       aria-label={`Status for ${p.name}`}
                       className="h-9 rounded-md border border-input bg-input-background px-3 text-sm"

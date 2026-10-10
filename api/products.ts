@@ -22,7 +22,7 @@ const STATUSES = ["Live", "Hidden", "Sold Out"];
 //   POST   /api/products                                 — admin, create
 //   PATCH  /api/products?id=<id>                         — admin: any field;
 //          editor: only status and price
-//   PATCH  /api/products?reorder=1  body: {ids: [...]}   — admin, set
+//   PATCH  /api/products?reorder=1  body: {ids: [...]}   — admin or editor, set
 //          display_order for a whole type's list in ONE commit (drag-
 //          reorder in the admin UI), rather than one PATCH per row
 //   DELETE /api/products?id=<id>                         — admin, delete
@@ -68,11 +68,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(401).json({ error: "Unauthorized" });
   }
 
-  // Editors can only update an existing product's status/price (checked in the
-  // PATCH branch below); creating, deleting and reordering are admin-only.
-  const isEditPatch = req.method === "PATCH" && req.query.reorder !== "1";
-  if (role === "editor" && !isEditPatch) {
-    return res.status(403).json({ error: "Editors can only change a product's status and price." });
+  // Editors may PATCH only: change an existing product's status/price (field
+  // whitelist in the branch below) or reorder (which writes display_order and
+  // nothing else). Creating and deleting are admin-only.
+  if (role === "editor" && req.method !== "PATCH") {
+    return res.status(403).json({ error: "Editors can change status, price and order, nothing else." });
   }
 
   if (req.method === "POST") {
@@ -91,7 +91,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   if (req.method === "PATCH" && req.query.reorder === "1") {
     const ids = req.body?.ids;
-    if (!Array.isArray(ids) || ids.some((i) => typeof i !== "string")) {
+    if (!Array.isArray(ids) || ids.length > 500 || ids.some((i) => typeof i !== "string")) {
       return res.status(400).json({ error: "Body must be { ids: string[] } in the new order" });
     }
 
@@ -102,7 +102,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       const updated = products.map((p) =>
         order.has(p.id) ? { ...p, display_order: order.get(p.id), updated_at: now } : p
       );
-      await writeProducts(updated, sha, `Reorder ${ids.length} products`);
+      const by = role === "editor" ? ` (by ${editorName()})` : "";
+      await writeProducts(updated, sha, `Reorder ${ids.length} products${by}`);
       return res.status(200).json({ success: true, count: ids.length });
     } catch (err: any) {
       return res.status(500).json({ error: err.message });

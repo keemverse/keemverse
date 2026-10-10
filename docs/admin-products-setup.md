@@ -65,9 +65,10 @@ file stops being the right fit.
 
 ## Giving a helper limited access (the "editor" login)
 
-A second secret lets someone (e.g. Ini) change **only a product's status and
-price**. She cannot see or change links, images, names, descriptions, Drive
-file ids, order, and she cannot create or delete anything. The limit is
+A second secret lets someone (e.g. Ini) change **only a product's status,
+price and position in the list**. She cannot see or change links, images,
+names, descriptions or Drive file ids, and she cannot create or delete
+anything. The limit is
 enforced in `api/products.ts` (a field whitelist), not just hidden in the page,
 so it holds even if someone calls the API directly.
 
@@ -85,7 +86,8 @@ Products screen with a Status picker and a Price box per row.
 - **Audit trail:** her edits show in GitHub history as `Update product: <name> (by Ini)`.
 - **Revoke:** delete `EDITOR_SECRET` in Vercel and redeploy; her login stops working.
 - **Rotate:** change `EDITOR_SECRET` and redeploy; send her the new one privately.
-- **Not available to editors:** `/admin/studio`, creating, deleting, reordering,
-  and every field other than `status` and `price`.
+- **Not available to editors:** `/admin/studio`, creating, deleting, and every
+  field other than `status` and `price`. Reordering is allowed (it only
+  writes `display_order`).
 - The endpoint `GET /api/products?whoami=1` returns the caller's role
   (`admin` / `editor`) and is what the admin page uses to pick which screen to show.
