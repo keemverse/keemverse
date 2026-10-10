@@ -798,5 +798,24 @@
     "created_at": "2026-10-10T23:38:45.273Z",
     "updated_at": "2026-10-10T23:42:58.783Z",
     "display_order": 4
+  },
+  {
+    "type": "fashion_find",
+    "name": "Classic Trendy Transparent-Frame Sunglasses",
+    "price": "₦6,284",
+    "description": "Classic square-frame sunglasses with a clear frame and orange-yellow arms, in a unisex design that pairs with simple fits.",
+    "tags": "sunglasses, transparent frame, orange legs, trendy, unisex, eyewear, summer, streetwear, statement, everyday",
+    "status": "Live",
+    "featured": false,
+    "image_url": "https://img.kwcdn.com/product/fancy/a633f0e8-6c29-4eeb-9e6f-5b5c16ec2cfd.jpg?imageView2/2/w/800/q/70/format/avif",
+    "source": "Temu",
+    "category": "Accessories",
+    "why_picked": "Puts colour on the face and lets the rest of the outfit stay simple.",
+    "rating": 4.9,
+    "affiliate_link": "https://temu.to/k/enxcis8g6rg",
+    "direct_product_link": "https://temu.to/k/en7f4zcq3op",
+    "id": "76e4dec1-a077-48c0-a3f7-16d8515709b6",
+    "created_at": "2026-10-10T23:43:14.121Z",
+    "updated_at": "2026-10-10T23:43:14.121Z"
   }
 ]
