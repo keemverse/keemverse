@@ -54,14 +54,39 @@ export async function writeProducts(products: any[], sha: string, message: strin
   });
 }
 
-export function isAuthorizedAdmin(req: { headers: Record<string, string | string[] | undefined> }) {
-  const provided = req.headers["x-admin-secret"];
-  const expected = process.env.ADMIN_SECRET;
+type HeaderReq = { headers: Record<string, string | string[] | undefined> };
+
+// Constant-time compare so response timing can't leak how much of a secret matched.
+function secretMatches(provided: unknown, expected: string | undefined) {
   if (!expected || typeof provided !== "string") return false;
-  // Constant-time compare so response timing can't leak how much of the secret matched.
   const a = Buffer.from(provided);
   const b = Buffer.from(expected);
   return a.length === b.length && timingSafeEqual(a, b);
+}
+
+export type Role = "admin" | "editor";
+
+// Two logins share the x-admin-secret header:
+//   ADMIN_SECRET  -> "admin":  everything
+//   EDITOR_SECRET -> "editor": a helper who may only change a product's status
+//                    and price (enforced in api/products.ts, not just hidden
+//                    in the page). Leave EDITOR_SECRET unset to disable it.
+export function getRole(req: HeaderReq): Role | null {
+  const provided = req.headers["x-admin-secret"];
+  if (secretMatches(provided, process.env.ADMIN_SECRET)) return "admin";
+  if (secretMatches(provided, process.env.EDITOR_SECRET)) return "editor";
+  return null;
+}
+
+// Admin-only gate, used by every endpoint that has no editor role
+// (pieces, layouts, and the create/delete/reorder parts of products).
+export function isAuthorizedAdmin(req: HeaderReq) {
+  return getRole(req) === "admin";
+}
+
+// Name written into commit messages for edits made with the editor login.
+export function editorName() {
+  return process.env.EDITOR_NAME || "editor";
 }
 
 // Generic versions of readProducts/writeProducts for any JSON file in the

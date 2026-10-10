@@ -1,28 +1,45 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 import { randomUUID } from "crypto";
-import { readProducts, writeProducts, isAuthorizedAdmin } from "./_github.js";
+import { readProducts, writeProducts, getRole, editorName } from "./_github.js";
 
 // Fields that only the admin UI needs. They stay in data/products.json but are
 // never sent to the public site: a Drive file id is the thing that delivers a
 // paid download, so it must not be readable by every visitor.
 const toPublic = ({ drive_file_id: _drive, ...rest }: Record<string, any>) => rest;
 
+// What the "editor" login (a helper, e.g. Ini) is allowed to change. Everything
+// else (links, images, names, descriptions, files, order, creating, deleting)
+// is admin-only. Enforced here on the server, so it holds even if someone
+// bypasses the admin page and calls the API directly.
+const EDITOR_FIELDS = ["status", "price"] as const;
+const STATUSES = ["Live", "Hidden", "Sold Out"];
+
 // One endpoint, backed by data/products.json in this repo (read/written
 // via the GitHub Contents API — see api/_github.ts):
 //   GET    /api/products?type=fashion_find              — public, Live rows only
-//   GET    /api/products?type=fashion_find&all=1        — admin, every status
+//   GET    /api/products?type=fashion_find&all=1        — admin or editor, every status
+//   GET    /api/products?whoami=1                        — admin or editor, returns the role
 //   POST   /api/products                                 — admin, create
-//   PATCH  /api/products?id=<id>                         — admin, update one
+//   PATCH  /api/products?id=<id>                         — admin: any field;
+//          editor: only status and price
 //   PATCH  /api/products?reorder=1  body: {ids: [...]}   — admin, set
 //          display_order for a whole type's list in ONE commit (drag-
 //          reorder in the admin UI), rather than one PATCH per row
 //   DELETE /api/products?id=<id>                         — admin, delete
 export default async function handler(req: VercelRequest, res: VercelResponse) {
+  const role = getRole(req);
+
+  if (req.method === "GET" && req.query.whoami === "1") {
+    if (!role) return res.status(401).json({ error: "Unauthorized" });
+    res.setHeader("Cache-Control", "no-store");
+    return res.status(200).json({ role, name: role === "editor" ? editorName() : "admin" });
+  }
+
   if (req.method === "GET") {
     const { type, all } = req.query;
     const wantsAll = all === "1";
 
-    if (wantsAll && !isAuthorizedAdmin(req)) {
+    if (wantsAll && !role) {
       return res.status(401).json({ error: "Unauthorized" });
     }
 
@@ -30,7 +47,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       const { products } = await readProducts();
       let result = products;
       if (typeof type === "string") result = result.filter((p) => p.type === type);
-      if (!wantsAll) result = result.filter((p) => p.status === "Live").map(toPublic);
+      if (!wantsAll) result = result.filter((p) => p.status === "Live");
+      if (!wantsAll || role !== "admin") result = result.map(toPublic);
       result.sort((a, b) => (b.created_at || "").localeCompare(a.created_at || ""));
 
       // Public reads are cached at the edge for a minute (and served stale
@@ -46,8 +64,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
   }
 
-  if (!isAuthorizedAdmin(req)) {
+  if (!role) {
     return res.status(401).json({ error: "Unauthorized" });
+  }
+
+  // Editors can only update an existing product's status/price (checked in the
+  // PATCH branch below); creating, deleting and reordering are admin-only.
+  const isEditPatch = req.method === "PATCH" && req.query.reorder !== "1";
+  if (role === "editor" && !isEditPatch) {
+    return res.status(403).json({ error: "Editors can only change a product's status and price." });
   }
 
   if (req.method === "POST") {
@@ -93,17 +118,41 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       const index = products.findIndex((p) => p.id === id);
       if (index === -1) return res.status(404).json({ error: "Not found" });
 
+      const body = req.body && typeof req.body === "object" ? req.body : {};
+
+      if (role === "editor") {
+        const keys = Object.keys(body);
+        const blocked = keys.filter((k) => !(EDITOR_FIELDS as readonly string[]).includes(k));
+        if (blocked.length > 0) {
+          return res.status(403).json({
+            error: "Editors can only change status and price.",
+            notAllowed: blocked,
+          });
+        }
+        if (keys.length === 0) return res.status(400).json({ error: "Nothing to update." });
+        if ("status" in body && !STATUSES.includes(body.status)) {
+          return res.status(400).json({ error: `status must be one of: ${STATUSES.join(", ")}` });
+        }
+        if ("price" in body) {
+          const price = body.price;
+          if (typeof price !== "string" || price.length > 24 || !/\d/.test(price)) {
+            return res.status(400).json({ error: "price must be text containing a number, e.g. ₦4,000" });
+          }
+        }
+      }
+
       const updatedProduct = {
         ...products[index],
-        ...req.body,
+        ...body,
         id,
         created_at: products[index].created_at,
         updated_at: new Date().toISOString(),
       };
       const updated = [...products];
       updated[index] = updatedProduct;
-      await writeProducts(updated, sha, `Update product: ${updatedProduct.name}`);
-      return res.status(200).json(updatedProduct);
+      const by = role === "editor" ? ` (by ${editorName()})` : "";
+      await writeProducts(updated, sha, `Update product: ${updatedProduct.name}${by}`);
+      return res.status(200).json(role === "admin" ? updatedProduct : toPublic(updatedProduct));
     } catch (err: any) {
       return res.status(500).json({ error: err.message });
     }

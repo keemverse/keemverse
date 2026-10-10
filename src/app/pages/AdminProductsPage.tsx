@@ -251,6 +251,9 @@ export default function AdminProductsPage() {
   const [sortKey, setSortKey] = useState<SortKey>("manual");
   const [orderDirty, setOrderDirty] = useState(false);
   const [savingOrder, setSavingOrder] = useState(false);
+  // "admin" sees everything; "editor" (a helper) only sees status and price.
+  // The server enforces this too, so this is only about showing the right screen.
+  const [role, setRole] = useState<"admin" | "editor" | null>(null);
 
   const quickItems = useMemo(() => parseQuickAdd(quickText), [quickText]);
   const categoryOptions = useMemo(
@@ -277,12 +280,22 @@ export default function AdminProductsPage() {
       });
       if (res.status === 401) {
         setUnlocked(false);
+        setRole(null);
         sessionStorage.removeItem("kv_admin_secret");
         setError("That secret was rejected — try again.");
         return;
       }
       if (!res.ok) throw new Error(await res.text());
       setProducts(sortBySiteOrder(await res.json()));
+      if (role === null) {
+        try {
+          const w = await fetch("/api/products?whoami=1", { headers: { "x-admin-secret": activeSecret } });
+          const who = w.ok ? await w.json() : null;
+          setRole(who?.role === "editor" ? "editor" : "admin");
+        } catch {
+          setRole("admin");
+        }
+      }
       setUnlocked(true);
     } catch (e: any) {
       setError(e.message || "Failed to load products");
@@ -483,6 +496,24 @@ export default function AdminProductsPage() {
           {error && <p className="text-sm text-destructive">{error}</p>}
         </div>
       </div>
+    );
+  }
+
+  if (role === null) {
+    return <div className="min-h-screen bg-background text-foreground flex items-center justify-center text-sm text-muted-foreground">Loading…</div>;
+  }
+
+  if (role === "editor") {
+    return (
+      <EditorView
+        products={products}
+        typeFilter={typeFilter}
+        onType={setTypeFilter}
+        secret={secret}
+        loading={loading}
+        loadError={error}
+        onSaved={() => load(typeFilter)}
+      />
     );
   }
 
@@ -812,6 +843,152 @@ export default function AdminProductsPage() {
             ))
           )}
         </div>
+      </div>
+    </div>
+  );
+}
+
+// The limited screen for the "editor" login: change a product's status and
+// price, nothing else. No links, images, descriptions, files, ordering,
+// creating or deleting. (The server rejects anything else regardless.)
+function EditorView({
+  products,
+  typeFilter,
+  onType,
+  secret,
+  loading,
+  loadError,
+  onSaved,
+}: {
+  products: Product[];
+  typeFilter: Product["type"];
+  onType: (t: Product["type"]) => void;
+  secret: string;
+  loading: boolean;
+  loadError: string;
+  onSaved: () => void;
+}) {
+  const [drafts, setDrafts] = useState<Record<string, { status: Product["status"]; price: string }>>({});
+  const [busyId, setBusyId] = useState<string | null>(null);
+  const [savedId, setSavedId] = useState<string | null>(null);
+  const [err, setErr] = useState("");
+
+  const draftFor = (p: Product) => drafts[p.id] ?? { status: p.status, price: p.price ?? "" };
+  const dirty = (p: Product) => {
+    const d = draftFor(p);
+    return d.status !== p.status || d.price !== (p.price ?? "");
+  };
+  const setDraft = (p: Product, patch: Partial<{ status: Product["status"]; price: string }>) =>
+    setDrafts((prev) => ({ ...prev, [p.id]: { ...draftFor(p), ...patch } }));
+
+  const save = async (p: Product) => {
+    const d = draftFor(p);
+    setBusyId(p.id);
+    setErr("");
+    try {
+      const res = await fetch(`/api/products?id=${p.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json", "x-admin-secret": secret },
+        body: JSON.stringify({ status: d.status, price: d.price }),
+      });
+      if (!res.ok) {
+        let msg = "Could not save";
+        try {
+          msg = (await res.json()).error || msg;
+        } catch {
+          /* keep default */
+        }
+        throw new Error(msg);
+      }
+      setDrafts((prev) => {
+        const next = { ...prev };
+        delete next[p.id];
+        return next;
+      });
+      setSavedId(p.id);
+      setTimeout(() => setSavedId((cur) => (cur === p.id ? null : cur)), 2500);
+      onSaved();
+    } catch (e: any) {
+      setErr(`${p.name}: ${e.message || "Could not save"}`);
+    } finally {
+      setBusyId(null);
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-background text-foreground px-5 md:px-8 py-10">
+      <div className="max-w-3xl mx-auto space-y-6">
+        <div>
+          <h1 className="font-serif text-2xl">Products</h1>
+          <p className="mt-1 text-sm text-muted-foreground">
+            You can change whether a product is Live, Hidden or Sold Out, and its price. Everything else is managed by Keem.
+          </p>
+        </div>
+
+        <div className="flex flex-wrap gap-2">
+          {TYPES.map((t) => (
+            <button
+              key={t}
+              type="button"
+              onClick={() => onType(t)}
+              className={`rounded-full px-4 py-2 text-xs uppercase tracking-[0.15em] border ${
+                typeFilter === t ? "bg-foreground text-background" : "border-input"
+              }`}
+            >
+              {t.replace("_", " ")}
+            </button>
+          ))}
+        </div>
+
+        {(err || loadError) && <p className="text-sm text-destructive">{err || loadError}</p>}
+
+        {loading ? (
+          <p className="text-sm text-muted-foreground">Loading…</p>
+        ) : products.length === 0 ? (
+          <p className="text-sm text-muted-foreground">No {typeFilter.replace("_", " ")} rows yet.</p>
+        ) : (
+          <div className="space-y-2">
+            {products.map((p) => {
+              const d = draftFor(p);
+              return (
+                <div
+                  key={p.id}
+                  className="flex flex-col gap-3 border border-input rounded-md px-4 py-3 sm:flex-row sm:items-center sm:justify-between"
+                >
+                  <div className="flex items-center gap-3 min-w-0">
+                    {(p.image_url || p.thumbnail) && (
+                      <img src={p.image_url || p.thumbnail || ""} alt="" className="w-10 h-10 rounded object-cover shrink-0" />
+                    )}
+                    <p className="truncate">{p.name}</p>
+                  </div>
+                  <div className="flex flex-wrap items-center gap-2 shrink-0">
+                    <select
+                      aria-label={`Status for ${p.name}`}
+                      className="h-9 rounded-md border border-input bg-input-background px-3 text-sm"
+                      value={d.status}
+                      onChange={(e) => setDraft(p, { status: e.target.value as Product["status"] })}
+                    >
+                      {STATUSES.map((s) => (
+                        <option key={s} value={s}>
+                          {s}
+                        </option>
+                      ))}
+                    </select>
+                    <Input
+                      aria-label={`Price for ${p.name}`}
+                      className="w-32"
+                      value={d.price}
+                      onChange={(e) => setDraft(p, { price: e.target.value })}
+                    />
+                    <Button size="sm" onClick={() => save(p)} disabled={!dirty(p) || busyId === p.id}>
+                      {busyId === p.id ? "Saving…" : savedId === p.id ? "Saved ✓" : "Save"}
+                    </Button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
       </div>
     </div>
   );

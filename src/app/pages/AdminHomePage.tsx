@@ -10,7 +10,7 @@ const TOOLS = [
 ];
 
 export default function AdminHomePage() {
-  const { unlocked, checking, error, checkSecret } = useAdminAuth();
+  const { unlocked, checking, error, role, checkSecret } = useAdminAuth({ allowEditor: true });
   const [secretInput, setSecretInput] = useState("");
 
   if (!unlocked) {
@@ -40,7 +40,7 @@ export default function AdminHomePage() {
         <h1 className="font-serif text-2xl">Admin</h1>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {TOOLS.map((tool) => (
+          {(role === "editor" ? TOOLS.filter((t) => t.to === "/admin/products") : TOOLS).map((tool) => (
             <Link
               key={tool.to}
               to={tool.to}
