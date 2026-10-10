@@ -66,3 +66,44 @@ re-calling verify (same link comes back, no second Orders row).
 The success page calls `verifyAndUnlock(state.txRef, state.item.id)` and the
 reference is built from the same `item.id`, so every genuine purchase already
 satisfies the new check.
+
+## Also found while verifying: the public sheet feed lists Drive file ids
+
+`GET <exec URL>?sheet=Lightroom Presets` is public and returns every column of
+the live rows, including **Drive File Id**. The files themselves are private
+(a Google login is required), so this does not hand out downloads, but file ids
+should not be public either. The website no longer reads this feed for
+presets (it uses /api/products, which strips the id); only Media Kit and Rate
+Card still use `?sheet=`.
+
+Fix, in `doGet`: skip private columns when building each product.
+
+```js
+// near the top of the file, with the other constants
+const PRIVATE_COLUMNS = ["Drive File Id"];
+```
+
+and inside the `values.map(row => { ... })` that builds `product`, change
+
+```js
+        headers.forEach((header, i) => {
+
+          product[header] = row[i];
+
+        });
+```
+
+to
+
+```js
+        headers.forEach((header, i) => {
+
+          if (PRIVATE_COLUMNS.indexOf(header) !== -1) return;
+
+          product[header] = row[i];
+
+        });
+```
+
+`handleVerify` and `handleDownload` read the sheet directly, not through
+`doGet`, so checkout and delivery are unaffected.
