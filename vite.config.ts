@@ -31,6 +31,16 @@ export default defineConfig({
     },
   },
 
+  // Local preview only (`vite dev`): the /api routes are Vercel functions, which
+  // the dev server does not run, so finds, presets and designs would always look
+  // empty. Send them to the live site so local work shows the real catalog.
+  // Production builds are not affected by this block.
+  server: {
+    proxy: {
+      '/api': { target: 'https://www.keemverse.com', changeOrigin: true, secure: true },
+    },
+  },
+
   // File types to support raw imports. Never add .css, .tsx, or .ts files to this.
   assetsInclude: ['**/*.svg', '**/*.csv'],
 })
