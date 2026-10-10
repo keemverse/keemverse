@@ -15,7 +15,7 @@ import { CRAFT, accentText } from '../lib/theme';
 const MARQUEE_ITEMS = [
   'No templates',
   'Original art',
-  'See it before you buy',
+  'Preview before you buy',
   'Made for you',
   'Art packs to download',
   'Custom designs',

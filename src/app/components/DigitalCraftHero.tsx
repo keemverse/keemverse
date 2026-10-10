@@ -115,8 +115,8 @@ export function DigitalCraftHero({
         </div>
 
         <div className="absolute -bottom-8 left-4 w-[220px] rounded-2xl border border-white/30 bg-background/80 p-4 shadow-[0_20px_50px_-24px_rgba(0,0,0,0.5)] backdrop-blur-xl lg:-left-6 lg:bottom-8">
-          <p className="text-sm font-bold text-foreground">See it first</p>
-          <p className="mt-1 text-xs leading-snug text-muted-foreground">Pick a tee, hoodie or tote, then a colour, before you buy.</p>
+          <p className="text-sm font-bold text-foreground">Preview it first</p>
+          <p className="mt-1 text-xs leading-snug text-muted-foreground">Try any design on four garments in five colours before you order.</p>
           <div className="mt-3 flex gap-1.5" aria-hidden="true">
             {GARMENT_COLORS.map((c) => (
               <span key={c.id} className="h-3.5 w-3.5 rounded-full ring-1 ring-foreground/15" style={{ backgroundColor: c.hex }} />
