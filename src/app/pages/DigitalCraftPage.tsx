@@ -1,9 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { motion } from 'motion/react';
 import { SocialFooter } from '../components/SocialFooter';
-import { ComingSoonModal } from '../components/ComingSoonModal';
 import { GeometricBackdrop } from '../components/GeometricBackdrop';
-import { UpworkIcon, BehanceIcon } from '../components/Icons';
 import { DigitalCraftHero } from '../components/DigitalCraftHero';
 import { Btn, Marquee, SectionLabel } from '../components/CraftUI';
 import { DigitalCraftShowcase, type ShowcaseTab } from '../components/DigitalCraftShowcase';
@@ -32,10 +30,13 @@ const services = [
   },
 ];
 
+// Same number the custom design form uses.
+const WHATSAPP_NUMBER = '2349167174194';
+const WHATSAPP_HELLO = "Hi Keem, I'd like to talk about a design project.";
+
 const SectionDivider = ({ label }: { label: string }) => <SectionLabel>{label}</SectionLabel>;
 
 export function DigitalCraftPage() {
-  const [comingSoon, setComingSoon] = useState<string | null>(null);
   const [designs, setDesigns] = useState<Design[]>([]);
   const [packs, setPacks] = useState<DesignPack[]>([]);
   const [tab, setTab] = useState<ShowcaseTab>('designs');
@@ -68,13 +69,6 @@ export function DigitalCraftPage() {
   return (
     <div className="relative min-h-screen bg-background text-foreground">
       <GeometricBackdrop />
-      <ComingSoonModal
-        open={!!comingSoon}
-        onClose={() => setComingSoon(null)}
-        title={comingSoon ? `${comingSoon} — Coming Soon` : 'Coming Soon'}
-        description="This shop isn't live yet — check back soon."
-      />
-
       <main className="relative z-10 pt-8 pb-0 px-5 md:px-8">
         <div className="max-w-6xl mx-auto">
           {/* ── HERO ── */}
@@ -123,11 +117,15 @@ export function DigitalCraftPage() {
             </div>
 
             <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:justify-center sm:gap-4">
-              <Btn variant="dark" size="lg" className="w-full sm:w-auto" onClick={() => setComingSoon('Upwork')} icon={<UpworkIcon className="w-5 h-5" />}>
-                Hire on Upwork
-              </Btn>
-              <Btn variant="outline" size="lg" className="w-full sm:w-auto" onClick={() => setComingSoon('Behance')} icon={<BehanceIcon className="w-5 h-5" />}>
-                View Behance
+              <Btn
+                variant="dark"
+                size="lg"
+                className="w-full sm:w-auto"
+                href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_HELLO)}`}
+                external
+                icon={<span aria-hidden="true">→</span>}
+              >
+                Chat with me on WhatsApp
               </Btn>
             </div>
           </section>
