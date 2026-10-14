@@ -155,8 +155,8 @@
 
 
 /* Home hero pictures melt into the page instead of sitting in a card.
-   Light: every edge fades out. Dark: the pictures have white grounds, so a
-   soft ellipse replaces the rectangle and the glow is toned down. */
+   Every edge fades out. In dark mode a white band (.hero-band) runs behind
+   both pictures so their white grounds join up. */
 .hero-fade {
   -webkit-mask-image:
     linear-gradient(to right, transparent 0%, #000 24%, #000 76%, transparent 100%),
@@ -167,10 +167,7 @@
   -webkit-mask-composite: source-in;
   mask-composite: intersect;
 }
-.dark .hero-fade {
-  -webkit-mask-image: radial-gradient(ellipse 58% 54% at 50% 44%, #000 0%, #000 40%, transparent 100%);
-  mask-image: radial-gradient(ellipse 58% 54% at 50% 44%, #000 0%, #000 40%, transparent 100%);
-  -webkit-mask-composite: source-over;
-  mask-composite: add;
-  filter: brightness(.9);
+.hero-band {
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 16%, #000 90%, transparent 100%);
+  mask-image: linear-gradient(to bottom, transparent 0%, #000 16%, #000 90%, transparent 100%);
 }

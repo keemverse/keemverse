@@ -98,7 +98,14 @@ function HeroPair({ items }: { items: typeof hero }) {
       transition={{ duration: 0.5 }}
       className="relative"
     >
-      <div className="grid grid-cols-2">
+      {/* Dark mode only: one white band runs edge to edge behind both pictures,
+          so their white grounds join up instead of showing as two glowing
+          patches. Its top and bottom fade into the dark page. */}
+      <div
+        aria-hidden="true"
+        className="hero-band pointer-events-none absolute -top-8 -bottom-3 left-1/2 hidden w-screen -translate-x-1/2 bg-white dark:block"
+      />
+      <div className="relative grid grid-cols-2">
         {items.map((item, i) => {
           const side = i === 0 ? 'left' : 'right';
           return (
@@ -128,10 +135,10 @@ function HeroPair({ items }: { items: typeof hero }) {
               </div>
 
               <div className="flex flex-col flex-1 px-2 pb-3 pt-1 md:px-8 md:pb-4 -mt-6 md:-mt-12 relative z-10 text-center">
-                <h3 className="text-lg md:text-[2rem] text-foreground" style={{ fontFamily: 'Georgia, serif' }}>
+                <h3 className="text-lg md:text-[2rem] text-foreground dark:text-stone-900" style={{ fontFamily: 'Georgia, serif' }}>
                   {item.title}
                 </h3>
-                <p className="mt-1 text-xs md:text-sm leading-relaxed md:leading-7 text-muted-foreground max-w-xs mx-auto">
+                <p className="mt-1 text-xs md:text-sm leading-relaxed md:leading-7 text-muted-foreground dark:text-stone-600 max-w-xs mx-auto">
                   {item.description}
                 </p>
                 <div className="mt-3 md:mt-6">
@@ -206,7 +213,7 @@ function HeroHeadline() {
 
 export function LandingPage() {
   return (
-    <div className="relative min-h-screen bg-background text-foreground">
+    <div className="relative min-h-screen overflow-x-clip bg-background text-foreground">
       <GeometricBackdrop />
       <main className="relative z-10 pt-8 pb-0 px-5 md:px-8">
         <div className="max-w-6xl mx-auto">
