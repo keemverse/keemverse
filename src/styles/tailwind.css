@@ -166,15 +166,15 @@
   mask-composite: intersect;
 }
 
-/* Day to night: while <html> carries .theme-fade (set for 3.5s by useTheme on a
-   real switch) every colour-ish property eases over 3.5s. Layout properties are
+/* Day to night: while <html> carries .theme-fade (set for 2.5s by useTheme on a
+   real switch) every colour-ish property eases over 2.5s. Layout properties are
    deliberately not listed, so nothing moves while it fades. */
 html.theme-fade,
 html.theme-fade *,
 html.theme-fade *::before,
 html.theme-fade *::after {
   transition-property: background-color, color, border-color, outline-color, box-shadow, fill, stroke, text-decoration-color, opacity !important;
-  transition-duration: 3.5s !important;
+  transition-duration: 2.5s !important;
   transition-timing-function: cubic-bezier(.4, 0, .2, 1) !important;
   transition-delay: 0s !important;
 }

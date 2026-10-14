@@ -27,7 +27,7 @@ function applyTheme(theme: Theme) {
 // all transition over FADE_MS (see styles/tailwind.css). It is only used for
 // a real switch, never for the first paint, and it is skipped for people who
 // asked their device for reduced motion.
-const FADE_MS = 3500;
+const FADE_MS = 2500;
 let fadeTimer: number | undefined;
 
 function applyThemeFaded(theme: Theme) {
