@@ -141,7 +141,8 @@ function HeroPair({ items }: { items: typeof hero }) {
                 <p className="mt-1 text-xs md:text-sm leading-relaxed md:leading-7 text-muted-foreground dark:text-stone-600 max-w-xs mx-auto">
                   {item.description}
                 </p>
-                <div className="mt-3 md:mt-6">
+                {/* mt-auto pins both "enter" buttons to the same line, even when one description wraps to more lines */}
+                <div className="mt-auto pt-3 md:pt-6">
                   <PillButton groupHover>{item.cta}</PillButton>
                 </div>
               </div>
