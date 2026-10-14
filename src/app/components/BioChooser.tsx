@@ -10,9 +10,11 @@ import { FASHION, SAND } from '../lib/theme';
 import fashionPageHero from '../../imports/IMG_7304.webp';
 
 // A quick "where to?" chooser for people who arrive from the link in bio.
-// It shows once per visit, a moment after the home page loads, only when
-// the home page was the visitor's entry page, and only if they have not
-// started scrolling yet. Add ?chooser=off to a link to suppress it. A phone gets a bottom sheet
+// It only ever shows for links that carry a bio marker (?from=bio or
+// ?utm_medium=bio), so normal home-page and Craft traffic never sees it.
+// Then it shows once per visit, a moment after the home page loads, only
+// when the home page was the visitor's entry page and they have not started
+// scrolling yet. Add ?chooser=off to a link to suppress it. A phone gets a bottom sheet
 // (swipe down to dismiss); a desktop gets a centred card. Each door shows
 // three real pictures pulled from the page it leads to (the top finds in
 // the order the Fashion Finds page itself uses, and the preset thumbnails).
@@ -258,7 +260,12 @@ export function BioChooser() {
   useEffect(() => {
     if (!ENTERED_ON_HOME) return;
     if (readSeen()) return;
-    if (new URLSearchParams(window.location.search).get('chooser') === 'off') return;
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('chooser') === 'off') return;
+    // Bio links only: set TikTok's to /?from=bio&utm_source=tiktok&utm_medium=bio
+    // and Instagram's to /?from=bio&utm_source=instagram&utm_medium=bio.
+    const fromBio = params.get('from') === 'bio' || params.get('utm_medium') === 'bio';
+    if (!fromBio) return;
 
     // Start loading the pictures straight away so they are ready when it opens.
     setEligible(true);
