@@ -165,11 +165,16 @@
   -webkit-mask-composite: source-in;
   mask-composite: intersect;
 }
-/* Dark mode: each half is its own white card, so the picture fills the card and
-   only its bottom fades into the white under the title. */
-.dark .hero-fade {
-  -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 72%, transparent 100%);
-  mask-image: linear-gradient(to bottom, #000 0%, #000 72%, transparent 100%);
-  -webkit-mask-composite: source-over;
-  mask-composite: add;
+
+/* Day to night: while <html> carries .theme-fade (set for 3.5s by useTheme on a
+   real switch) every colour-ish property eases over 3.5s. Layout properties are
+   deliberately not listed, so nothing moves while it fades. */
+html.theme-fade,
+html.theme-fade *,
+html.theme-fade *::before,
+html.theme-fade *::after {
+  transition-property: background-color, color, border-color, outline-color, box-shadow, fill, stroke, text-decoration-color, opacity !important;
+  transition-duration: 3.5s !important;
+  transition-timing-function: cubic-bezier(.4, 0, .2, 1) !important;
+  transition-delay: 0s !important;
 }

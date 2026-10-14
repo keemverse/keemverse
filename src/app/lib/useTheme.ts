@@ -22,6 +22,27 @@ function applyTheme(theme: Theme) {
   document.documentElement.classList.toggle('dark', theme === 'dark');
 }
 
+// Switching day to night (or back) is a slow, seamless fade, not a snap.
+// While `theme-fade` is on <html>, colours, backgrounds, borders and shadows
+// all transition over FADE_MS (see styles/tailwind.css). It is only used for
+// a real switch, never for the first paint, and it is skipped for people who
+// asked their device for reduced motion.
+const FADE_MS = 3500;
+let fadeTimer: number | undefined;
+
+function applyThemeFaded(theme: Theme) {
+  const root = document.documentElement;
+  const reduced = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+  if (!reduced) {
+    root.classList.add('theme-fade');
+    window.clearTimeout(fadeTimer);
+    fadeTimer = window.setTimeout(() => root.classList.remove('theme-fade'), FADE_MS + 150);
+    // make sure the transition engine has seen the old colours before they change
+    void root.offsetWidth;
+  }
+  applyTheme(theme);
+}
+
 /**
  * Module-level store (not per-component state) so every useTheme() call
  * anywhere in the tree — NavBar's menu, the landing page's own menu, the
@@ -46,14 +67,14 @@ function recompute() {
   const next = explicitChoice ?? systemTheme();
   if (next === theme) return;
   theme = next;
-  applyTheme(theme);
+  applyThemeFaded(theme);
   listeners.forEach((l) => l());
 }
 
 function setTheme(next: Theme) {
   explicitChoice = next;
   theme = next;
-  applyTheme(next);
+  applyThemeFaded(next);
   try {
     localStorage.setItem(STORAGE_KEY, next);
   } catch {

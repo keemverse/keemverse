@@ -96,11 +96,12 @@ function HeroPair({ items }: { items: typeof hero }) {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.5 }}
-      // Light mode: one seamless piece, no box. Dark mode: two separate white
-      // cards (each half becomes its own card), so each universe stays distinct.
+      // Same geometry in light and dark so nothing moves when the theme switches:
+      // only paint changes. Light: one seamless piece, no box. Dark: each half
+      // becomes its own white card, so each universe stays distinct.
       className="relative"
     >
-      <div className="grid grid-cols-2 dark:gap-3 md:dark:gap-8">
+      <div className="grid grid-cols-2 gap-3 md:gap-8">
         {items.map((item, i) => {
           const side = i === 0 ? 'left' : 'right';
           return (
@@ -108,7 +109,7 @@ function HeroPair({ items }: { items: typeof hero }) {
               key={item.title}
               href={item.href}
               aria-label={`${item.title}: ${item.description}`}
-              className="group flex flex-col rounded-2xl dark:overflow-hidden dark:border dark:border-stone-200/60 dark:bg-white dark:shadow-sm md:dark:rounded-[28px] dark:transition-all dark:duration-500 dark:hover:-translate-y-1.5 dark:hover:shadow-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-foreground"
+              className="group flex flex-col overflow-hidden rounded-2xl md:rounded-[28px] border border-transparent bg-transparent shadow-none dark:border-stone-200/60 dark:bg-white dark:shadow-sm transition-[transform,box-shadow] duration-500 dark:hover:-translate-y-1.5 dark:hover:shadow-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-foreground"
             >
               <div className="relative aspect-square md:aspect-[4/3]">
                 <div
@@ -121,8 +122,8 @@ function HeroPair({ items }: { items: typeof hero }) {
                   />
                 </div>
                 <span
-                  className={`absolute top-1 md:top-3 dark:top-2 md:dark:top-4 rounded-full bg-white/95 text-[9px] md:text-[11px] tracking-wide font-semibold px-2 py-0.5 md:px-3 md:py-1 text-stone-900 ${
-                    side === 'left' ? 'left-1 md:left-3 dark:left-2 md:dark:left-4' : 'right-1 md:right-3 dark:right-2 md:dark:right-4'
+                  className={`absolute top-2 md:top-4 rounded-full bg-white/95 text-[9px] md:text-[11px] tracking-wide font-semibold px-2 py-0.5 md:px-3 md:py-1 text-stone-900 ${
+                    side === 'left' ? 'left-2 md:left-4' : 'right-2 md:right-4'
                   }`}
                 >
                   {item.tag}
@@ -149,7 +150,7 @@ function HeroPair({ items }: { items: typeof hero }) {
       {/* the seam: a faint hairline that runs amber to teal down the middle */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-y-10 left-1/2 w-px -translate-x-1/2 dark:hidden"
+        className="pointer-events-none absolute inset-y-10 left-1/2 w-px -translate-x-1/2 transition-opacity dark:!opacity-0"
         style={{
           background: `linear-gradient(to bottom, transparent, ${FASHION} 30%, ${CRAFT} 70%, transparent)`,
           opacity: 0.4,
