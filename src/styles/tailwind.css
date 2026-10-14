@@ -152,23 +152,3 @@
 @utility text-amber-display {
   color: var(--fashion-display);
 }
-
-
-/* Home hero pictures melt into the page instead of sitting in a card.
-   Every edge fades out. In dark mode a white band (.hero-band) runs behind
-   both pictures so their white grounds join up. */
-.hero-fade {
-  -webkit-mask-image:
-    linear-gradient(to right, transparent 0%, #000 24%, #000 76%, transparent 100%),
-    linear-gradient(to bottom, transparent 0%, #000 16%, #000 70%, transparent 100%);
-  mask-image:
-    linear-gradient(to right, transparent 0%, #000 24%, #000 76%, transparent 100%),
-    linear-gradient(to bottom, transparent 0%, #000 16%, #000 70%, transparent 100%);
-  -webkit-mask-composite: source-in;
-  mask-composite: intersect;
-}
-.hero-band {
-  /* a short, fixed-size fade (not a percentage), so the band reads as crisp white */
-  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 14px, #000 calc(100% - 14px), transparent 100%);
-  mask-image: linear-gradient(to bottom, transparent 0, #000 14px, #000 calc(100% - 14px), transparent 100%);
-}
