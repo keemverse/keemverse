@@ -103,7 +103,7 @@ function HeroPair({ items }: { items: typeof hero }) {
           patches. Its top and bottom fade into the dark page. */}
       <div
         aria-hidden="true"
-        className="hero-band pointer-events-none absolute -top-8 -bottom-3 left-1/2 hidden w-screen -translate-x-1/2 bg-white dark:block"
+        className="hero-band pointer-events-none absolute -top-5 -bottom-2 left-1/2 hidden w-screen -translate-x-1/2 bg-white dark:block"
       />
       <div className="relative grid grid-cols-2">
         {items.map((item, i) => {

@@ -168,6 +168,7 @@
   mask-composite: intersect;
 }
 .hero-band {
-  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 16%, #000 90%, transparent 100%);
-  mask-image: linear-gradient(to bottom, transparent 0%, #000 16%, #000 90%, transparent 100%);
+  /* a short, fixed-size fade (not a percentage), so the band reads as crisp white */
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 14px, #000 calc(100% - 14px), transparent 100%);
+  mask-image: linear-gradient(to bottom, transparent 0, #000 14px, #000 calc(100% - 14px), transparent 100%);
 }
