@@ -83,11 +83,11 @@ const hero = [
   },
 ];
 
-// The two universes as ONE piece, no card: fashion on the left, craft on the
-// right, each half its own link. Both pictures are transparent cut-outs, so
-// they stand directly on the page in light and dark with nothing to fade or
-// mask, and a faint amber-to-teal seam runs between them. The quick links for
-// each half sit directly beneath, in the same two columns.
+// The two universes as ONE piece: fashion on the left, craft on the right,
+// each half its own link. Both pictures are transparent cut-outs. In light
+// mode they stand directly on the page with no box; in dark mode they sit on
+// one white card (dark text). A faint amber-to-teal seam runs between them.
+// The quick links for each half sit directly beneath, in the same two columns.
 function HeroPair({ items }: { items: typeof hero }) {
   return (
     <motion.div
@@ -95,9 +95,11 @@ function HeroPair({ items }: { items: typeof hero }) {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.5 }}
-      className="relative"
+      // Light mode: seamless, no box. Dark mode: the white card, so the pictures
+      // and their dark text always sit on a clean light surface.
+      className="relative transition-shadow duration-500 dark:overflow-hidden dark:rounded-2xl md:dark:rounded-[28px] dark:border dark:border-stone-200/60 dark:bg-white dark:shadow-sm dark:hover:shadow-2xl"
     >
-      <div className="grid grid-cols-2">
+      <div className="grid grid-cols-2 dark:pt-2">
         {items.map((item, i) => {
           const side = i === 0 ? 'left' : 'right';
           return (
@@ -127,10 +129,10 @@ function HeroPair({ items }: { items: typeof hero }) {
               </div>
 
               <div className="flex flex-col flex-1 px-2 pb-3 pt-2 md:px-8 md:pb-4 md:pt-3 relative z-10 text-center">
-                <h3 className="text-lg md:text-[2rem] text-foreground" style={{ fontFamily: 'Georgia, serif' }}>
+                <h3 className="text-lg md:text-[2rem] text-foreground dark:text-stone-900" style={{ fontFamily: 'Georgia, serif' }}>
                   {item.title}
                 </h3>
-                <p className="mt-1 text-xs md:text-sm leading-relaxed md:leading-7 text-muted-foreground max-w-xs mx-auto">
+                <p className="mt-1 text-xs md:text-sm leading-relaxed md:leading-7 text-muted-foreground dark:text-stone-600 max-w-xs mx-auto">
                   {item.description}
                 </p>
                 {/* mt-auto pins both "enter" buttons to the same line, even when one description wraps to more lines */}
