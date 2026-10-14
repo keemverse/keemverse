@@ -83,12 +83,12 @@ const hero = [
   },
 ];
 
-// The two universes as ONE piece: fashion on the left, craft on the right,
-// each half its own link. The original photographs fade out on every edge
-// (.hero-fade), so in light mode they melt straight into the page with no
-// box; in dark mode they sit on one white card with dark text, and the same
-// fade dissolves into it. A faint amber-to-teal seam runs between them. The
-// quick links for each half sit directly beneath, in the same two columns.
+// Light mode: the two universes as ONE seamless piece, fashion on the left and
+// craft on the right, each half its own link. The original photographs fade out
+// on every edge (.hero-fade) and melt into the page, with a faint amber-to-teal
+// seam between them. Dark mode: the same markup becomes two separate white
+// cards with dark text, side by side. The quick links for each half sit
+// directly beneath, in the same two columns.
 function HeroPair({ items }: { items: typeof hero }) {
   return (
     <motion.div
@@ -96,11 +96,11 @@ function HeroPair({ items }: { items: typeof hero }) {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.5 }}
-      // Light mode: seamless, no box. Dark mode: the white card, so the pictures
-      // and their dark text always sit on a clean light surface.
-      className="relative transition-shadow duration-500 dark:overflow-hidden dark:rounded-2xl md:dark:rounded-[28px] dark:border dark:border-stone-200/60 dark:bg-white dark:shadow-sm dark:hover:shadow-2xl"
+      // Light mode: one seamless piece, no box. Dark mode: two separate white
+      // cards (each half becomes its own card), so each universe stays distinct.
+      className="relative"
     >
-      <div className="grid grid-cols-2 dark:pt-2">
+      <div className="grid grid-cols-2 dark:gap-3 md:dark:gap-8">
         {items.map((item, i) => {
           const side = i === 0 ? 'left' : 'right';
           return (
@@ -108,7 +108,7 @@ function HeroPair({ items }: { items: typeof hero }) {
               key={item.title}
               href={item.href}
               aria-label={`${item.title}: ${item.description}`}
-              className="group flex flex-col rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-foreground"
+              className="group flex flex-col rounded-2xl dark:overflow-hidden dark:border dark:border-stone-200/60 dark:bg-white dark:shadow-sm md:dark:rounded-[28px] dark:transition-all dark:duration-500 dark:hover:-translate-y-1.5 dark:hover:shadow-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-foreground"
             >
               <div className="relative aspect-square md:aspect-[4/3]">
                 <div
@@ -121,8 +121,8 @@ function HeroPair({ items }: { items: typeof hero }) {
                   />
                 </div>
                 <span
-                  className={`absolute top-1 md:top-3 rounded-full bg-white/95 text-[9px] md:text-[11px] tracking-wide font-semibold px-2 py-0.5 md:px-3 md:py-1 text-stone-900 ${
-                    side === 'left' ? 'left-1 md:left-3' : 'right-1 md:right-3'
+                  className={`absolute top-1 md:top-3 dark:top-2 md:dark:top-4 rounded-full bg-white/95 text-[9px] md:text-[11px] tracking-wide font-semibold px-2 py-0.5 md:px-3 md:py-1 text-stone-900 ${
+                    side === 'left' ? 'left-1 md:left-3 dark:left-2 md:dark:left-4' : 'right-1 md:right-3 dark:right-2 md:dark:right-4'
                   }`}
                 >
                   {item.tag}
@@ -149,7 +149,7 @@ function HeroPair({ items }: { items: typeof hero }) {
       {/* the seam: a faint hairline that runs amber to teal down the middle */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-y-10 left-1/2 w-px -translate-x-1/2"
+        className="pointer-events-none absolute inset-y-10 left-1/2 w-px -translate-x-1/2 dark:hidden"
         style={{
           background: `linear-gradient(to bottom, transparent, ${FASHION} 30%, ${CRAFT} 70%, transparent)`,
           opacity: 0.4,

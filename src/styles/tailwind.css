@@ -165,3 +165,11 @@
   -webkit-mask-composite: source-in;
   mask-composite: intersect;
 }
+/* Dark mode: each half is its own white card, so the picture fills the card and
+   only its bottom fades into the white under the title. */
+.dark .hero-fade {
+  -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 72%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 0%, #000 72%, transparent 100%);
+  -webkit-mask-composite: source-over;
+  mask-composite: add;
+}
