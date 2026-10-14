@@ -9,6 +9,7 @@ import { PillButton } from '../components/ui/PillButton';
 import { AccentPillButton } from '../components/ui/AccentPillButton';
 import { BurgerMenu } from '../components/ui/BurgerMenu';
 import { GeometricBackdrop } from '../components/GeometricBackdrop';
+import { BioChooser } from '../components/BioChooser';
 import { FASHION, FASHION_DARK, CRAFT, CRAFT_DARK, accentText } from '../lib/theme';
 import fashionPageHero from '../../imports/IMG_7304.webp';
 import craftPageHero from '../../imports/craft-quality-hero_2.webp';
@@ -244,6 +245,8 @@ export function LandingPage() {
       <div className="-mt-14">
         <SocialFooter />
       </div>
+
+      <BioChooser />
     </div>
   );
 }
