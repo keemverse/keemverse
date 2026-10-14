@@ -30,6 +30,7 @@ export function AccentPillButton({
   return (
     <motion.a
       href={href}
+      title={sub}
       target={isExternal ? '_blank' : undefined}
       rel={isExternal ? 'noopener noreferrer' : undefined}
       initial={{ opacity: 0, y: 12 }}
@@ -38,7 +39,7 @@ export function AccentPillButton({
       whileHover={{ scale: 1.05, y: -3 }}
       whileTap={{ scale: 0.97 }}
       transition={{ duration: 0.4, delay }}
-      className="group flex flex-col items-center gap-1 rounded-full border px-3 py-4 md:px-4 md:py-5 text-center text-white transition-all duration-300 ease-[cubic-bezier(.22,1,.36,1)]"
+      className="group flex flex-row items-center justify-center gap-2 rounded-full border px-4 py-2.5 md:py-3 text-center text-white transition-all duration-300 ease-[cubic-bezier(.22,1,.36,1)]"
       style={{
         backgroundColor: accent,
         borderColor: accentDark,
@@ -47,11 +48,9 @@ export function AccentPillButton({
       onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = accentDark)}
       onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = accent)}
     >
-      <Icon className="w-5 h-5 mb-1" />
-      <span className="font-serif text-sm md:text-lg leading-none">{label}</span>
-      <span className="text-[9px] md:text-[10px] uppercase tracking-wider mt-1 text-white/80">
-        {sub}
-      </span>
+      <Icon className="w-4 h-4 md:w-[18px] md:h-[18px] shrink-0" />
+      <span className="font-serif text-sm md:text-base leading-none whitespace-nowrap">{label}</span>
+      <span className="sr-only">{sub}</span>
     </motion.a>
   );
 }
