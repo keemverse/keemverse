@@ -11,8 +11,8 @@ import { BurgerMenu } from '../components/ui/BurgerMenu';
 import { GeometricBackdrop } from '../components/GeometricBackdrop';
 import { BioChooser } from '../components/BioChooser';
 import { FASHION, FASHION_DARK, CRAFT, CRAFT_DARK, accentText } from '../lib/theme';
-import fashionPageHero from '../../imports/hero-fashion-cutout.webp';
-import craftPageHero from '../../imports/hero-craft-cutout.webp';
+import fashionPageHero from '../../imports/IMG_7304.webp';
+import craftPageHero from '../../imports/craft-quality-hero_2.webp';
 import keemverseWordmark from '../../imports/keemverse-wordmark.svg';
 
 // Landing-page-only top bar: wordmark left, animated burger right.
@@ -84,10 +84,11 @@ const hero = [
 ];
 
 // The two universes as ONE piece: fashion on the left, craft on the right,
-// each half its own link. Both pictures are transparent cut-outs. In light
-// mode they stand directly on the page with no box; in dark mode they sit on
-// one white card (dark text). A faint amber-to-teal seam runs between them.
-// The quick links for each half sit directly beneath, in the same two columns.
+// each half its own link. The original photographs fade out on every edge
+// (.hero-fade), so in light mode they melt straight into the page with no
+// box; in dark mode they sit on one white card with dark text, and the same
+// fade dissolves into it. A faint amber-to-teal seam runs between them. The
+// quick links for each half sit directly beneath, in the same two columns.
 function HeroPair({ items }: { items: typeof hero }) {
   return (
     <motion.div
@@ -109,14 +110,14 @@ function HeroPair({ items }: { items: typeof hero }) {
               aria-label={`${item.title}: ${item.description}`}
               className="group flex flex-col rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-foreground"
             >
-              <div className="relative aspect-[4/5] md:aspect-[5/4]">
+              <div className="relative aspect-square md:aspect-[4/3]">
                 <div
-                  className="absolute inset-0 will-change-transform transition-transform duration-[900ms] ease-[cubic-bezier(.22,1,.36,1)] group-hover:scale-[1.03]"
+                  className="hero-fade absolute inset-0 will-change-transform transition-transform duration-[900ms] ease-[cubic-bezier(.22,1,.36,1)] group-hover:scale-[1.03]"
                 >
                   <ImageWithFallback
                     src={item.image}
                     alt=""
-                    className="w-full h-full object-contain object-bottom"
+                    className="w-full h-full object-cover object-[center_25%] md:object-center"
                   />
                 </div>
                 <span
@@ -128,7 +129,7 @@ function HeroPair({ items }: { items: typeof hero }) {
                 </span>
               </div>
 
-              <div className="flex flex-col flex-1 px-2 pb-3 pt-2 md:px-8 md:pb-4 md:pt-3 relative z-10 text-center">
+              <div className="flex flex-col flex-1 px-2 pb-3 pt-1 md:px-8 md:pb-4 -mt-6 md:-mt-12 relative z-10 text-center">
                 <h3 className="text-lg md:text-[2rem] text-foreground dark:text-stone-900" style={{ fontFamily: 'Georgia, serif' }}>
                   {item.title}
                 </h3>
