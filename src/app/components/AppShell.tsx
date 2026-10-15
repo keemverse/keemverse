@@ -5,6 +5,51 @@ import { motion, useReducedMotion } from 'motion/react';
 // Small pieces of app-wide behaviour that make the site feel like an app
 // instead of a set of separate pages.
 
+/**
+ * On a phone the top bar and the tab bar together take a lot of the screen.
+ * This slides them away while the page is scrolled down and brings them back
+ * the moment the person scrolls up (or reaches the top or bottom). It only
+ * sets html[data-chrome]; the CSS in styles/tailwind.css does the movement
+ * and only applies below the tablet breakpoint.
+ */
+export function ScrollChrome() {
+  useEffect(() => {
+    const root = document.documentElement;
+    let last = window.scrollY;
+    let ticking = false;
+
+    const update = () => {
+      const y = window.scrollY;
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      const delta = y - last;
+      if (y < 80 || y >= max - 40) {
+        root.dataset.chrome = 'shown';
+      } else if (delta > 8) {
+        root.dataset.chrome = 'hidden';
+      } else if (delta < -8) {
+        root.dataset.chrome = 'shown';
+      }
+      if (Math.abs(delta) > 8) last = y;
+      ticking = false;
+    };
+
+    const onScroll = () => {
+      if (!ticking) {
+        ticking = true;
+        window.requestAnimationFrame(update);
+      }
+    };
+
+    root.dataset.chrome = 'shown';
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      delete root.dataset.chrome;
+    };
+  }, []);
+  return null;
+}
+
 /** Each new page opens at the top (instantly), as people expect. */
 export function ScrollToTop() {
   const { pathname } = useLocation();

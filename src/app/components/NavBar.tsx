@@ -36,7 +36,7 @@ export function NavBar() {
 
   return (
     <div
-      className={`sticky top-0 z-40 w-full px-4 py-3 transition-[background-color,backdrop-filter,border-color,box-shadow] duration-300 border-b ${
+      className={`chrome-top sticky top-0 z-40 w-full px-4 py-2 md:py-3 transition-[background-color,backdrop-filter,border-color,box-shadow] duration-300 border-b ${
         scrolled
           ? 'glass-bar shadow-[0_8px_24px_-20px_rgba(20,18,15,.35)]'
           : 'bg-transparent border-transparent'
@@ -56,7 +56,7 @@ export function NavBar() {
   key={isFashion ? "fashion" : "craft"}
   onClick={() => navigate("/")}
   aria-label="Back to Keemverse home"
-  className="w-12 h-12 flex items-center justify-center animate-in fade-in zoom-in duration-300 cursor-pointer"
+  className="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center animate-in fade-in zoom-in duration-300 cursor-pointer"
 >
           <ImageWithFallback
             src={isFashion ? profileImg : logImg}

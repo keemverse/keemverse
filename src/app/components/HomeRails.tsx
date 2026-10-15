@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, ShoppingBag, Camera, Layers, Palette } from 'lucide-react';
+import type { ComponentType } from 'react';
+import { FASHION, FASHION_DARK, CRAFT, CRAFT_DARK } from '../lib/theme';
 import { Reveal } from './CraftUI';
 import { ImageWithFallback } from './figma/ImageWithFallback';
 import { getCatalogProducts } from '../lib/products';
@@ -22,11 +24,45 @@ function pick(rows: any[], imageField: 'image_url' | 'thumbnail', limit: number)
     .slice(0, limit);
 }
 
+function ActionPill({
+  to,
+  label,
+  icon: Icon,
+  accent,
+  accentDark,
+}: {
+  to: string;
+  label: string;
+  icon: ComponentType<{ className?: string }>;
+  accent: string;
+  accentDark: string;
+}) {
+  return (
+    <Link
+      to={to}
+      className="press inline-flex shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-full border px-5 py-2.5 text-sm text-white transition-colors duration-300"
+      style={{
+        backgroundColor: accent,
+        borderColor: accentDark,
+        fontFamily: 'var(--font-display)',
+        boxShadow: `inset 0 1px 0 rgba(255,255,255,.35), 0 10px 24px -10px ${accent}99`,
+      }}
+      onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = accentDark)}
+      onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = accent)}
+    >
+      <Icon className="h-4 w-4 shrink-0" />
+      {label}
+      <ArrowRight className="h-4 w-4 shrink-0" />
+    </Link>
+  );
+}
+
 function Rail({
   eyebrow,
   title,
   href,
   cta,
+  icon,
   items,
   loading,
 }: {
@@ -34,6 +70,7 @@ function Rail({
   title: string;
   href: string;
   cta: string;
+  icon: ComponentType<{ className?: string }>;
   items: Item[];
   loading: boolean;
 }) {
@@ -45,10 +82,9 @@ function Rail({
             <p className="eyebrow text-amber-ink">{eyebrow}</p>
             <h2 className="mt-2 text-display-md">{title}</h2>
           </div>
-          <Link to={href} className="group hidden shrink-0 items-center gap-1.5 text-sm font-medium text-foreground/80 hover:text-foreground sm:inline-flex">
-            {cta}
-            <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
-          </Link>
+          <div className="hidden sm:block">
+            <ActionPill to={href} label={cta} icon={icon} accent={FASHION} accentDark={FASHION_DARK} />
+          </div>
         </div>
       </Reveal>
 
@@ -81,10 +117,9 @@ function Rail({
             ))}
       </div>
 
-      <Link to={href} className="mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-foreground/80 sm:hidden">
-        {cta}
-        <ArrowRight className="h-4 w-4" />
-      </Link>
+      <div className="mt-5 sm:hidden">
+        <ActionPill to={href} label={cta} icon={icon} accent={FASHION} accentDark={FASHION_DARK} />
+      </div>
     </section>
   );
 }
@@ -139,7 +174,8 @@ export default function HomeRails() {
           eyebrow={t('home.finds_eyebrow')}
           title={t('home.finds_title')}
           href="/fashion/finds"
-          cta="See all finds"
+          cta={t('home.finds_cta')}
+          icon={ShoppingBag}
           items={findItems}
           loading={loadingFinds}
         />
@@ -150,11 +186,27 @@ export default function HomeRails() {
           eyebrow={t('home.presets_eyebrow')}
           title={t('home.presets_title')}
           href="/fashion/presets"
-          cta="See all presets"
+          cta={t('home.presets_cta')}
+          icon={Camera}
           items={presetItems}
           loading={loadingPresets}
         />
       )}
+
+      <Reveal>
+        <section className="mt-16 md:mt-24">
+          <div className="flex flex-wrap items-end justify-between gap-5">
+            <div>
+              <p className="eyebrow text-teal-ink">{t('home.craft_eyebrow')}</p>
+              <h2 className="mt-2 text-display-md">{t('home.craft_title')}</h2>
+            </div>
+            <div className="flex flex-wrap gap-3">
+              <ActionPill to="/digital-craft" label={t('home.craft_cta_1')} icon={Layers} accent={CRAFT} accentDark={CRAFT_DARK} />
+              <ActionPill to="/digital-craft" label={t('home.craft_cta_2')} icon={Palette} accent={CRAFT} accentDark={CRAFT_DARK} />
+            </div>
+          </div>
+        </section>
+      </Reveal>
 
       <Reveal>
         <section className="mt-16 md:mt-24 glass sheen overflow-hidden rounded-[2rem] px-6 py-12 text-center md:px-12 md:py-16">

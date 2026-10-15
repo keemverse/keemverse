@@ -237,24 +237,6 @@ export function LandingPage() {
             <div className="max-w-5xl mx-auto">
               <HeroPair items={hero} />
 
-              <div className="grid grid-cols-2 gap-3 md:gap-8 mt-2 md:mt-4">
-                {hero.map((item, i) => (
-                  <div key={item.title} className="grid grid-cols-1 min-[680px]:grid-cols-2 gap-2 md:gap-3">
-                    {item.pills.map((p, pi) => (
-                      <AccentPillButton
-                        key={p.label}
-                        href={p.href}
-                        icon={p.icon}
-                        label={p.label}
-                        sub={p.sub}
-                        accent={item.accent}
-                        accentDark={item.accentDark}
-                        delay={0.15 + i * 0.1 + pi * 0.06}
-                      />
-                    ))}
-                  </div>
-                ))}
-              </div>
             </div>
           </section>
 

@@ -2,7 +2,7 @@ import React, { Suspense, lazy } from 'react';
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 
 import { NavBar } from './components/NavBar';
-import { ScrollToTop, InternalLinks, RouteTransition } from './components/AppShell';
+import { ScrollToTop, InternalLinks, RouteTransition, ScrollChrome } from './components/AppShell';
 import BottomTabs from './components/BottomTabs';
 import { useTheme } from './lib/useTheme';
 import { usePageMeta } from './lib/usePageMeta';
@@ -60,6 +60,7 @@ export default function App() {
       <div className="min-h-screen bg-background text-foreground">
         <PageMeta />
         <ScrollToTop />
+        <ScrollChrome />
         <InternalLinks />
         <ConditionalNavBar />
 

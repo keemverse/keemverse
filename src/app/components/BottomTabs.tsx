@@ -20,15 +20,15 @@ export default function BottomTabs() {
   const { pathname } = useLocation();
   const reduce = useReducedMotion();
 
-  if (HIDDEN_ON.some((p) => pathname.startsWith(p))) return null;
+  if (pathname === '/' || HIDDEN_ON.some((p) => pathname.startsWith(p))) return null;
 
   return (
     <>
-      <div aria-hidden="true" className="h-[calc(4.25rem+env(safe-area-inset-bottom))] md:hidden" />
+      <div aria-hidden="true" className="h-[calc(3.5rem+env(safe-area-inset-bottom))] md:hidden" />
 
       <nav
         aria-label="Main"
-        className="glass-bar fixed inset-x-0 bottom-0 z-40 border-b-0 border-t border-border/70 pb-[env(safe-area-inset-bottom)] md:hidden"
+        className="chrome-bottom glass-bar fixed inset-x-0 bottom-0 z-40 border-b-0 border-t border-border/70 pb-[env(safe-area-inset-bottom)] md:hidden"
       >
         <ul className="mx-auto grid max-w-md grid-cols-4">
           {TABS.map(({ label, href, icon: Icon }) => {
@@ -38,16 +38,16 @@ export default function BottomTabs() {
                 <Link
                   to={href}
                   aria-current={active ? 'page' : undefined}
-                  className="press relative flex h-[4.25rem] flex-col items-center justify-center gap-1 text-[11px] font-medium"
+                  className="press relative flex h-14 flex-col items-center justify-center gap-0.5 text-[11px] font-medium"
                 >
                   {active && (
                     <motion.span
                       layoutId="bottom-tab-pill"
-                      className="absolute top-2 h-8 w-14 rounded-full bg-foreground/10"
+                      className="absolute top-1.5 h-7 w-14 rounded-full bg-foreground/10"
                       transition={reduce ? { duration: 0 } : { type: 'spring', stiffness: 420, damping: 34 }}
                     />
                   )}
-                  <Icon className={`relative h-5 w-5 ${active ? 'text-foreground' : 'text-muted-foreground'}`} />
+                  <Icon className={`relative h-[18px] w-[18px] ${active ? 'text-foreground' : 'text-muted-foreground'}`} />
                   <span className={`relative ${active ? 'text-foreground' : 'text-muted-foreground'}`}>{label}</span>
                 </Link>
               </li>

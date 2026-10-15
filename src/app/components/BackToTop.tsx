@@ -24,7 +24,7 @@ export default function BackToTop() {
           exit={{ opacity: 0, y: 12, scale: 0.9 }}
           transition={{ duration: 0.25 }}
           onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-          className="press fixed bottom-[calc(5.25rem+env(safe-area-inset-bottom))] right-5 z-40 md:bottom-5 grid h-11 w-11 place-items-center rounded-full glass text-foreground"
+          className="press fixed bottom-[calc(4.5rem+env(safe-area-inset-bottom))] right-5 z-40 md:bottom-5 grid h-11 w-11 place-items-center rounded-full glass text-foreground"
         >
           <ArrowUp className="h-4 w-4" />
         </motion.button>

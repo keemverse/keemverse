@@ -188,7 +188,7 @@ html.theme-fade *::after {
 :root {
   --ease-out: cubic-bezier(.22, 1, .36, 1);
   --ease-in-out: cubic-bezier(.65, 0, .35, 1);
-  --nav-h: 4rem;
+  --nav-h: 3.6rem;
   --dur-fast: 160ms;
   --dur-base: 320ms;
   --dur-slow: 700ms;
@@ -340,4 +340,20 @@ body {
 }
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
   [class~='bg-card']:not(.no-glass):not(.force-light *) { background-color: var(--card); }
+}
+
+/* Phones: the top and bottom bars slide away while scrolling down and return on
+   the first scroll up (see ScrollChrome in components/AppShell.tsx). The sticky
+   category bars take the top slot while the nav is away. Desktop is untouched. */
+@media (max-width: 767px) {
+  .chrome-top, .chrome-bottom { transition-property: transform, background-color, backdrop-filter, border-color, box-shadow; }
+  .chrome-top { transition-duration: 300ms; }
+  .chrome-bottom { transition: transform 300ms var(--ease-out); }
+  html[data-chrome='hidden'] .chrome-top { transform: translateY(-100%); }
+  html[data-chrome='hidden'] .chrome-bottom { transform: translateY(100%); }
+  html[data-chrome='hidden'] { --nav-h: 0px; }
+  .sticky { transition: top 300ms var(--ease-out); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .chrome-top, .chrome-bottom, .sticky { transition: none; }
 }
