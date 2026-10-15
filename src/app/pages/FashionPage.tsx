@@ -6,7 +6,7 @@ import { ImageWithFallback } from '../components/figma/ImageWithFallback';
 import { SocialFooter } from '../components/SocialFooter';
 import { BookMeModal } from '../components/BookMeModal';
 import UniverseShopCard from "../components/UniverseShopCard";
-import { PillButton } from '../components/ui/PillButton';
+import SharedSectionDivider from '../components/SectionDivider';
 import { GeometricBackdrop } from '../components/GeometricBackdrop';
 import { FASHION, FASHION_DARK } from '../lib/theme';
 import img1 from '../../imports/IMG_7304.webp';
@@ -55,26 +55,18 @@ const shop = [
   },
 ];
 
-function SectionDivider({ label }: { label: string }) {
-  return (
-    <div className="flex items-center gap-4 mb-14">
-      <div className="h-px flex-1 bg-border" />
-      <span className="text-xs font-bold tracking-[0.2em] uppercase text-muted-foreground">{label}</span>
-      <div className="h-px flex-1 bg-border" />
-    </div>
-  );
-}
-
 export function FashionPage() {
   const [current, setCurrent] = useState(0);
+  const [paused, setPaused] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
 
   useEffect(() => {
+    if (paused) return;
     const timer = setInterval(() => {
       setCurrent((prev) => (prev + 1) % carouselImages.length);
     }, 5500);
     return () => clearInterval(timer);
-  }, []);
+  }, [paused]);
 
   return (
     <div className="relative min-h-screen bg-background text-foreground">
@@ -90,16 +82,19 @@ export function FashionPage() {
             <div
               className="relative w-full overflow-hidden rounded-3xl"
               style={{ aspectRatio: '3/4', maxHeight: '90vh' }}
+              onMouseEnter={() => setPaused(true)}
+              onMouseLeave={() => setPaused(false)}
             >
               {/* Stacked crossfade images */}
               {carouselImages.map((img, i) => (
                 <div
                   key={i}
-                  className="absolute inset-0 transition-opacity"
+                  className="absolute inset-0 transition-[opacity,transform] motion-reduce:transition-none"
                   style={{
                     opacity: i === current ? 1 : 0,
-                    transitionDuration: '2000ms',
-                    transitionTimingFunction: 'ease-in-out',
+                    transform: i === current ? 'scale(1.06)' : 'scale(1)',
+                    transitionDuration: i === current ? '2000ms, 7000ms' : '2000ms, 0ms',
+                    transitionTimingFunction: 'ease-in-out, linear',
                   }}
                 >
                   <ImageWithFallback
@@ -123,30 +118,35 @@ export function FashionPage() {
                     filter: 'drop-shadow(0 0 12px rgba(29, 28, 25, 0.25))'
                   }}
                 >
-                  <p className="text-white/50 text-xs font-bold tracking-[0.35em] uppercase mb-4">
-                    Fashion Storyteller
+                  <p className="eyebrow text-white/70 mb-3">
+                    Fashion storyteller
                   </p>
-                  <h1
-                    className="text-white leading-tight"
-                    style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(1.1rem, 4vw, 2.5rem)' }}
-                  >
+                  <h1 className="text-display-lg max-w-[18ch] text-white">
                     Visual identity through style, emotion, and atmosphere.
                   </h1>
                 </motion.div>
               </div>
 
-              {/* Dot indicators */}
-              <div className="absolute bottom-6 right-8 flex gap-1.5">
+              {/* Slide controls */}
+              <div className="absolute bottom-6 right-6 flex items-center gap-1 md:right-8">
                 {carouselImages.map((_, i) => (
-                  <div
+                  <button
                     key={i}
-                    className="rounded-full transition-all duration-500"
-                    style={{
-                      width: i === current ? '20px' : '6px',
-                      height: '6px',
-                      backgroundColor: i === current ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.35)',
-                    }}
-                  />
+                    type="button"
+                    aria-label={`Show photo ${i + 1} of ${carouselImages.length}`}
+                    aria-current={i === current}
+                    onClick={() => setCurrent(i)}
+                    className="grid h-6 place-items-center px-0.5"
+                  >
+                    <span
+                      className="block rounded-full transition-all duration-500"
+                      style={{
+                        width: i === current ? '20px' : '6px',
+                        height: '6px',
+                        backgroundColor: i === current ? 'rgba(255,255,255,0.95)' : 'rgba(255,255,255,0.4)',
+                      }}
+                    />
+                  </button>
                 ))}
               </div>
             </div>
@@ -158,10 +158,7 @@ export function FashionPage() {
               <p className="text-foreground/80 font-medium text-lg md:text-xl mb-4">
                 Hi, I'm Keem.
               </p>
-              <h2
-                className="mb-6 leading-snug text-foreground"
-                style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(1.75rem, 3.5vw, 2.5rem)' }}
-              >
+              <h2 className="text-display-md mb-6 text-foreground">
                 I believe style is visual storytelling.
               </h2>
               <p className="text-muted-foreground leading-loose text-base md:text-lg">
@@ -173,41 +170,35 @@ export function FashionPage() {
 
           {/* ── WORK WITH ME ── */}
           <section className="mt-24">
-            <SectionDivider label="Work With Me" />
+            <SharedSectionDivider label="Work with me" />
             {/* Media kit link removed while /fashion/media-kit is held in
                 draft — add back once that page is routed live again. */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-x-5 gap-y-9 md:gap-x-8">
+            <div className="grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-5">
               {services.map((svc, i) => (
-                <motion.div
-                  key={i}
-                  initial={{ opacity: 0, y: 14 }}
+                <motion.button
+                  type="button"
+                  key={svc.title}
+                  onClick={() => setModalOpen(true)}
+                  initial={{ opacity: 0, y: 18 }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.4, delay: i * 0.07 }}
-                  className="flex flex-col"
+                  viewport={{ once: true, margin: '-40px' }}
+                  transition={{ duration: 0.5, delay: i * 0.07, ease: [0.22, 1, 0.36, 1] }}
+                  className="card-lift group flex flex-col rounded-3xl border border-border bg-card p-5 text-left md:p-6"
                 >
-                  <h3 className="font-bold mb-1.5 md:mb-2 text-foreground text-sm md:text-base leading-snug">
-                    {svc.title}
-                  </h3>
-                  <p className="text-muted-foreground text-xs md:text-sm leading-relaxed mb-4">{svc.desc}</p>
-                  <PillButton
-                    onClick={() => setModalOpen(true)}
-                    accent={FASHION}
-                    accentDark={FASHION_DARK}
-                    ghost
-                    arrow={false}
-                    className="mt-auto self-start"
-                  >
-                    BOOK ME
-                  </PillButton>
-                </motion.div>
+                  <span className="text-[13px] font-medium tabular-nums text-amber-ink">{String(i + 1).padStart(2, '0')}</span>
+                  <h3 className="mt-6 text-[15px] font-semibold leading-snug text-foreground md:text-base">{svc.title}</h3>
+                  <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground md:text-sm">{svc.desc}</p>
+                  <span className="mt-auto pt-5 text-[13px] font-semibold text-foreground">
+                    Book me <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">→</span>
+                  </span>
+                </motion.button>
               ))}
             </div>
           </section>
 
           {/* ── SHOP ── */}
           <section className="mt-24">
-            <SectionDivider label="Shop" />
+            <SharedSectionDivider label="Shop" />
             <div className="grid grid-cols-2 gap-3 md:gap-8 max-w-5xl mx-auto">
               {shop.map((item, i) => (
   <UniverseShopCard

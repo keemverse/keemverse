@@ -42,8 +42,8 @@ export default function FilterChips({
       >
         {tabs.map((tab) => {
           const active = tab === activeTab;
-          const count = counts?.[tab];
-          const empty = count === 0 && tab !== 'All';
+          const count = counts && tab !== 'All' ? counts[tab] ?? 0 : undefined;
+          const empty = count === 0;
           return (
             <button
               key={tab}
@@ -67,7 +67,7 @@ export default function FilterChips({
               )}
               <span className="relative z-10">
                 {tab}
-                {typeof count === 'number' && tab !== 'All' && (
+                {typeof count === 'number' && count > 0 && (
                   <span className={`ml-1.5 text-[11px] tabular-nums ${active ? 'opacity-70' : 'text-muted-foreground'}`}>{count}</span>
                 )}
               </span>

@@ -115,7 +115,7 @@ export default function FashionFindsPage() {
 
         {!filtering && featured.length > 0 && (
           <>
-            <SectionDivider label="Featured finds" meta={`${featured.length} picks`} />
+            <SectionDivider label="Featured finds" meta={`${featured.length} ${featured.length === 1 ? "pick" : "picks"}`} />
 
             <div className="grid grid-cols-2 gap-x-4 gap-y-8 md:gap-x-6 lg:grid-cols-4 mb-8">
               {featured.map((product, i) => (

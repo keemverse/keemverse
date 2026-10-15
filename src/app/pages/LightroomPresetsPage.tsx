@@ -125,7 +125,7 @@ export default function LightroomPresetsPage() {
         {!filtering && featured.length > 0 && (
           <section className="mb-16">
 
-            <SectionDivider label="Featured presets" meta={`${featured.length} looks`} />
+            <SectionDivider label="Featured presets" meta={`${featured.length} ${featured.length === 1 ? "look" : "looks"}`} />
 
             <div className="grid grid-cols-2 gap-x-4 gap-y-8 md:grid-cols-3 md:gap-x-6 xl:grid-cols-4">
               {featured.map((preset, index) => (
