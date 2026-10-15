@@ -40,19 +40,19 @@ function ActionPill({
   return (
     <Link
       to={to}
-      className="press inline-flex shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-full border px-5 py-2.5 text-sm text-white transition-colors duration-300"
+      className="press inline-flex shrink-0 items-center justify-center gap-1.5 whitespace-nowrap rounded-full border px-3.5 py-1.5 text-[13px] leading-none text-white transition-colors duration-300"
       style={{
         backgroundColor: accent,
         borderColor: accentDark,
         fontFamily: 'var(--font-display)',
-        boxShadow: `inset 0 1px 0 rgba(255,255,255,.35), 0 10px 24px -10px ${accent}99`,
+        boxShadow: `inset 0 1px 0 rgba(255,255,255,.3), 0 6px 14px -8px ${accent}88`,
       }}
       onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = accentDark)}
       onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = accent)}
     >
-      <Icon className="h-4 w-4 shrink-0" />
+      <Icon className="h-3.5 w-3.5 shrink-0" />
       {label}
-      <ArrowRight className="h-4 w-4 shrink-0" />
+      <ArrowRight className="h-3.5 w-3.5 shrink-0" />
     </Link>
   );
 }
@@ -77,14 +77,12 @@ function Rail({
   return (
     <section className="mt-16 md:mt-24">
       <Reveal>
-        <div className="flex items-end justify-between gap-4">
+        <div className="flex items-start justify-between gap-4">
           <div>
             <p className="eyebrow text-amber-ink">{eyebrow}</p>
             <h2 className="mt-2 text-display-md">{title}</h2>
           </div>
-          <div className="hidden sm:block">
-            <ActionPill to={href} label={cta} icon={icon} accent={FASHION} accentDark={FASHION_DARK} />
-          </div>
+          <ActionPill to={href} label={cta} icon={icon} accent={FASHION} accentDark={FASHION_DARK} />
         </div>
       </Reveal>
 
@@ -117,9 +115,7 @@ function Rail({
             ))}
       </div>
 
-      <div className="mt-5 sm:hidden">
-        <ActionPill to={href} label={cta} icon={icon} accent={FASHION} accentDark={FASHION_DARK} />
-      </div>
+
     </section>
   );
 }
