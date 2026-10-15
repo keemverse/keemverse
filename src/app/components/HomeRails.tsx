@@ -90,13 +90,13 @@ function Rail({
         {loading
           ? Array.from({ length: 5 }).map((_, i) => (
               <div key={i} className="w-40 sm:w-48 md:w-56" aria-hidden="true">
-                <div className="skeleton-shimmer aspect-[4/5] rounded-3xl" />
+                <div className="skeleton-shimmer aspect-[4/5] rounded-2xl" />
                 <div className="skeleton-shimmer mt-3 h-3.5 w-3/4 rounded-full" />
               </div>
             ))
           : items.map((it) => (
               <Link key={it.id} to={href} className="group block w-40 sm:w-48 md:w-56" aria-label={it.name}>
-                <div className="card-lift relative aspect-[4/5] overflow-hidden rounded-3xl bg-muted">
+                <div className="card-lift relative aspect-[4/5] overflow-hidden rounded-2xl bg-muted">
                   <ImageWithFallback
                     src={it.image}
                     alt={it.name}
@@ -201,7 +201,7 @@ export default function HomeRails() {
       </Reveal>
 
       <Reveal>
-        <section className="mt-16 md:mt-24 glass sheen overflow-hidden rounded-[2rem] px-6 py-12 text-center md:px-12 md:py-16">
+        <section className="mt-16 md:mt-24 glass sheen overflow-hidden rounded-3xl px-6 py-12 text-center md:px-12 md:py-16">
           <p className="eyebrow text-teal-ink">{t('home.cta_eyebrow')}</p>
           <h2 className="mx-auto mt-3 max-w-xl text-display-lg">{t('home.cta_title')}</h2>
           <p className="mx-auto mt-4 max-w-md text-muted-foreground">

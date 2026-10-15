@@ -38,7 +38,7 @@ export default function PresetCard({
             onOpen?.();
           }
         }}
-        className="card-lift relative aspect-[4/5] cursor-pointer overflow-hidden rounded-3xl bg-muted"
+        className="card-lift relative aspect-[4/5] cursor-pointer overflow-hidden rounded-2xl bg-muted"
       >
         <ImageWithFallback src={image} alt={name} className="card-img h-full w-full object-cover" />
 

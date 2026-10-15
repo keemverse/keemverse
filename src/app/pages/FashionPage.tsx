@@ -184,7 +184,7 @@ export function FashionPage() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, margin: '-40px' }}
                   transition={{ duration: 0.5, delay: i * 0.07, ease: [0.22, 1, 0.36, 1] }}
-                  className="card-lift glass group flex flex-col rounded-3xl p-5 text-left md:p-6"
+                  className="card-lift glass group flex flex-col rounded-2xl p-5 text-left md:p-6"
                 >
                   <span className="text-[13px] font-medium tabular-nums text-amber-ink">{String(i + 1).padStart(2, '0')}</span>
                   <h3 className="mt-6 text-[15px] font-semibold leading-snug text-foreground md:text-base">{svc.title}</h3>
