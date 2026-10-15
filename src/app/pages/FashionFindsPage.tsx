@@ -15,6 +15,7 @@ import { formatPrice } from "../lib/currency";
 import { useRegion } from "../lib/geo";
 import FashionFAQ from "../components/FashionFAQ";
 import { useContent } from "../lib/siteContent";
+import TemuReferralCard from "../components/TemuReferralCard";
 import SectionDivider from "../components/SectionDivider";
 
 const categories = [
@@ -128,8 +129,9 @@ export default function FashionFindsPage() {
               products={products}
               formatPrice={showPrice}
               onSelect={setSelected}
-              storefrontUrl="https://temu.to/k/e3d0e4ta2g4"
+              storefrontUrl={t("temu.catalogue_link")}
             />
+            <TemuReferralCard />
           </div>
         )}
 

@@ -141,7 +141,7 @@ const EMPTY_FORM = {
 // Every Fashion Find points at one shared Temu storefront on purpose —
 // Temu's per-product affiliate flow forces a gift/invite funnel — so the
 // real per-product link lives in direct_product_link instead.
-const TEMU_STOREFRONT = "https://temu.to/k/enxcis8g6rg";
+const TEMU_STOREFRONT = "https://temu.to/k/et0vx9sob5t";
 
 type FormState = typeof EMPTY_FORM;
 
