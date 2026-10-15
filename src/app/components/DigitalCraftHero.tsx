@@ -45,6 +45,15 @@ export function DigitalCraftHero({
       <div className="contents lg:block">
         {/* 1. headline block */}
         <div className="order-1 lg:order-none">
+          <motion.p
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="eyebrow mb-4 text-muted-foreground"
+          >
+            Digital craftsmanship
+          </motion.p>
+
           <motion.h1
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
@@ -58,8 +67,8 @@ export function DigitalCraftHero({
               textWrap: 'balance',
             }}
           >
-            Original <span className="text-amber-display">art</span> you won't find{' '}
-            <span className="text-teal-display">anywhere else.</span>
+            Designing for <span className="text-amber-display">production</span>{' '}
+            <span className="text-teal-display">quality</span>
           </motion.h1>
 
           <motion.p
@@ -68,8 +77,8 @@ export function DigitalCraftHero({
             transition={{ duration: 0.6, delay: 0.16 }}
             className="mt-6 max-w-md text-base leading-relaxed text-muted-foreground md:mt-7 md:text-[17px]"
           >
-            Tired of the same prints everywhere? I'm Keem, and I make art for creators and small
-            brands. <strong className="text-foreground font-semibold">Wear it</strong>,{' '}
+            From concept to production, thoughtfully designed and executed. I'm Keem, and I make art
+            for creators and small brands: <strong className="text-foreground font-semibold">wear it</strong>,{' '}
             <strong className="text-foreground font-semibold">download it</strong>, or{' '}
             <strong className="text-foreground font-semibold">have something made just for you</strong>.
           </motion.p>
