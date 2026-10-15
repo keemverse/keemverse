@@ -9,11 +9,14 @@ import { usePageMeta } from './lib/usePageMeta';
 // it is first visited, so the home page no longer downloads the admin tools,
 // the studio, the checkout and the rest.
 import { LandingPage } from './pages/LandingPage';
+// The shop pages are where the link in bio sends people, so they stay in the
+// first download too: a lazy chunk would add a round trip before their data
+// can even start loading.
+import { FashionPage } from './pages/FashionPage';
+import FashionFindsPage from './pages/FashionFindsPage';
+import LightroomPresetsPage from './pages/LightroomPresetsPage';
 
-const FashionPage = lazy(() => import('./pages/FashionPage').then((m) => ({ default: m.FashionPage })));
 const DigitalCraftPage = lazy(() => import('./pages/DigitalCraftPage').then((m) => ({ default: m.DigitalCraftPage })));
-const FashionFindsPage = lazy(() => import('./pages/FashionFindsPage'));
-const LightroomPresetsPage = lazy(() => import('./pages/LightroomPresetsPage'));
 const AboutPage = lazy(() => import('./pages/AboutPage'));
 const ContactPage = lazy(() => import('./pages/ContactPage'));
 const RefundPolicyPage = lazy(() => import('./pages/RefundPolicyPage'));

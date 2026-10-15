@@ -17,35 +17,40 @@ Ten criteria, scored 0 to 5. **Self-assessed, not measured with visitors.** Each
 | | **Total (of 50)** | **19** | **41** | |
 | | **As a score out of 100** | **38** | **82** | +44 points, about 2.2 times the "before" score |
 
-## Measured facts (Lighthouse, mobile profile, same machine)
+## Measured facts (Lighthouse, mobile profile, same machine, three runs each)
 
-Baseline = the current `main` build. After = this branch. Both served with `vite preview` against the live API. Home
-was run three times each (medians shown); Finds and Presets once each, so treat small differences as noise.
+Baseline = the current `main` build. After = the final branch build (aea76e4 plus shop pages in the first download).
+Both served with `vite preview` against the live API. Medians shown, individual runs in brackets.
 
 | Page | Measure | Before | After |
 |---|---|---|---|
-| Home | Performance | 74 | 78 (runs: 81, 73, 78) |
-| Home | Largest paint | 9.4 s | 4.8 s (one of three runs stayed at 10 s) |
-| Home | Accessibility | 94 | 100 |
-| Fashion Finds | Performance | 63 | 86 |
-| Fashion Finds | Largest paint | 10.1 s | 3.8 s |
+| Home | Performance | 74 (74, 74, 74) | 74 (74, 74, 73) |
+| Home | Largest paint | 9.4 s | 9.6 s (stayed near 10 s in the final batch; an earlier batch showed 4.7 s) |
+| Home | Accessibility | 94 | 96 |
+| Fashion Finds | Performance | 63 (63, 63, 63) | 88 (92, 88, 86) |
+| Fashion Finds | Largest paint | 10.0 s | 3.6 s (64% faster) |
 | Fashion Finds | Layout shift (CLS) | 0.207 | 0.002 |
 | Fashion Finds | Accessibility | 100 | 100 |
-| Presets | Performance | 56 | 79 |
-| Presets | Largest paint | 11.7 s | 5.0 s |
-| Presets | Layout shift (CLS) | 0.285 | 0.000 |
+| Presets | Performance | 59 (59, 59, 59) | 74 (74, 70, 81) |
+| Presets | Largest paint | 11.5 s | 10.9 s (runs 10.9, 11.6, 4.8: unstable) |
+| Presets | Layout shift (CLS) | 0.285 | 0.001 |
 | Presets | Accessibility | 98 | 100 |
 | All three | Best practices, SEO | 100, 100 | 100, 100 |
 
-What moved the numbers: the font stylesheet no longer blocks first paint; the home tagline (the largest paint) no
-longer waits behind the headline animation; space is reserved for the banner and featured row so lists stop jumping;
-the hero photo loads first; white text on amber and teal became dark ink; heading order and accessible names fixed.
+What clearly worked: Finds is far faster and steadier; layout jumping is gone on both shop pages; accessibility is up.
 
-Other facts: JS bundle 184.0 KB to about 187 KB gzip, CSS 22.7 KB to about 25 KB gzip; type checker clean.
+What did not: **home and Presets largest-paint time is unstable.** Runs split between roughly 5 s and 10 to 12 s, so I
+cannot honestly claim a gain there. The home hero photo (large, unchanged by your choice) is the likely cause, and
+the page is discovered late because it renders in the browser. A fix needs real hosting changes (preloading the hero,
+self-hosting the font), not more styling.
 
-**Reading it honestly:** performance on Finds and Presets rose by about 23 points each and layout jumping is gone.
-Home performance is a modest gain (the hero photo is large and unchanged, by your choice). Lighthouse measures speed
-and accessibility, not whether the design feels modern, so the rubric above is still my judgement.
+Home accessibility is 96, not 100, because the amber and teal quick links keep their approved white text (white on
+those colours is about 2.7 to 1 and 3.1 to 1). Darker pills or dark text would fix it; that is your design call.
+
+Other facts: entry JS about 159 KB gzip (baseline 184 KB), CSS about 25 KB gzip (baseline 22.7 KB); type checker clean.
+
+**Reading it honestly:** two of the three key pages improved clearly; home did not move on speed. Lighthouse measures
+speed and accessibility, not whether the design feels modern, so the rubric above is still my judgement.
 
 ## What would actually prove "60% better"
 
