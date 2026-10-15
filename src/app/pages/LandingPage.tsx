@@ -10,6 +10,7 @@ import { AccentPillButton } from '../components/ui/AccentPillButton';
 import { BurgerMenu } from '../components/ui/BurgerMenu';
 import { GeometricBackdrop } from '../components/GeometricBackdrop';
 import { BioChooser } from '../components/BioChooser';
+import { Accent, useContent } from '../lib/siteContent';
 // Below the fold: its code and data load after the hero has painted.
 const HomeRails = lazy(() => import('../components/HomeRails'));
 import { FASHION, FASHION_DARK, CRAFT, CRAFT_DARK, accentText } from '../lib/theme';
@@ -169,6 +170,7 @@ function HeroPair({ items }: { items: typeof hero }) {
 // clip-path reveal language as before, just promoted to the hero
 // statement instead of a small italic line.
 function HeroHeadline() {
+  const t = useContent();
   return (
     <div>
       <h1
@@ -183,7 +185,7 @@ function HeroHeadline() {
             viewport={{ once: true, margin: '0px 0px -80px 0px' }}
             transition={{ duration: 0.9, ease: [0.65, 0, 0.35, 1] }}
           >
-            One <span className="text-amber-display">creator</span>
+            <Accent text={t('home.headline_1')} />
           </motion.span>
         </span>
         <span className="block overflow-hidden pb-[0.1em]">
@@ -194,7 +196,7 @@ function HeroHeadline() {
             viewport={{ once: true, margin: '0px 0px -80px 0px' }}
             transition={{ duration: 0.9, delay: 0.35, ease: [0.65, 0, 0.35, 1] }}
           >
-            two <span className="text-teal-display">crafts</span>
+            <Accent text={t('home.headline_2')} />
           </motion.span>
         </span>
       </h1>
@@ -205,7 +207,7 @@ function HeroHeadline() {
         transition={{ duration: 0.45, delay: 0.1 }}
         className="mt-5 text-muted-foreground leading-relaxed text-sm md:text-base"
       >
-        Helping people build wardrobes and helping brands build production-ready artwork.
+        {t('home.tagline')}
       </motion.p>
     </div>
   );

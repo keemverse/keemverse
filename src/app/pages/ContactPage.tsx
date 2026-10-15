@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Mail, Phone, MapPin, MessageCircle } from 'lucide-react';
 import { InfoPage } from '../components/InfoPage';
 import { socials } from '../lib/socials';
+import { useContent } from '../lib/siteContent';
 
 // Email and WhatsApp are already covered by the brief form above (and
 // the footer) — only list what isn't offered anywhere else on this page.
@@ -134,15 +135,10 @@ function BriefForm() {
 }
 
 export default function ContactPage() {
+  const t = useContent();
   return (
     <InfoPage eyebrow="Get in touch" title="Contact us">
-      <p className="text-center">
-        Have a question, a collaboration idea, or need support with an
-        order? Send a brief below, or reach out directly. I work with
-        brands, studios and creators anywhere in the world, and all of it
-        is handled remotely. We respond to all customer enquiries within
-        1 business day.
-      </p>
+      <p className="text-center">{t('contact.intro')}</p>
 
       <div className="mt-6">
         <BriefForm />

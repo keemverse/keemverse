@@ -7,6 +7,7 @@ import { SocialFooter } from '../components/SocialFooter';
 import { BookMeModal } from '../components/BookMeModal';
 import UniverseShopCard from "../components/UniverseShopCard";
 import SharedSectionDivider from '../components/SectionDivider';
+import { useContent } from '../lib/siteContent';
 import { GeometricBackdrop } from '../components/GeometricBackdrop';
 import { FASHION, FASHION_DARK } from '../lib/theme';
 import img1 from '../../imports/IMG_7304.webp';
@@ -56,6 +57,7 @@ const shop = [
 ];
 
 export function FashionPage() {
+  const t = useContent();
   const [current, setCurrent] = useState(0);
   const [paused, setPaused] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
@@ -119,10 +121,10 @@ export function FashionPage() {
                   }}
                 >
                   <p className="eyebrow text-white/70 mb-3">
-                    Fashion storyteller
+                    {t('fashion.eyebrow')}
                   </p>
                   <h1 className="text-display-lg max-w-[18ch] text-white">
-                    Visual identity through style, emotion, and atmosphere.
+                    {t('fashion.headline')}
                   </h1>
                 </motion.div>
               </div>
@@ -156,14 +158,13 @@ export function FashionPage() {
           <section className="mt-16">
             <div className="max-w-xl mx-auto text-center">
               <p className="text-foreground/80 font-medium text-lg md:text-xl mb-4">
-                Hi, I'm Keem.
+                {t('fashion.intro_hi')}
               </p>
               <h2 className="text-display-md mb-6 text-foreground">
-                I believe style is visual storytelling.
+                {t('fashion.intro_title')}
               </h2>
               <p className="text-muted-foreground leading-loose text-base md:text-lg">
-                I help people build wardrobes, campaigns, and creative
-                worlds that feel unmistakably theirs.
+                {t('fashion.intro_body')}
               </p>
             </div>
           </section>

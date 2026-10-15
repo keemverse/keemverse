@@ -25,12 +25,8 @@
       <link rel="icon" type="image/png" href="/kv-icon.png" />
       <link rel="apple-touch-icon" href="/kv-icon.png" />
 
-      <!-- Brand typeface: Satoshi (Identity System v4, primary font), free for commercial use via Fontshare.
-           Falls back to Inter / the system sans while it loads. -->
-      <link rel="preconnect" href="https://api.fontshare.com" />
-      <link rel="preconnect" href="https://cdn.fontshare.com" crossorigin />
-      <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@300,400,500,700,900&display=swap" media="print" onload="this.media='all'" />
-      <noscript><link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@300,400,500,700,900&display=swap" /></noscript>
+      <!-- Brand typeface: Satoshi (Identity System v4), self-hosted. Preloaded so text paints in it on the first frame. -->
+      <link rel="preload" href="/fonts/Satoshi-Variable.woff2" as="font" type="font/woff2" crossorigin />
       <style>html, body { height: 100%; margin: 0; } #root { height: 100%; }</style>
 
       <!-- Vercel Web Analytics: page views and referrers (TikTok vs Instagram vs direct).

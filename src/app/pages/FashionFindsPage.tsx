@@ -14,6 +14,7 @@ import { getCatalogProducts } from "../lib/products";
 import { formatPrice } from "../lib/currency";
 import { useRegion } from "../lib/geo";
 import FashionFAQ from "../components/FashionFAQ";
+import { useContent } from "../lib/siteContent";
 import SectionDivider from "../components/SectionDivider";
 
 const categories = [
@@ -29,6 +30,7 @@ const categories = [
 export default function FashionFindsPage() {
   // Fashion Finds are affiliate picks bought on Temu, so the price shown is a
   // guide for visitors in Nigeria only; abroad the price is left off.
+  const t = useContent();
   const region = useRegion();
   const showPrice = (price: any) => (region === "NG" ? formatPrice(price, "NG") : "");
   const [query, setQuery] = useState("");
@@ -84,10 +86,10 @@ export default function FashionFindsPage() {
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           className="mx-auto max-w-2xl text-center"
         >
-          <p className="eyebrow text-amber-ink">My finds</p>
-          <h1 className="mt-3 text-display-lg">Picked because they earn their place.</h1>
+          <p className="eyebrow text-amber-ink">{t("finds.eyebrow")}</p>
+          <h1 className="mt-3 text-display-lg">{t("finds.title")}</h1>
           <p className="mx-auto mt-4 max-w-md text-muted-foreground">
-            Personally selected for their design, quality or value. Tap a piece for the quick view, or go straight to the shop.
+            {t("finds.subtitle")}
           </p>
         </motion.section>
 

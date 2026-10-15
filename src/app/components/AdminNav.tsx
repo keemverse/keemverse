@@ -3,6 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 const LINKS = [
   { to: "/admin", label: "← Admin home" },
   { to: "/admin/products", label: "Products" },
+  { to: "/admin/content", label: "Content" },
   { to: "/admin/studio", label: "Studio" },
 ];
 
@@ -18,10 +19,10 @@ export function AdminNav() {
             key={link.to}
             to={link.to}
             aria-current={active ? "page" : undefined}
-            className={`rounded-full border px-4 py-2 text-xs uppercase tracking-[0.15em] transition-colors ${
+            className={`press rounded-full border px-4 py-2 text-xs uppercase tracking-[0.15em] transition-colors ${
               active
                 ? "border-transparent bg-foreground text-background"
-                : "border-input text-muted-foreground hover:text-foreground"
+                : "glass text-muted-foreground hover:text-foreground"
             }`}
           >
             {link.label}

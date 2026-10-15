@@ -4,6 +4,7 @@ import { Btn } from './CraftUI';
 import { GARMENT_COLORS } from './GarmentStudio';
 import { SAND } from '../lib/theme';
 import craftPageHero from '../../imports/craft-quality-hero_2.webp';
+import { Accent, useContent } from '../lib/siteContent';
 
 // Hero in the spirit of the Arena landing page, finished with restraint:
 // one status line, one headline, one short paragraph, one primary action
@@ -29,6 +30,7 @@ export function DigitalCraftHero({
   onPacks: () => void;
   onCustom: () => void;
 }) {
+  const t = useContent();
   return (
     <section className="relative isolate grid items-center lg:grid-cols-[1.05fr_1fr] lg:gap-x-20">
       {/* texture layers, kept faint: blueprint grid fading out at the edges, plus one soft sand glow */}
@@ -51,7 +53,7 @@ export function DigitalCraftHero({
             transition={{ duration: 0.5 }}
             className="eyebrow mb-4 text-muted-foreground"
           >
-            Digital craftsmanship
+            {t('craft.eyebrow')}
           </motion.p>
 
           <motion.h1
@@ -67,8 +69,7 @@ export function DigitalCraftHero({
               textWrap: 'balance',
             }}
           >
-            Original <span className="text-amber-display">art</span>, designed for production{' '}
-            <span className="text-teal-display">quality.</span>
+            <Accent text={t('craft.headline')} />
           </motion.h1>
 
           <motion.p
@@ -77,10 +78,7 @@ export function DigitalCraftHero({
             transition={{ duration: 0.6, delay: 0.16 }}
             className="mt-6 max-w-md text-base leading-relaxed text-muted-foreground md:mt-7 md:text-[17px]"
           >
-            Tired of the same prints everywhere? I'm Keem. I design original art for creators and small
-            brands, from concept to production-ready files: <strong className="text-foreground font-semibold">wear it</strong>,{' '}
-            <strong className="text-foreground font-semibold">download it</strong>, or{' '}
-            <strong className="text-foreground font-semibold">have something made just for you</strong>.
+            <Accent text={t('craft.sub')} />
           </motion.p>
         </div>
 
@@ -92,17 +90,17 @@ export function DigitalCraftHero({
           className="order-3 mt-8 grid grid-cols-2 items-center gap-3 sm:flex sm:flex-wrap sm:gap-4 lg:order-none lg:mt-9"
         >
           <Btn size="lg" onClick={onShop} className="w-full px-4 sm:w-auto sm:px-8" icon={<span aria-hidden="true">↓</span>}>
-            Shop apparel
+            {t('craft.cta_shop')}
           </Btn>
           <Btn size="lg" variant="outline" onClick={onPacks} className="w-full px-4 sm:w-auto sm:px-8">
-            Art packs
+            {t('craft.cta_packs')}
           </Btn>
           <button
             type="button"
             onClick={onCustom}
             className="col-span-2 mt-1 inline-flex items-center justify-center gap-1.5 py-2 text-sm font-semibold text-foreground underline decoration-[color:var(--craft-ink)]/45 underline-offset-[6px] transition-colors hover:decoration-[color:var(--craft-ink)] sm:col-span-1 sm:mt-0 sm:px-2"
           >
-            Get a custom design <span aria-hidden="true">→</span>
+            {t('craft.cta_custom')} <span aria-hidden="true">→</span>
           </button>
         </motion.div>
       </div>

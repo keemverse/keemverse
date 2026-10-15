@@ -16,7 +16,7 @@ the folder once real before/after pairs exist.
 
 | Piece | Source | Licence note |
 |---|---|---|
-| Satoshi typeface | Fontshare CDN (`api.fontshare.com`) | Free for commercial use per Fontshare's licence. **Please confirm on fontshare.com** and consider self-hosting |
+| Satoshi typeface | Self-hosted: `public/fonts/Satoshi-Variable.woff2` (42 KB), licence in `public/fonts/Satoshi-FFL-License.txt` | ITF Free Font License v2.0: commercial use and self-hosting on your own site are explicitly allowed. No third party is contacted |
 | Icons | `lucide-react`, already in the project | MIT |
 | Motion | `motion/react`, already in the project | MIT |
 

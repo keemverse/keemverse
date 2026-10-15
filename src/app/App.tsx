@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 
 import { NavBar } from './components/NavBar';
 import { ScrollToTop, InternalLinks, RouteTransition } from './components/AppShell';
+import BottomTabs from './components/BottomTabs';
 import { useTheme } from './lib/useTheme';
 import { usePageMeta } from './lib/usePageMeta';
 // The landing page ships with the first load; every other page is fetched when
@@ -26,6 +27,7 @@ const CheckoutPage = lazy(() => import('./pages/CheckoutPage'));
 const CheckoutSuccessPage = lazy(() => import('./pages/CheckoutSuccessPage'));
 const AdminHomePage = lazy(() => import('./pages/AdminHomePage'));
 const AdminProductsPage = lazy(() => import('./pages/AdminProductsPage'));
+const AdminContentPage = lazy(() => import('./pages/AdminContentPage'));
 const LayerStudioPage = lazy(() => import('./pages/LayerStudioPage'));
 const UiKitPage = lazy(() => import('./pages/UiKitPage'));
 // MediaKitPage: built and working, held in draft — not routed yet.
@@ -45,7 +47,8 @@ function PageMeta() {
 
 function ConditionalNavBar() {
   const { pathname } = useLocation();
-  if (pathname === '/') return null;
+  // The home page has its own bar and the admin console is its own space.
+  if (pathname === '/' || pathname.startsWith('/admin')) return null;
   return <NavBar />;
 }
 
@@ -93,12 +96,14 @@ export default function App() {
 
 <Route path="/admin" element={<AdminHomePage />} />
 <Route path="/admin/products" element={<AdminProductsPage />} />
+<Route path="/admin/content" element={<AdminContentPage />} />
 <Route path="/admin/studio" element={<LayerStudioPage />} />
 
 {SHOW_UI_KIT && <Route path="/ui-kit" element={<UiKitPage />} />}
 </Routes>
         </Suspense>
         </RouteTransition>
+        <BottomTabs />
       </div>
     </BrowserRouter>
   );

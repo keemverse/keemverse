@@ -12,6 +12,7 @@ import SectionDivider from "../components/SectionDivider";
 import { getCatalogProducts } from "../lib/products";
 import { formatPrice } from "../lib/currency";
 import { useRegion } from "../lib/geo";
+import { useContent } from "../lib/siteContent";
 import PresetPopup from "../components/PresetPopup";
 import RestoreDownloadForm from "../components/RestoreDownloadForm";
 import PresetFAQ from "../components/PresetFAQ";
@@ -30,6 +31,7 @@ const categories = [
 
 
 export default function LightroomPresetsPage() {
+  const t = useContent();
   const region = useRegion();
   const [query, setQuery] = useState("");
   const [activeTab, setActiveTab] = useState("All");
@@ -93,14 +95,14 @@ export default function LightroomPresetsPage() {
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           className="mx-auto mb-10 max-w-2xl text-center"
         >
-          <p className="eyebrow text-amber-ink">Lightroom presets</p>
+          <p className="eyebrow text-amber-ink">{t("presets.eyebrow")}</p>
 
           <h1 className="mt-3 text-display-lg">
-            Create timeless photographs
+            {t("presets.title")}
           </h1>
 
           <p className="mx-auto mt-4 max-w-md text-muted-foreground">
-            Edit once, keep the look. Pick a collection and open any preset to see what's inside.
+            {t("presets.subtitle")}
           </p>
         </motion.section>
 

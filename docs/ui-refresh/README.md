@@ -28,6 +28,17 @@ motion, using generic placeholder assets that Akeem redesigns before anything go
 | Surfaces | Flat solid cards | Soft blurred cream and peach backdrop; **every card is frosted glass by default** (`.bg-card`), plus frosted bars and chips and a whisper of film grain. Menus and modal panels stay solid for legibility; opt out any element with `no-glass` |
 | Presets popup | Static banner only | Optional drag-to-compare before/after slider when a preset has both photos |
 
+## Editing without code: the admin console
+
+- **Admin > Site content** (`/admin/content`): headlines, supporting lines, section titles and button labels for the
+  home, Craft, Finds, Presets, Fashion and Contact pages. Group switcher, live preview of coloured words, unsaved
+  count, reset-to-default per field, one Save. Live about 30 seconds after saving.
+- **Admin > Products**: presets now have **Before photo** and **After photo** fields that switch on the drag-to-compare
+  slider on that preset's popup.
+- Coloured words in headlines: `*amber*`, `~teal~`, `**bold**`.
+- Data lives in `data/site-content.json` (only values you changed are stored); the shipped wording is the fallback, so
+  the site can never go blank if the content API is unavailable.
+
 ## What did NOT change (on purpose)
 
 - The hero pair geometry, the light/dark behaviour and the 2.5s day-to-night fade you approved.
@@ -37,11 +48,9 @@ motion, using generic placeholder assets that Akeem redesigns before anything go
 
 ## Decisions for Akeem
 
-1. **Satoshi source.** It loads from Fontshare's CDN (free for commercial use per their licence; please confirm on
-   fontshare.com). Self-hosting the files is faster and keeps visitor IPs off a third party, but needs the font files
-   downloaded, which I did not do without asking.
-2. **Mobile bottom tab bar** (Finds, Presets, Craft, Contact) is common on shopping sites and sits in the thumb zone.
-   Not built: it is a bigger change to how people move around. Say yes and I will add it.
+1. **Satoshi source: done.** Self-hosted (one 42 KB variable file) with the ITF Free Font License saved beside it.
+   The licence explicitly allows commercial use and self-hosting on your own site.
+2. **Mobile bottom tab bar: done** (Finds, Presets, Craft, Contact), phones only, hidden in admin and checkout.
 3. **Before/after photos.** The slider is ready; it needs one same-framed pair per preset. Add `before_image` and
    `after_image` to a preset in `data/products.json` (the admin tool does not have those fields yet).
 4. **Product popup and checkout** still use the old layout (they only picked up the new font). Next pass if wanted.

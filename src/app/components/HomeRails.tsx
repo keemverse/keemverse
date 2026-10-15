@@ -6,6 +6,7 @@ import { ImageWithFallback } from './figma/ImageWithFallback';
 import { getCatalogProducts } from '../lib/products';
 import { formatPrice } from '../lib/currency';
 import { useRegion } from '../lib/geo';
+import { useContent } from '../lib/siteContent';
 
 // Below the two-universe hero: a taste of what is inside each shop, so the home
 // page shows real things instead of ending after two cards. Everything here is
@@ -89,6 +90,7 @@ function Rail({
 }
 
 export default function HomeRails() {
+  const t = useContent();
   const region = useRegion();
   const [finds, setFinds] = useState<any[]>([]);
   const [presets, setPresets] = useState<any[]>([]);
@@ -134,8 +136,8 @@ export default function HomeRails() {
     <div className="max-w-5xl mx-auto">
       {showFinds && (
         <Rail
-          eyebrow="Fashion finds"
-          title="Fresh picks, chosen by hand"
+          eyebrow={t('home.finds_eyebrow')}
+          title={t('home.finds_title')}
           href="/fashion/finds"
           cta="See all finds"
           items={findItems}
@@ -145,8 +147,8 @@ export default function HomeRails() {
 
       {showPresets && (
         <Rail
-          eyebrow="Lightroom presets"
-          title="Looks you can reuse"
+          eyebrow={t('home.presets_eyebrow')}
+          title={t('home.presets_title')}
           href="/fashion/presets"
           cta="See all presets"
           items={presetItems}
@@ -156,24 +158,24 @@ export default function HomeRails() {
 
       <Reveal>
         <section className="mt-16 md:mt-24 glass sheen overflow-hidden rounded-[2rem] px-6 py-12 text-center md:px-12 md:py-16">
-          <p className="eyebrow text-teal-ink">Something specific in mind?</p>
-          <h2 className="mx-auto mt-3 max-w-xl text-display-lg">Tell me what you need and I'll make it.</h2>
+          <p className="eyebrow text-teal-ink">{t('home.cta_eyebrow')}</p>
+          <h2 className="mx-auto mt-3 max-w-xl text-display-lg">{t('home.cta_title')}</h2>
           <p className="mx-auto mt-4 max-w-md text-muted-foreground">
-            Brand collaborations, custom artwork or a styling project. A short note is enough to start.
+            {t('home.cta_body')}
           </p>
           <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Link
               to="/contact"
               className="press inline-flex items-center gap-2 rounded-full bg-foreground px-7 py-3.5 text-sm font-semibold text-background transition-opacity hover:opacity-90"
             >
-              Start a project
+              {t('home.cta_primary')}
               <ArrowRight className="h-4 w-4" />
             </Link>
             <Link
               to="/digital-craft"
               className="press inline-flex items-center gap-2 rounded-full border border-border px-7 py-3.5 text-sm font-semibold text-foreground transition-colors hover:border-foreground/40"
             >
-              See the craft side
+              {t('home.cta_secondary')}
             </Link>
           </div>
         </section>

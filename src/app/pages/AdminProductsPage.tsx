@@ -31,6 +31,8 @@ type Product = {
   collection: string | null;
   thumbnail: string | null;
   banner: string | null;
+  before_image: string | null;
+  after_image: string | null;
   whats_included: string | null;
   installation: string | null;
   compatible_with: string | null;
@@ -120,6 +122,8 @@ const EMPTY_FORM = {
   collection: "",
   thumbnail: "",
   banner: "",
+  before_image: "",
+  after_image: "",
   whats_included: "",
   installation: "",
   compatible_with: "",
@@ -210,6 +214,8 @@ const buildPayload = (f: FormState) => {
         collection: f.collection,
         thumbnail: f.thumbnail,
         banner: f.banner,
+        before_image: f.before_image || null,
+        after_image: f.after_image || null,
         whats_included: f.whats_included,
         installation: f.installation,
         compatible_with: f.compatible_with,
@@ -385,6 +391,8 @@ export default function AdminProductsPage() {
       collection: p.collection || "",
       thumbnail: p.thumbnail || "",
       banner: p.banner || "",
+      before_image: p.before_image || "",
+      after_image: p.after_image || "",
       whats_included: p.whats_included || "",
       installation: p.installation || "",
       compatible_with: p.compatible_with || "",
@@ -652,6 +660,8 @@ export default function AdminProductsPage() {
                 <Input placeholder="Display order (1, 2, 3…)" value={form.display_order} onChange={(e) => setForm({ ...form, display_order: e.target.value })} />
                 <Input placeholder="Thumbnail image URL" value={form.thumbnail} onChange={(e) => setForm({ ...form, thumbnail: e.target.value })} className="col-span-2" />
                 <Input placeholder="Banner image URL" value={form.banner} onChange={(e) => setForm({ ...form, banner: e.target.value })} className="col-span-2" />
+                <Input placeholder="Before photo URL (drag-to-compare slider, optional)" value={form.before_image} onChange={(e) => setForm({ ...form, before_image: e.target.value })} />
+                <Input placeholder="After photo URL (same framing as before)" value={form.after_image} onChange={(e) => setForm({ ...form, after_image: e.target.value })} />
                 <Input placeholder="Drive File Id (delivered file)" value={form.drive_file_id} onChange={(e) => setForm({ ...form, drive_file_id: e.target.value })} className="col-span-2" />
                 <Input placeholder="Purchase link (optional, external)" value={form.purchase_link} onChange={(e) => setForm({ ...form, purchase_link: e.target.value })} className="col-span-2" />
               </>

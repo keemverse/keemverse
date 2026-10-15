@@ -1,0 +1,11 @@
+/* Satoshi (Identity System v4 primary font), self-hosted from /public/fonts.
+   One variable file covers weights 300 to 900. Licence: ITF Free Font License
+   (public/fonts/Satoshi-FFL-License.txt), which allows commercial use and
+   self-hosting on your own site. */
+@font-face {
+  font-family: 'Satoshi';
+  src: url('/fonts/Satoshi-Variable.woff2') format('woff2');
+  font-weight: 300 900;
+  font-style: normal;
+  font-display: swap;
+}
