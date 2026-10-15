@@ -58,13 +58,14 @@ Run after the simulated numbers looked unstable on home and Presets. Three runs 
 | Home, before | 76 | 5.0 s | 0 | about 3 ms |
 | Home, after (first build) | 57 | 5.5 s | 0 | about 900 ms (regression) |
 | Home, after (blur and blend layers removed) | 71 | 6.2 s | 0 | about 11 ms |
+| Home, after (rail images lazy, rails deferred; final) | 70 to 73 | 5.3 to 5.8 s | 0 | 25 to 300 ms (noisy) |
 | Presets, before | 55 | 8.9 s | 0.285 | about 0 ms |
 | Presets, after | 60 | 8.5 s | 0.001 | about 540 ms |
 
 What this showed: the first version of the soft glass look (a full-screen blended grain layer and large blurred
 colour layers) cost real main-thread time on a throttled phone. I removed those layers; home blocking time is back to
-baseline. Home is still a few performance points below baseline under this lens (largest paint 6.2 s vs 5.0 s), so I
-am not claiming a home speed gain. Presets blocking time (about 540 ms) is the next thing to look at.
+baseline. Home is still a few performance points below baseline under this lens (final largest paint about 5.3 to 5.8 s
+vs 4.9 s), so I am not claiming a home speed gain; the home page trades a little lab speed for more content. Presets blocking time (about 540 ms) is the next thing to look at.
 
 **Reading it honestly:** two of the three key pages improved clearly; home did not move on speed. Lighthouse measures
 speed and accessibility, not whether the design feels modern, so the rubric above is still my judgement.

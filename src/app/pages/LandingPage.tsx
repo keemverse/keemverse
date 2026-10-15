@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { Suspense, lazy, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { ShoppingBag, Camera, Palette, Layers } from 'lucide-react';
@@ -10,7 +10,8 @@ import { AccentPillButton } from '../components/ui/AccentPillButton';
 import { BurgerMenu } from '../components/ui/BurgerMenu';
 import { GeometricBackdrop } from '../components/GeometricBackdrop';
 import { BioChooser } from '../components/BioChooser';
-import HomeRails from '../components/HomeRails';
+// Below the fold: its code and data load after the hero has painted.
+const HomeRails = lazy(() => import('../components/HomeRails'));
 import { FASHION, FASHION_DARK, CRAFT, CRAFT_DARK, accentText } from '../lib/theme';
 import fashionPageHero from '../../imports/IMG_7304.webp';
 import craftPageHero from '../../imports/craft-quality-hero_2.webp';
@@ -256,7 +257,9 @@ export function LandingPage() {
           </section>
 
           {/* ── A TASTE OF EACH SHOP ── */}
-          <HomeRails />
+          <Suspense fallback={<div className="min-h-[60vh]" aria-hidden="true" />}>
+            <HomeRails />
+          </Suspense>
 
         </div>
       </main>

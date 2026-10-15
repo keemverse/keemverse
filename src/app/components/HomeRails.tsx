@@ -62,7 +62,14 @@ function Rail({
           : items.map((it) => (
               <Link key={it.id} to={href} className="group block w-40 sm:w-48 md:w-56" aria-label={it.name}>
                 <div className="card-lift relative aspect-[4/5] overflow-hidden rounded-3xl bg-muted">
-                  <ImageWithFallback src={it.image} alt={it.name} className="card-img h-full w-full object-cover" />
+                  <ImageWithFallback
+                    src={it.image}
+                    alt={it.name}
+                    // Below the fold: let them load after the hero photo, not alongside it.
+                    loading="lazy"
+                    decoding="async"
+                    className="card-img h-full w-full object-cover"
+                  />
                   <span className="absolute left-2.5 top-2.5 rounded-full bg-white/90 px-2 py-0.5 text-[9px] font-bold uppercase tracking-[0.16em] text-stone-900 backdrop-blur">
                     {it.tag}
                   </span>
