@@ -1,26 +1,30 @@
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 
 import { NavBar } from './components/NavBar';
 import { ScrollToTop, InternalLinks, RouteTransition } from './components/AppShell';
-import UiKitPage from './pages/UiKitPage';
 import { useTheme } from './lib/useTheme';
 import { usePageMeta } from './lib/usePageMeta';
+// The landing page ships with the first load; every other page is fetched when
+// it is first visited, so the home page no longer downloads the admin tools,
+// the studio, the checkout and the rest.
 import { LandingPage } from './pages/LandingPage';
-import { FashionPage } from './pages/FashionPage';
-import { DigitalCraftPage } from './pages/DigitalCraftPage';
-import FashionFindsPage from "./pages/FashionFindsPage";
-import LightroomPresetsPage from "./pages/LightroomPresetsPage";
-import AboutPage from "./pages/AboutPage";
-import ContactPage from "./pages/ContactPage";
-import RefundPolicyPage from "./pages/RefundPolicyPage";
-import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
-import TermsPage from "./pages/TermsPage";
-import CheckoutPage from "./pages/CheckoutPage";
-import CheckoutSuccessPage from "./pages/CheckoutSuccessPage";
-import AdminHomePage from "./pages/AdminHomePage";
-import AdminProductsPage from "./pages/AdminProductsPage";
-import LayerStudioPage from "./pages/LayerStudioPage";
+
+const FashionPage = lazy(() => import('./pages/FashionPage').then((m) => ({ default: m.FashionPage })));
+const DigitalCraftPage = lazy(() => import('./pages/DigitalCraftPage').then((m) => ({ default: m.DigitalCraftPage })));
+const FashionFindsPage = lazy(() => import('./pages/FashionFindsPage'));
+const LightroomPresetsPage = lazy(() => import('./pages/LightroomPresetsPage'));
+const AboutPage = lazy(() => import('./pages/AboutPage'));
+const ContactPage = lazy(() => import('./pages/ContactPage'));
+const RefundPolicyPage = lazy(() => import('./pages/RefundPolicyPage'));
+const PrivacyPolicyPage = lazy(() => import('./pages/PrivacyPolicyPage'));
+const TermsPage = lazy(() => import('./pages/TermsPage'));
+const CheckoutPage = lazy(() => import('./pages/CheckoutPage'));
+const CheckoutSuccessPage = lazy(() => import('./pages/CheckoutSuccessPage'));
+const AdminHomePage = lazy(() => import('./pages/AdminHomePage'));
+const AdminProductsPage = lazy(() => import('./pages/AdminProductsPage'));
+const LayerStudioPage = lazy(() => import('./pages/LayerStudioPage'));
+const UiKitPage = lazy(() => import('./pages/UiKitPage'));
 // MediaKitPage: built and working, held in draft — not routed yet.
 // Re-add the import above and the route below (/fashion/media-kit)
 // when ready to make it live.
@@ -54,6 +58,7 @@ export default function App() {
         <ConditionalNavBar />
 
         <RouteTransition>
+        <Suspense fallback={<div className="min-h-[60vh]" aria-hidden="true" />}>
         <Routes>
   <Route path="/" element={<LandingPage />} />
 
@@ -89,6 +94,7 @@ export default function App() {
 
 {SHOW_UI_KIT && <Route path="/ui-kit" element={<UiKitPage />} />}
 </Routes>
+        </Suspense>
         </RouteTransition>
       </div>
     </BrowserRouter>
