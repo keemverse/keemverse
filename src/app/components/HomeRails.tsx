@@ -78,10 +78,7 @@ function Rail({
     <section className="mt-16 md:mt-24">
       <Reveal>
         <div>
-          <div className="flex items-center justify-between gap-3">
-            <p className="eyebrow text-amber-ink">{eyebrow}</p>
-            <ActionPill to={href} label={cta} icon={icon} accent={FASHION} accentDark={FASHION_DARK} />
-          </div>
+          <p className="eyebrow text-amber-ink">{eyebrow}</p>
           <h2 className="mt-3 text-display-md">{title}</h2>
         </div>
       </Reveal>
@@ -112,7 +109,9 @@ function Rail({
             ))}
       </div>
 
-
+      <div className="mt-5">
+        <ActionPill to={href} label={cta} icon={icon} accent={FASHION} accentDark={FASHION_DARK} />
+      </div>
     </section>
   );
 }
