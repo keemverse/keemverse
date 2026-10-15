@@ -77,12 +77,12 @@ function Rail({
   return (
     <section className="mt-16 md:mt-24">
       <Reveal>
-        <div className="flex items-start justify-between gap-4">
-          <div>
+        <div>
+          <div className="flex items-center justify-between gap-3">
             <p className="eyebrow text-amber-ink">{eyebrow}</p>
-            <h2 className="mt-2 text-display-md">{title}</h2>
+            <ActionPill to={href} label={cta} icon={icon} accent={FASHION} accentDark={FASHION_DARK} />
           </div>
-          <ActionPill to={href} label={cta} icon={icon} accent={FASHION} accentDark={FASHION_DARK} />
+          <h2 className="mt-3 text-display-md">{title}</h2>
         </div>
       </Reveal>
 
@@ -191,15 +191,11 @@ export default function HomeRails() {
 
       <Reveal>
         <section className="mt-16 md:mt-24">
-          <div className="flex flex-wrap items-end justify-between gap-5">
-            <div>
-              <p className="eyebrow text-teal-ink">{t('home.craft_eyebrow')}</p>
-              <h2 className="mt-2 text-display-md">{t('home.craft_title')}</h2>
-            </div>
-            <div className="flex flex-wrap gap-3">
-              <ActionPill to="/digital-craft" label={t('home.craft_cta_1')} icon={Layers} accent={CRAFT} accentDark={CRAFT_DARK} />
-              <ActionPill to="/digital-craft" label={t('home.craft_cta_2')} icon={Palette} accent={CRAFT} accentDark={CRAFT_DARK} />
-            </div>
+          <p className="eyebrow text-teal-ink">{t('home.craft_eyebrow')}</p>
+          <h2 className="mt-3 text-display-md">{t('home.craft_title')}</h2>
+          <div className="mt-4 flex flex-wrap gap-2.5">
+            <ActionPill to="/digital-craft" label={t('home.craft_cta_1')} icon={Layers} accent={CRAFT} accentDark={CRAFT_DARK} />
+            <ActionPill to="/digital-craft" label={t('home.craft_cta_2')} icon={Palette} accent={CRAFT} accentDark={CRAFT_DARK} />
           </div>
         </section>
       </Reveal>
