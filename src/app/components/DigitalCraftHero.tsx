@@ -51,7 +51,7 @@ export function DigitalCraftHero({
             transition={{ duration: 0.6, delay: 0.08 }}
             className="text-foreground"
             style={{
-              fontFamily: 'Georgia, serif',
+              fontFamily: 'var(--font-display)',
               fontSize: 'clamp(2.75rem, 6.8vw, 4.5rem)',
               lineHeight: 1.04,
               letterSpacing: '-0.025em',

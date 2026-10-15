@@ -136,7 +136,7 @@ export function CustomDesignForm() {
             exit={{ opacity: 0 }}
             className="text-center py-6"
           >
-            <h3 className="text-foreground mb-3" style={{ fontFamily: 'Georgia, serif', fontSize: '1.75rem' }}>
+            <h3 className="text-foreground mb-3" style={{ fontFamily: 'var(--font-display)', fontSize: '1.75rem' }}>
               {save?.state === 'saved' ? 'Got it.' : 'Your message is ready.'}
             </h3>
             <p className="text-muted-foreground text-sm leading-relaxed max-w-md mx-auto mb-8">
@@ -176,7 +176,7 @@ export function CustomDesignForm() {
         ) : (
           <motion.form key="form" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onSubmit={onSubmit} noValidate className="flex flex-col gap-5">
             <div>
-              <h3 className="text-foreground mb-2" style={{ fontFamily: 'Georgia, serif', fontSize: '1.5rem' }}>
+              <h3 className="text-foreground mb-2" style={{ fontFamily: 'var(--font-display)', fontSize: '1.5rem' }}>
                 Tell me what you need.
               </h3>
               <p className="text-muted-foreground text-sm leading-relaxed">

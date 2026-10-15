@@ -87,6 +87,13 @@
 }
 
 @theme inline {
+  /* Brand type (Identity System v4): Satoshi Medium for headings, Satoshi Light
+     for secondary text. The old serif utilities now resolve to the same family,
+     so every existing heading picks up the brand face without being rewritten. */
+  --font-sans: 'Satoshi', 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-serif: 'Satoshi', 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-display: 'Satoshi', 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -134,7 +141,33 @@
 
   body {
     @apply bg-background text-foreground;
+    font-family: var(--font-sans);
+    font-weight: 400;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    font-feature-settings: 'ss01', 'kern';
   }
+
+  ::selection {
+    background: color-mix(in srgb, #D98E2B 38%, transparent);
+    color: inherit;
+  }
+
+  /* Anchor jumps and "back to top" glide, but never for people who asked for less motion. */
+  @media (prefers-reduced-motion: no-preference) {
+    html { scroll-behavior: smooth; }
+  }
+
+  /* One consistent, visible keyboard focus ring on everything interactive. */
+  :where(a, button, [role='button'], input, select, textarea, summary):focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 3px;
+    border-radius: 0.5rem;
+  }
+
+  h1, h2, h3 { text-wrap: balance; letter-spacing: -0.015em; }
+  p, li { text-wrap: pretty; }
 
   /**
   * Default typography styles for HTML elements (h1-h4, p, label, button, input).
@@ -147,20 +180,20 @@
 
   h1 {
     font-size: var(--text-2xl);
-    font-weight: var(--font-weight-medium);
-    line-height: 1.5;
+    font-weight: 500;
+    line-height: 1.12;
   }
 
   h2 {
     font-size: var(--text-xl);
-    font-weight: var(--font-weight-medium);
-    line-height: 1.5;
+    font-weight: 500;
+    line-height: 1.2;
   }
 
   h3 {
     font-size: var(--text-lg);
-    font-weight: var(--font-weight-medium);
-    line-height: 1.5;
+    font-weight: 500;
+    line-height: 1.3;
   }
 
   h4 {

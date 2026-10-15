@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
 import { priceFor } from "../lib/currency";
 import { useRegion, type Region } from "../lib/geo";
+import BeforeAfter from "./ui/BeforeAfter";
 
 // Turns the sheet's raw Price value ("$12", "12000", "₦12,000") into the
 // amount + currency this visitor is charged: naira in Nigeria, dollars (a
@@ -21,6 +22,9 @@ interface PresetPopupProps {
   rawPrice?: any;
   previewImage: string;
   banner?: string;
+  /** Optional pair of same-framed photos for the drag-to-compare slider. */
+  beforeImage?: string;
+  afterImage?: string;
   collection: string;
   description?: string;
   whyCreated?: string;
@@ -40,6 +44,8 @@ export default function PresetPopup({
   rawPrice,
   previewImage,
   banner,
+  beforeImage,
+  afterImage,
   collection,
   description,
   whyCreated,
@@ -159,6 +165,17 @@ export default function PresetPopup({
 
                     </div>
                   </div>
+
+                  {/* ---------- Before / after (only when both photos exist) ---------- */}
+
+                  {beforeImage && afterImage && (
+                    <section className="mt-10">
+                      <h3 className="text-sm font-semibold tracking-[.15em] uppercase text-muted-foreground">
+                        Drag to compare
+                      </h3>
+                      <BeforeAfter className="mt-4" before={beforeImage} after={afterImage} alt={name} />
+                    </section>
+                  )}
 
                   {/* ---------- Banner (tier comparison / look overview) ---------- */}
 

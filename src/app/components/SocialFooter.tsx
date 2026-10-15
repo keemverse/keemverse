@@ -55,7 +55,7 @@ export function SocialFooter() {
             />
             <p
               className="mt-5 text-xs tracking-[0.2em] uppercase text-muted-foreground"
-              style={{ fontFamily: 'Georgia, serif' }}
+              style={{ fontFamily: 'var(--font-display)' }}
             >
               Create · Build · Inspire
             </p>

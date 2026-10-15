@@ -82,7 +82,7 @@ export function DesignTile({
 
       <div className="flex flex-1 flex-col p-3 sm:p-4">
         <div className="flex items-start justify-between gap-3">
-          <h3 className="text-[15px] leading-tight text-foreground sm:text-[17px]" style={{ fontFamily: 'Georgia, serif' }}>
+          <h3 className="text-[15px] leading-tight text-foreground sm:text-[17px]" style={{ fontFamily: 'var(--font-display)' }}>
             {design.name}
           </h3>
           {design.price && <Price value={design.price} />}

@@ -128,7 +128,7 @@ export function FashionPage() {
                   </p>
                   <h1
                     className="text-white leading-tight"
-                    style={{ fontFamily: 'Georgia, serif', fontSize: 'clamp(1.1rem, 4vw, 2.5rem)' }}
+                    style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(1.1rem, 4vw, 2.5rem)' }}
                   >
                     Visual identity through style, emotion, and atmosphere.
                   </h1>
@@ -160,7 +160,7 @@ export function FashionPage() {
               </p>
               <h2
                 className="mb-6 leading-snug text-foreground"
-                style={{ fontFamily: 'Georgia, serif', fontSize: 'clamp(1.75rem, 3.5vw, 2.5rem)' }}
+                style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(1.75rem, 3.5vw, 2.5rem)' }}
               >
                 I believe style is visual storytelling.
               </h2>

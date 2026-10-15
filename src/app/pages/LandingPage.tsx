@@ -10,6 +10,7 @@ import { AccentPillButton } from '../components/ui/AccentPillButton';
 import { BurgerMenu } from '../components/ui/BurgerMenu';
 import { GeometricBackdrop } from '../components/GeometricBackdrop';
 import { BioChooser } from '../components/BioChooser';
+import HomeRails from '../components/HomeRails';
 import { FASHION, FASHION_DARK, CRAFT, CRAFT_DARK, accentText } from '../lib/theme';
 import fashionPageHero from '../../imports/IMG_7304.webp';
 import craftPageHero from '../../imports/craft-quality-hero_2.webp';
@@ -131,7 +132,7 @@ function HeroPair({ items }: { items: typeof hero }) {
               </div>
 
               <div className="flex flex-col flex-1 px-2 pb-3 pt-1 md:px-8 md:pb-4 -mt-6 md:-mt-12 relative z-10 text-center">
-                <h3 className="text-lg md:text-[2rem] text-foreground dark:text-stone-900" style={{ fontFamily: 'Georgia, serif' }}>
+                <h3 className="text-lg md:text-[2rem] text-foreground dark:text-stone-900" style={{ fontFamily: 'var(--font-display)' }}>
                   {item.title}
                 </h3>
                 <p className="mt-1 text-xs md:text-sm leading-relaxed md:leading-7 text-muted-foreground dark:text-stone-600 max-w-xs mx-auto">
@@ -168,8 +169,8 @@ function HeroHeadline() {
   return (
     <div>
       <h1
-        className="leading-[1.05] text-foreground"
-        style={{ fontFamily: 'Georgia, serif', fontSize: 'clamp(2.25rem, 7vw, 3.75rem)' }}
+        className="text-display-xl text-foreground"
+        style={{ fontFamily: 'var(--font-display)' }}
       >
         <span className="block overflow-hidden pb-[0.1em]">
           <motion.span
@@ -212,6 +213,8 @@ export function LandingPage() {
   return (
     <div className="relative min-h-screen overflow-x-clip bg-background text-foreground">
       <GeometricBackdrop />
+      <div aria-hidden="true" className="aurora z-0" />
+      <span aria-hidden="true" className="grain z-0" />
       <main className="relative z-10 pt-8 pb-0 px-5 md:px-8">
         <div className="max-w-6xl mx-auto">
 
@@ -250,6 +253,9 @@ export function LandingPage() {
               </div>
             </div>
           </section>
+
+          {/* ── A TASTE OF EACH SHOP ── */}
+          <HomeRails />
 
         </div>
       </main>

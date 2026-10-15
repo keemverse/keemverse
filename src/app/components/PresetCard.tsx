@@ -1,4 +1,4 @@
-import { motion } from "motion/react";
+import { motion, useReducedMotion } from "motion/react";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
 
 interface PresetCardProps {
@@ -18,39 +18,48 @@ export default function PresetCard({
   index = 0,
   onOpen,
 }: PresetCardProps) {
+  const reduce = useReducedMotion();
+
   return (
     <motion.article
-      onClick={onOpen}
-      initial={{ opacity: 0, y: 20 }}
+      initial={reduce ? false : { opacity: 0, y: 24 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.45, delay: index * 0.08 }}
-      className="group cursor-pointer"
+      viewport={{ once: true, margin: "-40px" }}
+      transition={{ duration: 0.55, delay: (index % 4) * 0.07, ease: [0.22, 1, 0.36, 1] }}
+      className="group"
     >
-      {/* Image alone — no card chrome (no border/bg/shadow box), just the
-          photo. Matches ProductCard/UniverseShopCard's treatment. */}
-      <div className="relative h-52 md:h-72 overflow-hidden rounded-[24px]">
-        <div className="absolute inset-0 will-change-transform transition-all duration-[900ms] ease-[cubic-bezier(.22,1,.36,1)] group-hover:scale-[1.07]">
-          <ImageWithFallback
-            src={image}
-            alt={name}
-            className="w-full h-full object-cover"
-          />
-        </div>
+      <div
+        role="button"
+        tabIndex={0}
+        aria-label={`View preset: ${name}`}
+        onClick={onOpen}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            onOpen?.();
+          }
+        }}
+        className="card-lift relative aspect-[4/5] cursor-pointer overflow-hidden rounded-3xl bg-muted"
+      >
+        <ImageWithFallback src={image} alt={name} className="card-img h-full w-full object-cover" />
+
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/45 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+
+        <span className="absolute left-3 top-3 rounded-full bg-white/90 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.16em] text-stone-900 backdrop-blur">
+          {collection}
+        </span>
+
+        {price && (
+          <span className="absolute bottom-3 right-3 rounded-full bg-foreground px-3 py-1.5 text-[12px] font-semibold text-background shadow-lg">
+            {price}
+          </span>
+        )}
       </div>
 
-      {/* Details — fully isolated from the image, no shared container */}
-      <div className="pt-4">
-        <p className="text-[11px] uppercase tracking-[0.28em] text-muted-foreground font-semibold mb-3">
-          {collection}
-        </p>
-
-        <h3 className="font-serif text-lg md:text-[26px] leading-tight text-foreground line-clamp-2">
-          {name}
-        </h3>
-
-        <p className="mt-3 text-lg font-semibold text-amber-ink">
-          {price}
+      <div className="px-1 pt-3.5">
+        <h3 className="line-clamp-2 text-[15px] font-medium leading-snug text-foreground md:text-base">{name}</h3>
+        <p className="mt-1 text-[12px] text-muted-foreground transition-colors group-hover:text-foreground">
+          Tap to see the look →
         </p>
       </div>
     </motion.article>

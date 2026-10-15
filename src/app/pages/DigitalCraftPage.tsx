@@ -106,10 +106,10 @@ export function DigitalCraftPage() {
                   transition={{ duration: 0.4, delay: i * 0.08 }}
                   className="flex flex-col border-t border-border pt-5"
                 >
-                  <span className="mb-3 block text-[13px] italic leading-none text-amber-ink" style={{ fontFamily: 'Georgia, serif' }}>
+                  <span className="mb-3 block text-[13px] italic leading-none text-amber-ink" style={{ fontFamily: 'var(--font-display)' }}>
                     {String(i + 1).padStart(2, '0')}
                   </span>
-                  <h3 className="mb-1.5 text-base leading-snug text-foreground md:mb-2 md:text-lg" style={{ fontFamily: 'Georgia, serif' }}>
+                  <h3 className="mb-1.5 text-base leading-snug text-foreground md:mb-2 md:text-lg" style={{ fontFamily: 'var(--font-display)' }}>
                     {svc.title}
                   </h3>
                   <p className="text-muted-foreground text-xs md:text-sm leading-relaxed">{svc.desc}</p>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { ImageWithFallback } from './figma/ImageWithFallback';
 import { BurgerMenu } from './ui/BurgerMenu';
@@ -11,6 +11,14 @@ export function NavBar() {
   const location = useLocation();
   const navigate = useNavigate();
   const [comingSoon, setComingSoon] = useState<string | null>(null);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 8);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
 
   const isFashion =
   location.pathname === "/" ||
@@ -27,7 +35,13 @@ export function NavBar() {
   ];
 
   return (
-    <div className="w-full px-4 pt-5 pb-4">
+    <div
+      className={`sticky top-0 z-40 w-full px-4 py-3 transition-[background-color,backdrop-filter,border-color,box-shadow] duration-300 border-b ${
+        scrolled
+          ? 'bg-background/80 backdrop-blur-xl border-border/70 shadow-[0_8px_24px_-20px_rgba(20,18,15,.5)]'
+          : 'bg-transparent border-transparent'
+      }`}
+    >
       <ComingSoonModal
         open={!!comingSoon}
         onClose={() => setComingSoon(null)}

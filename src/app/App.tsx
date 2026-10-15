@@ -2,6 +2,8 @@ import React from 'react';
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 
 import { NavBar } from './components/NavBar';
+import { ScrollToTop, InternalLinks, RouteTransition } from './components/AppShell';
+import UiKitPage from './pages/UiKitPage';
 import { useTheme } from './lib/useTheme';
 import { usePageMeta } from './lib/usePageMeta';
 import { LandingPage } from './pages/LandingPage';
@@ -23,6 +25,12 @@ import LayerStudioPage from "./pages/LayerStudioPage";
 // Re-add the import above and the route below (/fashion/media-kit)
 // when ready to make it live.
 
+// The component gallery is for reviewing the redesign: it is available while
+// developing and on Vercel preview URLs, never on the live domain.
+const SHOW_UI_KIT =
+  import.meta.env.DEV ||
+  (typeof window !== 'undefined' && window.location.hostname.endsWith('.vercel.app'));
+
 function PageMeta() {
   usePageMeta();
   return null;
@@ -41,8 +49,11 @@ export default function App() {
     <BrowserRouter>
       <div className="min-h-screen bg-background text-foreground">
         <PageMeta />
+        <ScrollToTop />
+        <InternalLinks />
         <ConditionalNavBar />
 
+        <RouteTransition>
         <Routes>
   <Route path="/" element={<LandingPage />} />
 
@@ -75,7 +86,10 @@ export default function App() {
 <Route path="/admin" element={<AdminHomePage />} />
 <Route path="/admin/products" element={<AdminProductsPage />} />
 <Route path="/admin/studio" element={<LayerStudioPage />} />
+
+{SHOW_UI_KIT && <Route path="/ui-kit" element={<UiKitPage />} />}
 </Routes>
+        </RouteTransition>
       </div>
     </BrowserRouter>
   );

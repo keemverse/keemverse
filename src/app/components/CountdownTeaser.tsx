@@ -54,7 +54,7 @@ export function CountdownTeaser({
       </p>
       <h3
         className="text-foreground leading-snug mb-4"
-        style={{ fontFamily: 'Georgia, serif', fontSize: 'clamp(1.75rem, 4vw, 2.5rem)' }}
+        style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(1.75rem, 4vw, 2.5rem)' }}
       >
         {heading}
       </h3>

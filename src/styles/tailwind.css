@@ -178,3 +178,94 @@ html.theme-fade *::after {
   transition-timing-function: cubic-bezier(.4, 0, .2, 1) !important;
   transition-delay: 0s !important;
 }
+
+/* ────────────────────────────────────────────────────────────────────────
+   UI refresh kit (branch ui-refresh): motion tokens, surfaces and helpers.
+   Everything here is CSS only, uses the existing brand tokens, and switches
+   itself off for prefers-reduced-motion.
+   ──────────────────────────────────────────────────────────────────────── */
+
+:root {
+  --ease-out: cubic-bezier(.22, 1, .36, 1);
+  --ease-in-out: cubic-bezier(.65, 0, .35, 1);
+  --nav-h: 4rem;
+  --dur-fast: 160ms;
+  --dur-base: 320ms;
+  --dur-slow: 700ms;
+  --shadow-soft: 0 1px 2px rgba(20, 18, 15, .06), 0 8px 24px -12px rgba(20, 18, 15, .22);
+  --shadow-lift: 0 2px 4px rgba(20, 18, 15, .08), 0 22px 44px -18px rgba(20, 18, 15, .38);
+}
+
+/* Fluid display sizes, so headings scale smoothly instead of jumping at breakpoints. */
+@utility text-display-xl { font-size: clamp(2.6rem, 8.5vw, 5.5rem); line-height: 1.02; letter-spacing: -0.035em; font-weight: 500; }
+@utility text-display-lg { font-size: clamp(2rem, 5.5vw, 3.5rem); line-height: 1.06; letter-spacing: -0.03em; font-weight: 500; }
+@utility text-display-md { font-size: clamp(1.5rem, 3.4vw, 2.25rem); line-height: 1.12; letter-spacing: -0.02em; font-weight: 500; }
+
+/* Small uppercase label used above sections. */
+@utility eyebrow {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+/* Press feedback on anything tappable. */
+@utility press {
+  transition: transform var(--dur-fast) var(--ease-out);
+  &:active { transform: scale(0.97); }
+}
+
+/* Card hover: lift + deeper shadow, image inside zooms (add .card-img to it). */
+@utility card-lift {
+  transition: transform var(--dur-base) var(--ease-out), box-shadow var(--dur-base) var(--ease-out);
+  &:hover { transform: translateY(-4px); box-shadow: var(--shadow-lift); }
+}
+.card-img { transition: transform var(--dur-slow) var(--ease-out); }
+.group:hover .card-img { transform: scale(1.06); }
+
+/* Loading skeleton: a slow sheen instead of a static grey block. */
+@keyframes kv-shimmer { to { background-position: -200% 0; } }
+.skeleton-shimmer {
+  background: linear-gradient(100deg, var(--muted) 35%, color-mix(in srgb, var(--muted) 90%, var(--foreground) 10%) 50%, var(--muted) 65%);
+  background-size: 250% 100%;
+  animation: kv-shimmer 1.6s linear infinite;
+}
+
+/* Slow drifting colour behind a hero: brand amber, teal and sand, blurred. */
+@keyframes kv-drift-a { 0%,100% { transform: translate3d(0,0,0) scale(1); } 50% { transform: translate3d(6%, 8%, 0) scale(1.15); } }
+@keyframes kv-drift-b { 0%,100% { transform: translate3d(0,0,0) scale(1.1); } 50% { transform: translate3d(-8%, -6%, 0) scale(.95); } }
+.aurora { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+.aurora::before, .aurora::after {
+  content: ''; position: absolute; width: 55vmax; height: 55vmax; border-radius: 50%;
+  filter: blur(80px); opacity: .22; will-change: transform;
+}
+.aurora::before { top: -20vmax; left: -15vmax; background: radial-gradient(circle, #D98E2B, transparent 65%); animation: kv-drift-a 26s ease-in-out infinite; }
+.aurora::after  { bottom: -25vmax; right: -15vmax; background: radial-gradient(circle, #1FA396, transparent 65%); animation: kv-drift-b 32s ease-in-out infinite; }
+.dark .aurora::before, .dark .aurora::after { opacity: .16; }
+
+/* Fine film grain: gives flat colour a cinematic, printed feel. Add to a
+   positioned parent as an empty <span class="grain" aria-hidden>. */
+.grain {
+  position: absolute; inset: 0; pointer-events: none; opacity: .06; mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .9 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+.dark .grain { mix-blend-mode: screen; opacity: .05; }
+
+/* Horizontal rails: snap, hide the scrollbar, fade the right edge. */
+.rail { display: flex; gap: 1rem; overflow-x: auto; scroll-snap-type: x proximity; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+.rail::-webkit-scrollbar { display: none; }
+.rail > * { scroll-snap-align: start; flex: none; }
+
+/* Scroll-driven reveal where the browser supports it (no JS, runs off the main
+   thread). Other browsers simply show the content, nothing is left hidden. */
+@supports (animation-timeline: view()) {
+  @keyframes kv-reveal { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: none; } }
+  .scroll-reveal { animation: kv-reveal linear both; animation-timeline: view(); animation-range: entry 0% entry 55%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aurora::before, .aurora::after, .skeleton-shimmer { animation: none; }
+  .scroll-reveal { animation: none; }
+  .card-lift:hover { transform: none; }
+  .card-img, .group:hover .card-img { transition: none; transform: none; }
+}

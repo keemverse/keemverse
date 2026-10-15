@@ -43,7 +43,7 @@ export function CustomDesignBand() {
             <Tag tone="accent" accent={FASHION} className="!text-[#E5A34C]">Custom design</Tag>
             <h3
               className="mt-5 max-w-[14ch] text-[#F5F2EC]"
-              style={{ fontFamily: 'Georgia, serif', fontSize: 'clamp(2.2rem, 5vw, 3.5rem)', lineHeight: 1.02, letterSpacing: '-0.02em' }}
+              style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(2.2rem, 5vw, 3.5rem)', lineHeight: 1.02, letterSpacing: '-0.02em' }}
             >
               Made for you, not off a shelf.
             </h3>

@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="800" height="600" role="img" aria-label="PLACEHOLDER photo (after) - replace with your own">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f2a65a"/><stop offset="1" stop-color="#fbd9a8"/></linearGradient>
+    <radialGradient id="sun" cx=".72" cy=".42" r=".28"><stop offset="0" stop-color="#fff1c9" stop-opacity="1"/><stop offset="1" stop-color="#fff1c9" stop-opacity="0"/></radialGradient>
+  </defs>
+  <rect width="800" height="600" fill="url(#sky)"/>
+  <rect width="800" height="600" fill="url(#sun)"/>
+  <path d="M0 360 C140 300 260 330 400 350 C540 370 660 310 800 340 L800 600 L0 600Z" fill="#8a5a3c"/>
+  <path d="M0 430 C160 390 300 440 440 425 C580 410 700 450 800 420 L800 600 L0 600Z" fill="#5a3524"/>
+  <rect y="500" width="800" height="100" fill="#3b2418"/>
+  <g fill="#1b110c">
+    <circle cx="400" cy="318" r="22"/>
+    <path d="M372 345 Q400 332 428 345 L436 470 L418 470 L412 400 L408 480 L392 480 L388 400 L382 470 L364 470Z"/>
+  </g>
+  <rect width="800" height="600" fill="#ffb86b" opacity=".35"/>
+  <text x="24" y="580" font-family="Satoshi, Inter, Arial, sans-serif" font-size="18" fill="#ffffff" fill-opacity=".8" letter-spacing="3">PLACEHOLDER - REPLACE WITH YOUR OWN</text>
+</svg>

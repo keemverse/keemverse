@@ -31,7 +31,7 @@ export default function FAQAccordion({ label, heading, faqs, accent = "#D98E2B" 
           </p>
           <h2
             className="mt-4 text-foreground leading-[1.05] tracking-tight"
-            style={{ fontFamily: "Georgia, serif", fontSize: "clamp(2rem, 5vw, 3.25rem)", textWrap: "balance" }}
+            style={{ fontFamily: "var(--font-display)", fontSize: "clamp(2rem, 5vw, 3.25rem)", textWrap: "balance" }}
           >
             {heading}
           </h2>

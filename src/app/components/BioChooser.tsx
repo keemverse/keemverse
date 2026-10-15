@@ -193,7 +193,7 @@ function DoorCard({
           }}
         >
           <span className="flex flex-1 flex-col text-left">
-            <span className="text-lg leading-none" style={{ fontFamily: 'Georgia, serif' }}>
+            <span className="text-lg leading-none" style={{ fontFamily: 'var(--font-display)' }}>
               {door.label}
             </span>
             <span className="mt-1.5 text-[10px] uppercase tracking-[0.18em] opacity-70">{door.sub}</span>
@@ -222,7 +222,7 @@ function ChooserBody({
         </p>
 
         <div className="mt-2 text-center">
-          <h2 className="text-foreground text-[1.75rem] leading-tight" style={{ fontFamily: 'Georgia, serif' }}>
+          <h2 className="text-foreground text-[1.75rem] leading-tight" style={{ fontFamily: 'var(--font-display)' }}>
             Where to?
           </h2>
           <p className="mt-1.5 text-sm text-muted-foreground">Pick one and I'll take you straight there.</p>
