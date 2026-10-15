@@ -340,6 +340,18 @@ function handleRestore(e) {
   var downloadsSheet = ss.getSheetByName('Downloads');
   if (!ordersSheet || !downloadsSheet) return jsonResponse(generic);
 
+  // A buyer whose link was revoked in the Downloads tab must not be able to
+  // get a fresh one from here. Any revoked row for that order + item blocks it.
+  var dlRows = downloadsSheet.getDataRange().getValues();
+  var dlH    = dlRows[0];
+  var dRef = dlH.indexOf('Order Ref'), dItem = dlH.indexOf('Item'), dRev = dlH.indexOf('Revoked');
+  var revoked = {};
+  for (var k = 1; k < dlRows.length; k++) {
+    if (String(dlRows[k][dRev]).toUpperCase() === 'TRUE') {
+      revoked[String(dlRows[k][dRef]) + '|' + String(dlRows[k][dItem])] = true;
+    }
+  }
+
   var rows = ordersSheet.getDataRange().getValues();
   var h = rows[0];
   var cEmail = h.indexOf('Email'), cPreset = h.indexOf('Preset'),
@@ -370,6 +382,7 @@ function handleRestore(e) {
       if (pRows[j][pcName] === itemName) { fileId = pRows[j][pcFile]; break; }
     }
     if (!fileId) return; // no file configured for this item — skip it
+    if (revoked[String(items[itemName]) + '|' + String(itemName)]) return;
 
     var token = Utilities.getUuid();
     downloadsSheet.appendRow([
