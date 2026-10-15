@@ -1,5 +1,5 @@
 import { motion, useReducedMotion } from "motion/react";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, Eye } from "lucide-react";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
 
 interface ProductCardProps {
@@ -58,28 +58,40 @@ export default function ProductCard({
           {source}
         </span>
 
-        <span className="absolute bottom-3 left-3 rounded-full bg-white/90 px-3 py-1.5 text-[11px] font-semibold text-stone-900 opacity-0 backdrop-blur transition-all duration-300 group-hover:opacity-100 group-focus-within:opacity-100 max-md:opacity-100">
-          Quick view
-        </span>
       </div>
 
-      <div className="flex items-start justify-between gap-3 px-1 pt-3.5">
-        <div className="min-w-0">
-          <p className="eyebrow text-muted-foreground">{category}</p>
-          <h3 className="mt-1.5 line-clamp-2 text-[15px] font-medium leading-snug text-foreground md:text-base">{name}</h3>
-          {price && <p className="mt-1.5 text-[15px] font-semibold text-amber-ink">{price}</p>}
-        </div>
+      <div className="px-1 pt-3.5">
+        <p className="eyebrow text-muted-foreground">{category}</p>
+        <h3 className="mt-1.5 line-clamp-2 text-[15px] font-medium leading-snug text-foreground md:text-base">{name}</h3>
 
-        <a
-          href={affiliateLink}
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label={`${buttonText}: ${name} (opens in a new tab)`}
-          onClick={(e) => e.stopPropagation()}
-          className="press mt-0.5 grid h-10 w-10 shrink-0 place-items-center rounded-full border border-border text-foreground transition-colors duration-300 hover:border-transparent hover:bg-[var(--fashion-display)] hover:text-[#14120F]"
-        >
-          <ArrowUpRight className="h-[18px] w-[18px]" />
-        </a>
+        <div className="mt-2 flex items-center justify-between gap-2">
+          {price ? <p className="text-[15px] font-semibold text-amber-ink">{price}</p> : <span />}
+
+          <div className="flex shrink-0 items-center gap-2">
+            <button
+              type="button"
+              aria-label={`Quick view: ${name}`}
+              onClick={(e) => {
+                e.stopPropagation();
+                onOpen?.();
+              }}
+              className="press grid h-9 w-9 place-items-center rounded-full border border-border text-foreground transition-colors duration-300 hover:bg-foreground hover:text-background"
+            >
+              <Eye className="h-[17px] w-[17px]" />
+            </button>
+
+            <a
+              href={affiliateLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={`${buttonText}: ${name} (opens in a new tab)`}
+              onClick={(e) => e.stopPropagation()}
+              className="press grid h-9 w-9 place-items-center rounded-full border border-border text-foreground transition-colors duration-300 hover:border-transparent hover:bg-[var(--fashion-display)] hover:text-[#14120F]"
+            >
+              <ArrowUpRight className="h-[17px] w-[17px]" />
+            </a>
+          </div>
+        </div>
       </div>
     </motion.article>
   );
