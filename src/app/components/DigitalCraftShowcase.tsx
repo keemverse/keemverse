@@ -120,7 +120,7 @@ export function DigitalCraftShowcase({
                       aria-pressed={active}
                       onClick={() => setFilter(c === 'All' ? null : c)}
                       className={`px-4 py-2 rounded-full text-xs font-semibold border transition-colors ${
-                        active ? 'bg-foreground text-background border-foreground' : 'bg-card text-muted-foreground border-border hover:border-foreground/40'
+                        active ? 'bg-foreground text-background border-foreground' : 'no-glass bg-card text-muted-foreground border-border hover:border-foreground/40'
                       }`}
                     >
                       {c}

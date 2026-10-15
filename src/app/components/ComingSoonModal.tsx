@@ -40,7 +40,7 @@ export function ComingSoonModal({
             className="fixed inset-0 z-50 flex items-center justify-center px-5 pointer-events-none"
           >
             <div
-              className="w-full max-w-sm bg-card rounded-3xl shadow-2xl p-8 pointer-events-auto text-center relative"
+              className="w-full max-w-sm no-glass bg-card rounded-3xl shadow-2xl p-8 pointer-events-auto text-center relative"
               onClick={(e) => e.stopPropagation()}
             >
               <button

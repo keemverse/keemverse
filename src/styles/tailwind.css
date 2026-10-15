@@ -333,3 +333,24 @@ body::after {
   .glass { background: var(--card); }
   .glass-bar { background: var(--background); }
 }
+
+/* Every card surface is frosted glass by default (the look of the home page's
+   closing card): translucent fill, soft white edge, a lit top rim and a
+   long soft shadow. It reads as part of the page instead of a box on it.
+   Opt out on any element with .no-glass. Cards inside .force-light keep their
+   solid light fill (they sit on a dark band). */
+[class~='bg-card']:not(.no-glass):not(.force-light *) {
+  background-color: color-mix(in srgb, var(--card) 52%, transparent);
+  -webkit-backdrop-filter: blur(18px) saturate(1.45);
+  backdrop-filter: blur(18px) saturate(1.45);
+  border-color: color-mix(in srgb, #fff 62%, transparent);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, #fff 75%, transparent), 0 14px 34px -22px rgba(70, 52, 20, .35);
+}
+.dark [class~='bg-card']:not(.no-glass):not(.force-light *) {
+  background-color: color-mix(in srgb, var(--card) 62%, transparent);
+  border-color: rgba(255, 255, 255, .09);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .07), 0 14px 34px -22px rgba(0, 0, 0, .7);
+}
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  [class~='bg-card']:not(.no-glass):not(.force-light *) { background-color: var(--card); }
+}

@@ -188,7 +188,7 @@ export function GarmentStudio({
                 onClick={() => setGarment(g.id)}
                 aria-pressed={g.id === garment}
                 className={`px-3.5 py-1.5 rounded-full text-xs font-semibold border transition-colors ${
-                  g.id === garment ? 'bg-foreground text-background border-foreground' : 'bg-card text-muted-foreground border-border hover:border-foreground/40'
+                  g.id === garment ? 'bg-foreground text-background border-foreground' : 'no-glass bg-card text-muted-foreground border-border hover:border-foreground/40'
                 }`}
               >
                 {g.label}
@@ -238,7 +238,7 @@ export function GarmentStudio({
                     className={`px-4 py-2 rounded-full text-xs font-semibold border transition-colors ${
                       d.id === designId
                         ? 'bg-foreground text-background border-foreground'
-                        : 'bg-card text-muted-foreground border-border hover:border-foreground/40'
+                        : 'no-glass bg-card text-muted-foreground border-border hover:border-foreground/40'
                     }`}
                   >
                     {d.name}
@@ -258,7 +258,7 @@ export function GarmentStudio({
                   className={`px-4 py-2 rounded-full text-xs font-semibold border transition-colors ${
                     g.id === garment
                       ? 'bg-foreground text-background border-foreground'
-                      : 'bg-card text-muted-foreground border-border hover:border-foreground/40'
+                      : 'no-glass bg-card text-muted-foreground border-border hover:border-foreground/40'
                   }`}
                 >
                   {g.label}

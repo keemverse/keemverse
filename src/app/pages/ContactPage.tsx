@@ -198,7 +198,7 @@ export default function ContactPage() {
               target="_blank"
               rel="noopener noreferrer"
               aria-label={s.name}
-              className="w-12 h-12 rounded-2xl flex items-center justify-center border border-border bg-card text-foreground/80 hover:bg-muted hover:text-foreground transition-all"
+              className="w-12 h-12 rounded-2xl flex items-center justify-center no-glass border border-border bg-card text-foreground/80 hover:bg-muted hover:text-foreground transition-all"
             >
               <s.icon className="w-5 h-5" />
             </a>

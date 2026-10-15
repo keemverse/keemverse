@@ -25,7 +25,7 @@ motion, using generic placeholder assets that Akeem redesigns before anything go
 | Home | Two cards and a footer | Bigger headline, drifting brand colour, fresh finds rail, presets rail, closing call to action |
 | Fashion hub | Static carousel, text columns | Slow push-in on photos, clickable slide dots, numbered service cards |
 | Motion | Scattered one-offs | One kit: reveal, press feedback, card lift, shimmer, page fade; all off for reduced motion |
-| Surfaces | Flat solid cards | Soft blurred cream and peach backdrop with frosted-glass bars, chips and cards (from your reference), plus a whisper of film grain |
+| Surfaces | Flat solid cards | Soft blurred cream and peach backdrop; **every card is frosted glass by default** (`.bg-card`), plus frosted bars and chips and a whisper of film grain. Menus and modal panels stay solid for legibility; opt out any element with `no-glass` |
 | Presets popup | Static banner only | Optional drag-to-compare before/after slider when a preset has both photos |
 
 ## What did NOT change (on purpose)

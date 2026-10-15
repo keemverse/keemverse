@@ -74,7 +74,7 @@ export function BurgerMenu({ items }: BurgerMenuProps) {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -8, scale: 0.97 }}
             transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
-            className="absolute right-0 top-14 z-30 w-52 rounded-2xl bg-card border border-border shadow-xl overflow-hidden"
+            className="absolute right-0 top-14 z-30 w-52 no-glass rounded-2xl bg-card border border-border shadow-xl overflow-hidden"
           >
             {items.map((item, i) => (
               <motion.button
