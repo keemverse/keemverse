@@ -87,12 +87,13 @@
 }
 
 @theme inline {
-  /* Brand type (Identity System v4): Satoshi Medium for headings, Satoshi Light
-     for secondary text. The old serif utilities now resolve to the same family,
-     so every existing heading picks up the brand face without being rewritten. */
+  /* Body and interface: Satoshi (Identity System v4). Headlines keep the serif
+     Akeem prefers (the large "Original art you won't find anywhere else" style),
+     so hero and section headings read editorial while everything functional
+     stays in the brand sans. */
   --font-sans: 'Satoshi', 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-  --font-serif: 'Satoshi', 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-  --font-display: 'Satoshi', 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-serif: Georgia, 'Times New Roman', serif;
+  --font-display: Georgia, 'Times New Roman', serif;
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);

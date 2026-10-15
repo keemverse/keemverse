@@ -17,7 +17,7 @@ motion, using generic placeholder assets that Akeem redesigns before anything go
 
 | Area | Before | After |
 |---|---|---|
-| Typeface | Georgia serif, contradicting Identity System v4 | **Satoshi** (the brand's primary font) everywhere, fluid display sizes |
+| Typeface | Georgia everywhere, no sans | **Satoshi** for body and interface (Identity System v4); headlines keep the serif you prefer, now with fluid sizes |
 | Navigation | Page reloads on most links; menu stayed open; nav scrolled away | In-app navigation for every internal link, menu closes on outside tap or Escape, sticky frosted bar |
 | Browsing finds and presets | Small dropdown, hairline dividers | Scrollable category chips with counts, sticky category bar, result counts, "Results" mode |
 | Product cards | 7px tags, full-width button, flat | Portrait cards, readable tags, quick view, round shop button, lift and zoom on hover |
