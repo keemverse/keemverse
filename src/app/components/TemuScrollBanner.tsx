@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
 import { FASHION, SAND } from "../lib/theme";
 
@@ -7,6 +7,8 @@ interface TemuScrollBannerProps {
   formatPrice: (price: any) => string;
   onSelect: (product: any) => void;
   storefrontUrl: string;
+  /** Shown beside the "View all" button (e.g. the New to Temu? button). */
+  secondaryAction?: ReactNode;
 }
 
 /**
@@ -22,6 +24,7 @@ export default function TemuScrollBanner({
   formatPrice,
   onSelect,
   storefrontUrl,
+  secondaryAction,
 }: TemuScrollBannerProps) {
   const temuProducts = products.filter(
     (p) => String(p.source || "").toLowerCase() === "temu"
@@ -135,12 +138,12 @@ export default function TemuScrollBanner({
         </div>
       </div>
 
-      <div className="flex justify-center mt-6">
+      <div className="mt-6 flex flex-wrap items-center justify-center gap-2 md:gap-3">
         <a
           href={storefrontUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="group/button inline-flex items-center gap-1.5 md:gap-2 rounded-full px-4 py-2 md:px-7 md:py-3 text-[11px] md:text-xs font-semibold tracking-[0.15em] text-[#14120F] border border-black/10 shadow-[0_10px_24px_-14px_rgba(20,18,15,.45)] transition-all duration-300 ease-[cubic-bezier(.22,1,.36,1)] hover:-translate-y-0.5 whitespace-nowrap"
+          className="group/button inline-flex items-center gap-1.5 md:gap-2 rounded-full px-3 py-2 md:px-7 md:py-3 text-[11px] md:text-xs font-semibold tracking-[0.12em] md:tracking-[0.15em] text-[#14120F] border border-black/10 shadow-[0_10px_24px_-14px_rgba(20,18,15,.45)] transition-all duration-300 ease-[cubic-bezier(.22,1,.36,1)] hover:-translate-y-0.5 whitespace-nowrap"
           style={{ backgroundColor: SAND }}
           onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = FASHION)}
           onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = SAND)}
@@ -148,6 +151,7 @@ export default function TemuScrollBanner({
           View All Temu Finds
           <span className="transition-transform group-hover/button:translate-x-1">→</span>
         </a>
+        {secondaryAction}
       </div>
 
       <style>{`
