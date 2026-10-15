@@ -49,6 +49,23 @@ those colours is about 2.7 to 1 and 3.1 to 1). Darker pills or dark text would f
 
 Other facts: entry JS about 159 KB gzip (baseline 184 KB), CSS about 25 KB gzip (baseline 22.7 KB); type checker clean.
 
+### Second lens: applied throttling (real network and CPU slowdown, no simulation)
+
+Run after the simulated numbers looked unstable on home and Presets. Three runs each, medians.
+
+| Page | Performance | Largest paint | Layout shift | Main-thread blocking |
+|---|---|---|---|---|
+| Home, before | 76 | 5.0 s | 0 | about 3 ms |
+| Home, after (first build) | 57 | 5.5 s | 0 | about 900 ms (regression) |
+| Home, after (blur and blend layers removed) | 71 | 6.2 s | 0 | about 11 ms |
+| Presets, before | 55 | 8.9 s | 0.285 | about 0 ms |
+| Presets, after | 60 | 8.5 s | 0.001 | about 540 ms |
+
+What this showed: the first version of the soft glass look (a full-screen blended grain layer and large blurred
+colour layers) cost real main-thread time on a throttled phone. I removed those layers; home blocking time is back to
+baseline. Home is still a few performance points below baseline under this lens (largest paint 6.2 s vs 5.0 s), so I
+am not claiming a home speed gain. Presets blocking time (about 540 ms) is the next thing to look at.
+
 **Reading it honestly:** two of the three key pages improved clearly; home did not move on speed. Lighthouse measures
 speed and accessibility, not whether the design feels modern, so the rubric above is still my judgement.
 

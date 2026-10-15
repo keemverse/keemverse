@@ -61,14 +61,14 @@ export function DigitalCraftHero({
             className="text-foreground"
             style={{
               fontFamily: 'var(--font-display)',
-              fontSize: 'clamp(2.75rem, 6.8vw, 4.5rem)',
+              fontSize: 'clamp(2.4rem, 5.4vw, 3.75rem)',
               lineHeight: 1.04,
               letterSpacing: '-0.025em',
               textWrap: 'balance',
             }}
           >
-            Designing for <span className="text-amber-display">production</span>{' '}
-            <span className="text-teal-display">quality</span>
+            Original <span className="text-amber-display">art</span>, designed for production{' '}
+            <span className="text-teal-display">quality.</span>
           </motion.h1>
 
           <motion.p
@@ -77,8 +77,8 @@ export function DigitalCraftHero({
             transition={{ duration: 0.6, delay: 0.16 }}
             className="mt-6 max-w-md text-base leading-relaxed text-muted-foreground md:mt-7 md:text-[17px]"
           >
-            From concept to production, thoughtfully designed and executed. I'm Keem, and I make art
-            for creators and small brands: <strong className="text-foreground font-semibold">wear it</strong>,{' '}
+            Tired of the same prints everywhere? I'm Keem. I design original art for creators and small
+            brands, from concept to production-ready files: <strong className="text-foreground font-semibold">wear it</strong>,{' '}
             <strong className="text-foreground font-semibold">download it</strong>, or{' '}
             <strong className="text-foreground font-semibold">have something made just for you</strong>.
           </motion.p>
