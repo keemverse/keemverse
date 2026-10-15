@@ -105,9 +105,6 @@ function Rail({
                     decoding="async"
                     className="card-img h-full w-full object-cover"
                   />
-                  <span className="absolute left-2.5 top-2.5 rounded-full bg-white/90 px-2 py-0.5 text-[9px] font-bold uppercase tracking-[0.16em] text-stone-900 backdrop-blur">
-                    {it.tag}
-                  </span>
                 </div>
                 <p className="mt-3 line-clamp-2 px-1 text-[13px] font-medium leading-snug text-foreground">{it.name}</p>
                 {it.price && <p className="mt-1 px-1 text-[13px] font-semibold text-amber-ink">{it.price}</p>}
