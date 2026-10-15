@@ -55,8 +55,8 @@ export default function FilterChips({
               className={`press relative shrink-0 rounded-full border px-4 py-2 text-[13px] font-medium whitespace-nowrap transition-colors duration-300 ${
                 active
                   ? 'border-transparent text-background'
-                  : 'border-border bg-card/60 text-foreground/75 hover:border-foreground/30 hover:text-foreground'
-              } ${empty ? 'opacity-45' : ''}`}
+                  : 'glass text-foreground/80 hover:text-foreground'
+              } ${empty ? '!border-dashed !text-muted-foreground' : ''}`}
             >
               {active && (
                 <motion.span

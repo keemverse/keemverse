@@ -17,14 +17,35 @@ Ten criteria, scored 0 to 5. **Self-assessed, not measured with visitors.** Each
 | | **Total (of 50)** | **19** | **41** | |
 | | **As a score out of 100** | **38** | **82** | +44 points, about 2.2 times the "before" score |
 
-## Measured facts (not opinion)
+## Measured facts (Lighthouse, mobile profile, same machine)
 
-| Measure | Before (live) | After (branch) |
-|---|---|---|
-| JS bundle, gzip | 184.0 KB | 187.3 KB (+3.2 KB) |
-| CSS bundle, gzip | 22.7 KB | 24.1 KB (+1.4 KB) |
-| Type checker | clean | clean |
-| Horizontal overflow at 375px (home, finds, fashion) | none | none |
+Baseline = the current `main` build. After = this branch. Both served with `vite preview` against the live API. Home
+was run three times each (medians shown); Finds and Presets once each, so treat small differences as noise.
+
+| Page | Measure | Before | After |
+|---|---|---|---|
+| Home | Performance | 74 | 78 (runs: 81, 73, 78) |
+| Home | Largest paint | 9.4 s | 4.8 s (one of three runs stayed at 10 s) |
+| Home | Accessibility | 94 | 100 |
+| Fashion Finds | Performance | 63 | 86 |
+| Fashion Finds | Largest paint | 10.1 s | 3.8 s |
+| Fashion Finds | Layout shift (CLS) | 0.207 | 0.002 |
+| Fashion Finds | Accessibility | 100 | 100 |
+| Presets | Performance | 56 | 79 |
+| Presets | Largest paint | 11.7 s | 5.0 s |
+| Presets | Layout shift (CLS) | 0.285 | 0.000 |
+| Presets | Accessibility | 98 | 100 |
+| All three | Best practices, SEO | 100, 100 | 100, 100 |
+
+What moved the numbers: the font stylesheet no longer blocks first paint; the home tagline (the largest paint) no
+longer waits behind the headline animation; space is reserved for the banner and featured row so lists stop jumping;
+the hero photo loads first; white text on amber and teal became dark ink; heading order and accessible names fixed.
+
+Other facts: JS bundle 184.0 KB to about 187 KB gzip, CSS 22.7 KB to about 25 KB gzip; type checker clean.
+
+**Reading it honestly:** performance on Finds and Presets rose by about 23 points each and layout jumping is gone.
+Home performance is a modest gain (the hero photo is large and unchanged, by your choice). Lighthouse measures speed
+and accessibility, not whether the design feels modern, so the rubric above is still my judgement.
 
 ## What would actually prove "60% better"
 

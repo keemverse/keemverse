@@ -31,7 +31,6 @@ export default function PresetCard({
       <div
         role="button"
         tabIndex={0}
-        aria-label={`View preset: ${name}`}
         onClick={onOpen}
         onKeyDown={(e) => {
           if (e.key === "Enter" || e.key === " ") {
@@ -44,10 +43,6 @@ export default function PresetCard({
         <ImageWithFallback src={image} alt={name} className="card-img h-full w-full object-cover" />
 
         <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/45 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
-
-        <span className="absolute left-3 top-3 rounded-full bg-white/90 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.16em] text-stone-900 backdrop-blur">
-          {collection}
-        </span>
 
         {price && (
           <span className="absolute bottom-3 right-3 rounded-full bg-foreground px-3 py-1.5 text-[12px] font-semibold text-background shadow-lg">

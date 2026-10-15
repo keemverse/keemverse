@@ -148,7 +148,7 @@ export default function HomeRails() {
       )}
 
       <Reveal>
-        <section className="mt-16 md:mt-24 overflow-hidden rounded-[2rem] border border-border bg-card px-6 py-12 text-center md:px-12 md:py-16">
+        <section className="mt-16 md:mt-24 glass sheen overflow-hidden rounded-[2rem] px-6 py-12 text-center md:px-12 md:py-16">
           <p className="eyebrow text-teal-ink">Something specific in mind?</p>
           <h2 className="mx-auto mt-3 max-w-xl text-display-lg">Tell me what you need and I'll make it.</h2>
           <p className="mx-auto mt-4 max-w-md text-muted-foreground">

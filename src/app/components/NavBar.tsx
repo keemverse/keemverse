@@ -38,7 +38,7 @@ export function NavBar() {
     <div
       className={`sticky top-0 z-40 w-full px-4 py-3 transition-[background-color,backdrop-filter,border-color,box-shadow] duration-300 border-b ${
         scrolled
-          ? 'bg-background/80 backdrop-blur-xl border-border/70 shadow-[0_8px_24px_-20px_rgba(20,18,15,.5)]'
+          ? 'glass-bar shadow-[0_8px_24px_-20px_rgba(20,18,15,.35)]'
           : 'bg-transparent border-transparent'
       }`}
     >

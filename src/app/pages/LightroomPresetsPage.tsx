@@ -114,13 +114,24 @@ export default function LightroomPresetsPage() {
           />
         </div>
 
-        <div className="sticky top-[var(--nav-h,0px)] z-30 -mx-5 mb-10 mt-4 border-b border-border/60 bg-background/85 px-5 py-2.5 backdrop-blur-xl md:-mx-8 md:px-8">
+        <div className="sticky top-[var(--nav-h,0px)] z-30 -mx-5 mb-10 mt-4 glass-bar px-5 py-2.5 md:-mx-8 md:px-8">
           <div className="mx-auto max-w-3xl">
             <FilterChips tabs={categories} activeTab={activeTab} onChange={setActiveTab} counts={counts} label="Filter by collection" />
           </div>
         </div>
 
         {/* ---------- Featured ---------- */}
+
+        {loading && (
+          <section className="mb-16" aria-hidden="true">
+            <div className="mb-7 mt-16 h-[3.25rem]" />
+            <div className="grid grid-cols-2 gap-x-4 gap-y-8 md:grid-cols-3 md:gap-x-6 xl:grid-cols-4">
+              {Array.from({ length: 4 }).map((_, i) => (
+                <SkeletonCard key={i} />
+              ))}
+            </div>
+          </section>
+        )}
 
         {!filtering && featured.length > 0 && (
           <section className="mb-16">

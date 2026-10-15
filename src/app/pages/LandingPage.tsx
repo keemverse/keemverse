@@ -109,7 +109,6 @@ function HeroPair({ items }: { items: typeof hero }) {
             <a
               key={item.title}
               href={item.href}
-              aria-label={`${item.title}: ${item.description}`}
               className="group flex flex-col overflow-hidden rounded-2xl md:rounded-[28px] border border-transparent bg-transparent shadow-none dark:border-stone-200/60 dark:bg-white dark:shadow-sm transition-[transform,box-shadow] duration-500 dark:hover:-translate-y-1.5 dark:hover:shadow-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-foreground"
             >
               <div className="relative aspect-square md:aspect-[4/3]">
@@ -119,6 +118,9 @@ function HeroPair({ items }: { items: typeof hero }) {
                   <ImageWithFallback
                     src={item.image}
                     alt=""
+                    // The hero photos are the largest thing painted, so they load first.
+                    fetchPriority="high"
+                    decoding="async"
                     className="w-full h-full object-cover object-[center_25%] md:object-center"
                   />
                 </div>
@@ -132,9 +134,9 @@ function HeroPair({ items }: { items: typeof hero }) {
               </div>
 
               <div className="flex flex-col flex-1 px-2 pb-3 pt-1 md:px-8 md:pb-4 -mt-6 md:-mt-12 relative z-10 text-center">
-                <h3 className="text-lg md:text-[2rem] text-foreground dark:text-stone-900" style={{ fontFamily: 'var(--font-display)' }}>
+                <h2 className="text-lg md:text-[2rem] text-foreground dark:text-stone-900" style={{ fontFamily: 'var(--font-display)' }}>
                   {item.title}
-                </h3>
+                </h2>
                 <p className="mt-1 text-xs md:text-sm leading-relaxed md:leading-7 text-muted-foreground dark:text-stone-600 max-w-xs mx-auto">
                   {item.description}
                 </p>
@@ -197,10 +199,9 @@ function HeroHeadline() {
       </h1>
 
       <motion.p
-        initial={{ opacity: 0, y: 10 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.6, delay: 0.9 }}
+        initial={{ opacity: 0, y: 6 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.45, delay: 0.1 }}
         className="mt-5 text-muted-foreground leading-relaxed text-sm md:text-base"
       >
         Helping people build wardrobes and helping brands build production-ready artwork.

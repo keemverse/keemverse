@@ -96,11 +96,29 @@ export default function FashionFindsPage() {
         </div>
 
         {/* Categories stay in reach while the grid scrolls. */}
-        <div className="sticky top-[var(--nav-h,0px)] z-30 -mx-5 mt-4 border-b border-border/60 bg-background/85 px-5 py-2.5 backdrop-blur-xl md:-mx-8 md:px-8">
+        <div className="sticky top-[var(--nav-h,0px)] z-30 -mx-5 mt-4 glass-bar px-5 py-2.5 md:-mx-8 md:px-8">
           <div className="mx-auto max-w-3xl">
             <FilterChips tabs={categories} activeTab={activeTab} onChange={setActiveTab} counts={counts} />
           </div>
         </div>
+
+        {loading && (
+          <div className="mt-10" aria-hidden="true">
+            <div className="skeleton-shimmer mx-auto h-4 w-24 rounded-full" />
+            <div className="skeleton-shimmer mt-6 h-[17rem] rounded-3xl" />
+          </div>
+        )}
+
+        {loading && (
+          <div aria-hidden="true">
+            <div className="mb-7 mt-16 h-[3.25rem]" />
+            <div className="grid grid-cols-2 gap-x-4 gap-y-8 md:gap-x-6 lg:grid-cols-4 mb-8">
+              {Array.from({ length: 4 }).map((_, i) => (
+                <SkeletonCard key={i} />
+              ))}
+            </div>
+          </div>
+        )}
 
         {!loading && !filtering && (
           <div className="mt-10">

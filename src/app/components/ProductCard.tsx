@@ -41,7 +41,6 @@ export default function ProductCard({
       <div
         role="button"
         tabIndex={0}
-        aria-label={`Quick view: ${name}`}
         onClick={onOpen}
         onKeyDown={(e) => {
           if (e.key === "Enter" || e.key === " ") {
