@@ -97,8 +97,6 @@ function Rail({
                   <ImageWithFallback
                     src={it.image}
                     alt={it.name}
-                    // Below the fold: let them load after the hero photo, not alongside it.
-                    loading="lazy"
                     decoding="async"
                     className="card-img h-full w-full object-cover"
                   />
