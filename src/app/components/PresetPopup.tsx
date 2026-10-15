@@ -1,14 +1,16 @@
 import { motion, AnimatePresence } from "motion/react";
 import { useNavigate } from "react-router-dom";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
+import { priceFor } from "../lib/currency";
+import { useRegion, type Region } from "../lib/geo";
 
-// Turns the sheet's raw Price value ("$12", "12000", "₦12,000") into a
-// numeric amount + currency Flutterwave can charge directly.
-function parseRawPrice(raw: any): { amount: number; currency: "NGN" | "USD" } {
-  const str = String(raw ?? "").trim();
-  const amount = parseFloat(str.replace(/[^0-9.]/g, "")) || 0;
-  const currency = str.startsWith("$") ? "USD" : "NGN";
-  return { amount, currency };
+// Turns the sheet's raw Price value ("$12", "12000", "₦12,000") into the
+// amount + currency this visitor is charged: naira in Nigeria, dollars (a
+// straight conversion) everywhere else. Until the visitor's region is known
+// there is nothing to charge yet, so the buy button stays disabled.
+function chargeFor(raw: any, region: Region | null): { amount: number; currency: "NGN" | "USD" } {
+  if (!region) return { amount: 0, currency: "NGN" };
+  return priceFor(raw, region) ?? { amount: 0, currency: "NGN" };
 }
 
 interface PresetPopupProps {
@@ -49,7 +51,8 @@ export default function PresetPopup({
   purchaseLink,
 }: PresetPopupProps) {
   const navigate = useNavigate();
-  const { amount, currency } = parseRawPrice(rawPrice);
+  const region = useRegion();
+  const { amount, currency } = chargeFor(rawPrice, region);
 
   const handleBuyNow = () => {
     navigate("/checkout", {

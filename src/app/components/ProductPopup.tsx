@@ -88,11 +88,15 @@ export default function ProductPopup({
 
   <span>{category}</span>
 
-  <span>•</span>
+  {price && (
+    <>
+      <span>•</span>
 
-  <span className="rounded-full bg-foreground text-background px-4 py-1 text-sm font-semibold">
-    {price}
-  </span>
+      <span className="rounded-full bg-foreground text-background px-4 py-1 text-sm font-semibold">
+        {price}
+      </span>
+    </>
+  )}
 
   {rating && (
     <>

@@ -1,27 +1,47 @@
-// Prices are stored in the currency they were entered in (₦ by default, or $
-// when the value starts with "$" / the sheet says USD). Visitors from anywhere
-// should be able to read them, so a naira price is shown with an approximate
-// dollar figure beside it. The dollar figure is a guide only: checkout still
-// charges the amount in the currency it was priced in (see CheckoutPage).
+import type { Region } from './geo';
 
-// Approximate rate used for the "≈ $" hint. Update it when the naira moves a
-// lot; it does not change what anyone is charged.
+// Products are listed in naira (or in dollars when the value starts with "$"
+// or the sheet says USD). Visitors in Nigeria see and pay naira; everyone else
+// sees and pays US dollars at a straight conversion of the naira price.
+
+// Straight-conversion rate. The Apps Script that verifies payments uses the
+// same number (USD_PER_NGN_RATE in docs/apps-script-verify.gs); keep the two
+// equal, or a dollar payment will not match the price the script expects.
 export const NGN_PER_USD = 1350;
 
-export function approxUsd(ngn: number): string {
-  const usd = ngn / NGN_PER_USD;
-  if (usd >= 1) return `$${Math.round(usd).toLocaleString()}`;
-  return `$${usd.toFixed(2)}`;
+/** Whole US dollars for a naira price, never below $1. */
+export function ngnToUsd(ngn: number): number {
+  return Math.max(1, Math.round(ngn / NGN_PER_USD));
 }
 
-/** "₦4,000 (≈ $3)" for a naira price, "$12" for a dollar price. */
-export function formatPrice(raw: unknown, currency?: unknown): string {
+export type ParsedPrice = { amount: number; listedIn: 'NGN' | 'USD' } | null;
+
+export function parsePrice(raw: unknown, currency?: unknown): ParsedPrice {
   const text = String(raw ?? '').trim();
   const amount = typeof raw === 'number' ? raw : parseFloat(text.replace(/[^0-9.]/g, ''));
-  if (isNaN(amount)) return text;
-
+  if (isNaN(amount)) return null;
   const isUsd = text.startsWith('$') || String(currency ?? '').toUpperCase() === 'USD';
-  if (isUsd) return `$${amount.toLocaleString()}`;
+  return { amount, listedIn: isUsd ? 'USD' : 'NGN' };
+}
 
-  return `₦${amount.toLocaleString()} (≈ ${approxUsd(amount)})`;
+/** What a visitor in this region pays: the amount and currency to charge. */
+export function priceFor(raw: unknown, region: Region, currency?: unknown) {
+  const p = parsePrice(raw, currency);
+  if (!p) return null;
+  if (p.listedIn === 'USD') return { amount: p.amount, currency: 'USD' as const };
+  if (region === 'NG') return { amount: p.amount, currency: 'NGN' as const };
+  return { amount: ngnToUsd(p.amount), currency: 'USD' as const };
+}
+
+/**
+ * "₦9,900" for Nigeria, "$7" elsewhere. Returns "" while the region is still
+ * being looked up, so a visitor in Nigeria never sees dollars flash first.
+ * Values that are not numbers (e.g. "Free") are returned as written.
+ */
+export function formatPrice(raw: unknown, region: Region | null, currency?: unknown): string {
+  const p = parsePrice(raw, currency);
+  if (!p) return String(raw ?? '').trim();
+  if (p.listedIn === 'USD') return `$${p.amount.toLocaleString()}`;
+  if (!region) return '';
+  return region === 'NG' ? `₦${p.amount.toLocaleString()}` : `$${ngnToUsd(p.amount).toLocaleString()}`;
 }

@@ -9,6 +9,7 @@ import UniverseTabs from "../components/UniverseTabs";
 import SectionDivider from "../components/SectionDivider";
 import { getCatalogProducts } from "../lib/products";
 import { formatPrice } from "../lib/currency";
+import { useRegion } from "../lib/geo";
 import PresetPopup from "../components/PresetPopup";
 import RestoreDownloadForm from "../components/RestoreDownloadForm";
 import PresetFAQ from "../components/PresetFAQ";
@@ -27,6 +28,7 @@ const categories = [
 
 
 export default function LightroomPresetsPage() {
+  const region = useRegion();
   const [query, setQuery] = useState("");
   const [activeTab, setActiveTab] = useState("All");
   const [selected, setSelected] = useState<any | null>(null);
@@ -123,7 +125,7 @@ export default function LightroomPresetsPage() {
   <PresetCard
     key={preset.id}
     name={preset.name}
-    price={formatPrice(preset.price)}
+    price={formatPrice(preset.price, region)}
     image={preset.thumbnail}
     collection={preset.collection}
     index={index}
@@ -180,7 +182,7 @@ export default function LightroomPresetsPage() {
   <PresetCard
     key={preset.id}
     name={preset.name}
-    price={formatPrice(preset.price)}
+    price={formatPrice(preset.price, region)}
     image={preset.thumbnail}
     collection={preset.collection}
     index={index}
@@ -211,7 +213,7 @@ export default function LightroomPresetsPage() {
             open={true}
             onClose={() => setSelected(null)}
             name={selected.name}
-            price={formatPrice(selected.price)}
+            price={formatPrice(selected.price, region)}
             rawPrice={selected.price}
             previewImage={selected.thumbnail}
             banner={selected.banner}

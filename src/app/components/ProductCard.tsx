@@ -60,9 +60,11 @@ export default function ProductCard({
           {name}
         </h3>
 
-        <p className="mt-3 text-lg font-semibold text-amber-ink">
-          {price}
-        </p>
+        {price && (
+          <p className="mt-3 text-lg font-semibold text-amber-ink">
+            {price}
+          </p>
+        )}
 
         <PillButton
           href={affiliateLink}

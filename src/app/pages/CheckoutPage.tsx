@@ -4,7 +4,6 @@ import { motion } from "motion/react";
 import { ImageWithFallback } from "../components/figma/ImageWithFallback";
 import { SocialFooter } from "../components/SocialFooter";
 import { payWithFlutterwave, type CheckoutItem } from "../lib/flutterwave";
-import { approxUsd } from "../lib/currency";
 
 interface CheckoutState {
   item: CheckoutItem;
@@ -97,14 +96,9 @@ export default function CheckoutPage() {
             )}
             <p className="font-serif text-lg text-foreground truncate">{item.name}</p>
           </div>
-          <div className="text-right">
-            <p className="text-lg font-semibold text-foreground whitespace-nowrap">
-              {formatAmount(item.amount, item.currency)}
-            </p>
-            {item.currency === "NGN" && (
-              <p className="text-xs text-muted-foreground whitespace-nowrap">≈ {approxUsd(item.amount)}</p>
-            )}
-          </div>
+          <p className="text-lg font-semibold text-foreground whitespace-nowrap">
+            {formatAmount(item.amount, item.currency)}
+          </p>
         </div>
 
         {/* Buyer details */}
@@ -160,12 +154,6 @@ export default function CheckoutPage() {
           <p className="text-xs text-muted-foreground text-center">
             Secure checkout via Flutterwave. Your card details never touch our servers.
           </p>
-          {item.currency === "NGN" && (
-            <p className="text-xs text-muted-foreground text-center -mt-2">
-              Priced in naira. International cards are accepted and your bank converts the amount at its own rate
-              (about {approxUsd(item.amount)}).
-            </p>
-          )}
         </div>
       </main>
 

@@ -10,6 +10,7 @@ import ProductPopup from "../components/ProductPopup";
 import { SocialFooter } from "../components/SocialFooter";
 import { getCatalogProducts } from "../lib/products";
 import { formatPrice } from "../lib/currency";
+import { useRegion } from "../lib/geo";
 import FashionFAQ from "../components/FashionFAQ";
 import SectionDivider from "../components/SectionDivider";
 const categories = [
@@ -24,6 +25,10 @@ const categories = [
 
 
 export default function FashionFindsPage() {
+  // Fashion Finds are affiliate picks bought on Temu, so the price shown is a
+  // guide for visitors in Nigeria only; abroad the price is left off.
+  const region = useRegion();
+  const showPrice = (price: any) => (region === "NG" ? formatPrice(price, "NG") : "");
   const [query, setQuery] = useState("");
   const [activeTab, setActiveTab] = useState("All");
   const [selected, setSelected] = useState<any | null>(null);
@@ -99,7 +104,7 @@ const filteredProducts = products.filter((p) => {
         {!loading && (
           <TemuScrollBanner
             products={products}
-            formatPrice={formatPrice}
+            formatPrice={showPrice}
             onSelect={setSelected}
             storefrontUrl="https://temu.to/k/e3d0e4ta2g4"
           />
@@ -114,7 +119,7 @@ const filteredProducts = products.filter((p) => {
   <ProductCard
   key={product.id}
   name={product.name}
-  price={formatPrice(product.price)}
+  price={showPrice(product.price)}
   image={product.image_url}
   source={product.source}
   category={product.category}
@@ -164,7 +169,7 @@ onOpen={() => setSelected(product)}
       <ProductCard
         key={product.id}
         name={product.name}
-        price={formatPrice(product.price)}
+        price={showPrice(product.price)}
         image={product.image_url}
         source={product.source}
         category={product.category}
@@ -182,7 +187,7 @@ onOpen={() => setSelected(product)}
   open={true}
   onClose={() => setSelected(null)}
   name={selected.name}
-  price={formatPrice(selected.price)}
+  price={showPrice(selected.price)}
   image={selected.image_url}
   source={selected.source}
   category={selected.category}

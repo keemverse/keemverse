@@ -27,6 +27,13 @@ export default function PrivacyPolicyPage() {
         at any time.
       </p>
 
+      <p>
+        To show prices in the right currency, our site checks which country
+        your request comes from (naira in Nigeria, US dollars elsewhere). Only
+        the two-letter country code is used, for that purpose, and it is not
+        stored against you.
+      </p>
+
       <h2 className="font-serif text-xl text-foreground mt-8 mb-2">Third-party services</h2>
       <p>
         Purchases and payments are processed by third-party providers

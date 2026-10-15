@@ -125,8 +125,31 @@ function handleVerify(e) {
   }
   if (!row) return jsonResponse({ ok: false, error: 'Unknown item.' });
 
-  var expected = parseFloat(String(row[cPrice]).replace(/[^0-9.]/g, ''));
-  if (Math.abs(paid - expected) > 1) {
+  // The sheet lists each price once, in naira ("9900") or dollars ("$7").
+  // The site charges visitors in Nigeria in naira and everyone else in US
+  // dollars at a straight conversion (whole dollars, never below $1), so a
+  // naira-listed item is accepted in either currency. Keep USD_PER_NGN_RATE
+  // equal to NGN_PER_USD in src/app/lib/currency.ts.
+  var USD_PER_NGN_RATE = 1350;
+  var priceText   = String(row[cPrice]);
+  var listedUsd   = /\$/.test(priceText);
+  var listedValue = parseFloat(priceText.replace(/[^0-9.]/g, ''));
+  var accepted = [];
+  if (listedUsd) {
+    accepted.push({ currency: 'USD', amount: listedValue });
+  } else {
+    accepted.push({ currency: 'NGN', amount: listedValue });
+    accepted.push({ currency: 'USD', amount: Math.max(1, Math.round(listedValue / USD_PER_NGN_RATE)) });
+  }
+  var matched = null;
+  for (var a = 0; a < accepted.length; a++) {
+    var tolerance = accepted[a].currency === 'USD' ? 0.5 : 1;
+    if (currency === accepted[a].currency && Math.abs(paid - accepted[a].amount) <= tolerance) {
+      matched = accepted[a];
+      break;
+    }
+  }
+  if (!matched) {
     return jsonResponse({ ok: false, error: 'Amount mismatch.' });
   }
   if (!row[cFile]) {
@@ -139,10 +162,7 @@ function handleVerify(e) {
   if (String(txRef).indexOf('keemverse-' + itemId + '-') !== 0) {
     return jsonResponse({ ok: false, error: 'This payment is not for this item.' });
   }
-  var expectedCurrency = /\$/.test(String(row[cPrice])) ? 'USD' : 'NGN';
-  if (currency !== expectedCurrency) {
-    return jsonResponse({ ok: false, error: 'Currency mismatch.' });
-  }
+  //     (The currency was already checked together with the amount above.)
 
   // 2c. Calling verify again for the same payment and item (a refresh, or a
   //     replay) returns the link already issued instead of minting a new one.

@@ -125,9 +125,11 @@ export default function TemuScrollBanner({
               <p className="mt-2 text-xs text-foreground/80 leading-snug line-clamp-2">
                 {product.name}
               </p>
-              <p className="text-xs font-semibold text-foreground mt-0.5">
-                {formatPrice(product.price)}
-              </p>
+              {formatPrice(product.price) && (
+                <p className="text-xs font-semibold text-foreground mt-0.5">
+                  {formatPrice(product.price)}
+                </p>
+              )}
             </button>
           ))}
         </div>

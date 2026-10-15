@@ -6,6 +6,7 @@ import SectionDivider from '../components/SectionDivider';
 import { TikTokIcon, PinterestIcon } from '../components/Icons';
 import { getMediaKit, getRateCard } from '../lib/products';
 import { formatPrice } from '../lib/currency';
+import { useRegion } from '../lib/geo';
 import profileImg from '../../imports/keem-profile.jpg';
 
 const PLATFORM_ICON: Record<string, any> = {
@@ -98,6 +99,7 @@ function StatCard({ row, index }: { row: any; index: number }) {
 }
 
 export default function MediaKitPage() {
+  const region = useRegion();
   const [rows, setRows] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [rates, setRates] = useState<any[]>([]);
@@ -189,7 +191,7 @@ export default function MediaKitPage() {
                     <p className="text-muted-foreground text-xs mt-1">{rate.Description}</p>
                   )}
                   <p className="font-serif text-xl md:text-2xl text-foreground mt-auto pt-3">
-                    {formatPrice(rate.Price, rate.Currency)}
+                    {formatPrice(rate.Price, region, rate.Currency)}
                   </p>
                 </motion.div>
               ))}
