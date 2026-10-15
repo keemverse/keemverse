@@ -7,8 +7,8 @@ import { socials } from '../lib/socials';
 // the footer) — only list what isn't offered anywhere else on this page.
 const details = [
   { icon: Mail, label: 'Email', value: 'akeemtajudeen322@gmail.com', href: 'mailto:akeemtajudeen322@gmail.com' },
-  { icon: Phone, label: 'Phone', value: '+234 916 717 4194', href: 'tel:+2349167174194' },
-  { icon: MapPin, label: 'Business Address', value: 'Osogbo, Osun State, Nigeria', href: undefined },
+  { icon: Phone, label: 'Phone / WhatsApp (international format)', value: '+234 916 717 4194', href: 'tel:+2349167174194' },
+  { icon: MapPin, label: 'Studio', value: 'Remote-first, working with clients worldwide. Registered office: Osogbo, Nigeria.', href: undefined },
 ];
 
 const projectTypes = [
@@ -58,12 +58,12 @@ function BriefForm() {
 
         <div>
           <label className="text-xs text-muted-foreground mb-1.5 block">
-            Email or WhatsApp number (so I can reply)
+            Your email (or WhatsApp number, with country code)
           </label>
           <input
             value={contact}
             onChange={(e) => setContact(e.target.value)}
-            placeholder="How should I reach you back?"
+            placeholder="you@example.com"
             className="w-full rounded-xl border border-border bg-input-background px-4 py-3 text-sm text-foreground outline-none focus:border-foreground/40 transition-colors"
           />
         </div>
@@ -94,20 +94,6 @@ function BriefForm() {
 
         <div className="flex flex-col sm:flex-row gap-3 mt-2">
           <a
-            href={whatsappHref}
-            target={whatsappHref ? '_blank' : undefined}
-            rel={whatsappHref ? 'noopener noreferrer' : undefined}
-            aria-disabled={!canSend}
-            onClick={(e) => { if (!canSend) e.preventDefault(); }}
-            className={`flex-1 inline-flex items-center justify-center gap-2 rounded-full px-6 py-3.5 text-sm font-semibold transition-all ${
-              canSend ? 'bg-[#25D366] text-white hover:-translate-y-0.5' : 'bg-muted text-muted-foreground cursor-not-allowed'
-            }`}
-          >
-            <MessageCircle className="w-4 h-4" />
-            Send via WhatsApp
-          </a>
-
-          <a
             href={emailHref}
             aria-disabled={!canSend}
             onClick={(e) => { if (!canSend) e.preventDefault(); }}
@@ -119,6 +105,22 @@ function BriefForm() {
           >
             <Mail className="w-4 h-4" />
             Send via Email
+          </a>
+
+          <a
+            href={whatsappHref}
+            target={whatsappHref ? '_blank' : undefined}
+            rel={whatsappHref ? 'noopener noreferrer' : undefined}
+            aria-disabled={!canSend}
+            onClick={(e) => { if (!canSend) e.preventDefault(); }}
+            className={`flex-1 inline-flex items-center justify-center gap-2 rounded-full border px-6 py-3.5 text-sm font-semibold transition-all ${
+              canSend
+                ? 'border-foreground/25 text-foreground hover:-translate-y-0.5 hover:border-foreground/50'
+                : 'border-transparent bg-muted text-muted-foreground cursor-not-allowed'
+            }`}
+          >
+            <MessageCircle className="w-4 h-4" />
+            Send via WhatsApp
           </a>
         </div>
 
@@ -136,8 +138,10 @@ export default function ContactPage() {
     <InfoPage eyebrow="Get in touch" title="Contact us">
       <p className="text-center">
         Have a question, a collaboration idea, or need support with an
-        order? Send a brief below, or reach out directly. We respond to
-        all customer enquiries within 1 business day.
+        order? Send a brief below, or reach out directly. I work with
+        brands, studios and creators anywhere in the world, and all of it
+        is handled remotely. We respond to all customer enquiries within
+        1 business day.
       </p>
 
       <div className="mt-6">

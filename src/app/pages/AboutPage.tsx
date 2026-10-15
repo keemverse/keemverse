@@ -29,7 +29,9 @@ export default function AboutPage() {
       </p>
 
       <p>
-        Keemverse is based in Osogbo, Osun State, Nigeria.
+        Keemverse is a remote-first studio. We work with creators, brands and
+        print businesses around the world, and everything from first brief to
+        final files is handled online.
       </p>
 
       <p>

@@ -12,6 +12,7 @@ import { Btn } from './CraftUI';
 // price, or ticket.
 
 const WHATSAPP_NUMBER = '2349167174194';
+const OWNER_EMAIL = 'akeemtajudeen322@gmail.com';
 
 const PROJECTS = ['Clothing design', 'Illustration or art print', 'Logo', 'Something else'];
 const GARMENTS = ['T-shirt', 'Hoodie', 'Long sleeve', 'Tote', 'Not sure yet'];
@@ -72,7 +73,7 @@ export function CustomDesignForm() {
   const validate = () => {
     const e: Partial<Record<keyof Fields, string>> = {};
     if (f.name.trim().length < 2) e.name = 'Tell me who to reply to.';
-    if (f.contact.trim().length < 5) e.contact = 'An email or WhatsApp number so I can reply.';
+    if (f.contact.trim().length < 5) e.contact = 'An email, or a WhatsApp number with country code, so I can reply.';
     if (!f.project) e.project = 'Pick the closest option.';
     if (f.brief.trim().length < 20) e.brief = 'A sentence or two is plenty (20 characters minimum).';
     setErrors(e);
@@ -105,6 +106,9 @@ export function CustomDesignForm() {
   };
 
   const waHref = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message(f))}`;
+  const mailHref = `mailto:${OWNER_EMAIL}?subject=${encodeURIComponent(
+    `Custom design request from ${f.name.trim()}`
+  )}&body=${encodeURIComponent(message(f))}`;
 
   const field = (k: keyof Fields, label: string, node: React.ReactNode) => (
     <div>
@@ -139,18 +143,23 @@ export function CustomDesignForm() {
               {save?.state === 'saved' ? (
                 <>
                   I've saved your request{save.ref ? ` (${save.ref})` : ''} and I'll reply to you. For a faster answer, you
-                  can also send it on WhatsApp.
+                  can also send it by email or on WhatsApp.
                 </>
               ) : (
                 <>
-                  I couldn't save it here just now, so please send it on WhatsApp and I'll see it there. Nothing is sent
-                  until you press send.
+                  I couldn't save it here just now, so please send it by email or on WhatsApp and I'll see it there.
+                  Nothing is sent until you press send.
                 </>
               )}
             </p>
-            <Btn href={waHref} external size="lg" icon={<span aria-hidden="true">→</span>}>
-              Send on WhatsApp
-            </Btn>
+            <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
+              <Btn href={mailHref} size="lg" icon={<span aria-hidden="true">→</span>}>
+                Send by email
+              </Btn>
+              <Btn href={waHref} external variant="outline" size="lg">
+                Send on WhatsApp
+              </Btn>
+            </div>
             {save?.state === 'saved' && (
               <p className="mt-5 text-xs text-muted-foreground">Your note is saved privately so I can reply. It isn't shared.</p>
             )}
@@ -171,7 +180,7 @@ export function CustomDesignForm() {
                 Tell me what you need.
               </h3>
               <p className="text-muted-foreground text-sm leading-relaxed">
-                A short note is enough. I'll read it and reply on WhatsApp.
+                A short note is enough. I'll read it and reply by email or WhatsApp.
               </p>
               <div className="mt-4 h-1.5 w-full rounded-full bg-border overflow-hidden" aria-hidden="true">
                 <div className="h-full rounded-full transition-all duration-500" style={{ width: `${completeness}%`, backgroundColor: CRAFT_DARK }} />
@@ -189,8 +198,8 @@ export function CustomDesignForm() {
               )}
               {field(
                 'contact',
-                'Email or WhatsApp',
-                <input id="cm-contact" value={f.contact} onChange={(e) => set('contact', e.target.value)} autoComplete="email" className={`${inputBase} ${errors.contact ? 'border-destructive' : 'border-border'}`} />
+                'Email (or WhatsApp)',
+                <input id="cm-contact" value={f.contact} onChange={(e) => set('contact', e.target.value)} autoComplete="email" placeholder="you@example.com" className={`${inputBase} ${errors.contact ? 'border-destructive' : 'border-border'}`} />
               )}
             </div>
 

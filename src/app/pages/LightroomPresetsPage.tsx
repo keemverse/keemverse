@@ -8,6 +8,7 @@ import UniverseSearch from "../components/UniverseSearch";
 import UniverseTabs from "../components/UniverseTabs";
 import SectionDivider from "../components/SectionDivider";
 import { getCatalogProducts } from "../lib/products";
+import { formatPrice } from "../lib/currency";
 import PresetPopup from "../components/PresetPopup";
 import RestoreDownloadForm from "../components/RestoreDownloadForm";
 import PresetFAQ from "../components/PresetFAQ";
@@ -24,21 +25,6 @@ const categories = [
   "Vintage",
 ];
 
-const formatPrice = (price: any) => {
-  const raw = String(price ?? "").trim();
-
-  const number = parseFloat(
-    raw.replace(/[^0-9.]/g, "")
-  );
-
-  if (isNaN(number)) return raw;
-
-  if (raw.startsWith("$")) {
-    return `$${number.toLocaleString()}`;
-  }
-
-  return `₦${number.toLocaleString()}`;
-};
 
 export default function LightroomPresetsPage() {
   const [query, setQuery] = useState("");

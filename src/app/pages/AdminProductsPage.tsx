@@ -574,7 +574,7 @@ export default function AdminProductsPage() {
               </p>
               <textarea
                 className="w-full rounded-md border border-input bg-input-background px-3 py-2 text-sm font-mono"
-                placeholder={"name: …\nprice: ₦…\ncategory: …\ntags: a, b, c\ndescription: …\nwhy: …\nimage: https://…\nlink: https://…\n---   (separate several items)"}
+                placeholder={"name: …\nprice: ₦… or $…\ncategory: …\ntags: a, b, c\ndescription: …\nwhy: …\nimage: https://…\nlink: https://…\n---   (separate several items)"}
                 rows={4}
                 value={quickText}
                 onChange={(e) => setQuickText(e.target.value)}
@@ -614,7 +614,7 @@ export default function AdminProductsPage() {
 
           <div className="grid grid-cols-2 gap-3">
             <Input placeholder="Name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
-            <Input placeholder="Price (e.g. ₦4,586)" value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} />
+            <Input placeholder="Price (e.g. ₦4,586 or $12)" value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} />
 
             {craft ? (
               <>

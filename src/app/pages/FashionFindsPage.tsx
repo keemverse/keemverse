@@ -9,6 +9,7 @@ import TemuScrollBanner from "../components/TemuScrollBanner";
 import ProductPopup from "../components/ProductPopup";
 import { SocialFooter } from "../components/SocialFooter";
 import { getCatalogProducts } from "../lib/products";
+import { formatPrice } from "../lib/currency";
 import FashionFAQ from "../components/FashionFAQ";
 import SectionDivider from "../components/SectionDivider";
 const categories = [
@@ -21,19 +22,6 @@ const categories = [
   "Tech",
 ];
 
-const formatPrice = (price: any) => {
-  const raw = String(price).trim();
-
-  const number = parseFloat(raw.replace(/[^0-9.]/g, ""));
-
-  if (isNaN(number)) return raw;
-
-  if (raw.startsWith("$")) {
-    return `$${number.toLocaleString()}`;
-  }
-
-  return `₦${number.toLocaleString()}`;
-};
 
 export default function FashionFindsPage() {
   const [query, setQuery] = useState("");

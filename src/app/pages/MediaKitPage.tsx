@@ -5,6 +5,7 @@ import { SocialFooter } from '../components/SocialFooter';
 import SectionDivider from '../components/SectionDivider';
 import { TikTokIcon, PinterestIcon } from '../components/Icons';
 import { getMediaKit, getRateCard } from '../lib/products';
+import { formatPrice } from '../lib/currency';
 import profileImg from '../../imports/keem-profile.jpg';
 
 const PLATFORM_ICON: Record<string, any> = {
@@ -39,12 +40,6 @@ const formatDate = (value: any) => {
   return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 };
 
-const formatPrice = (price: any, currency: any) => {
-  const num = typeof price === 'number' ? price : parseFloat(price);
-  if (isNaN(num)) return String(price ?? '');
-  const symbol = String(currency ?? '').toUpperCase() === 'USD' ? '$' : '₦';
-  return `${symbol}${num.toLocaleString()}`;
-};
 
 function StatCard({ row, index }: { row: any; index: number }) {
   const Icon = PLATFORM_ICON[row.Platform] || Instagram;
@@ -86,13 +81,13 @@ function StatCard({ row, index }: { row: any; index: number }) {
         </div>
       </div>
 
-      {(row['Top Audience Age'] || row['Top Audience Gender'] || row['Top Audience Location']) && (
+      {(row['Top Audience Age'] || row['Top Audience Gender']) && (
         <div className="mt-5 pt-5 border-t border-border">
           <p className="flex items-center gap-1.5 text-[10px] uppercase tracking-[0.15em] text-muted-foreground font-semibold mb-1.5">
             <MapPin className="w-3 h-3" /> Audience
           </p>
           <p className="text-sm text-muted-foreground">
-            {[row['Top Audience Age'], row['Top Audience Gender'], row['Top Audience Location']]
+            {[row['Top Audience Age'], row['Top Audience Gender']]
               .filter(Boolean)
               .join(' · ')}
           </p>
@@ -148,6 +143,10 @@ export default function MediaKitPage() {
             Fashion storyteller and creator — helping people express identity,
             emotion, and atmosphere through style, and helping brands reach an
             engaged, style-forward audience.
+          </p>
+          <p className="text-muted-foreground max-w-md mx-auto leading-relaxed mt-3">
+            Open to brands, studios and creators anywhere in the world. Campaigns,
+            collaborations and custom design are all handled remotely.
           </p>
           {lastUpdated && (
             <p className="text-xs text-muted-foreground mt-5">Stats last updated {formatDate(lastUpdated)}</p>

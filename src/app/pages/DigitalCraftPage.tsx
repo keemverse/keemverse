@@ -32,6 +32,7 @@ const services = [
 
 // Same number the custom design form uses.
 const WHATSAPP_NUMBER = '2349167174194';
+const OWNER_EMAIL = 'akeemtajudeen322@gmail.com';
 const WHATSAPP_HELLO = "Hi Keem, I'd like to talk about a design project.";
 
 const SectionDivider = ({ label }: { label: string }) => <SectionLabel>{label}</SectionLabel>;
@@ -121,11 +122,19 @@ export function DigitalCraftPage() {
                 variant="dark"
                 size="lg"
                 className="w-full sm:w-auto"
-                href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_HELLO)}`}
-                external
+                href={`mailto:${OWNER_EMAIL}?subject=${encodeURIComponent('Design project')}&body=${encodeURIComponent(WHATSAPP_HELLO)}`}
                 icon={<span aria-hidden="true">→</span>}
               >
-                Chat with me on WhatsApp
+                Email me about a project
+              </Btn>
+              <Btn
+                variant="outline"
+                size="lg"
+                className="w-full sm:w-auto"
+                href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_HELLO)}`}
+                external
+              >
+                Or chat on WhatsApp
               </Btn>
             </div>
           </section>

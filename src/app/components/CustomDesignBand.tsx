@@ -11,7 +11,7 @@ import { SAND, CRAFT, FASHION } from '../lib/theme';
 
 const STEPS = [
   { n: '01', title: 'Send a short note', copy: 'Tell me what it is for and what you have in mind. A sentence or two is enough.' },
-  { n: '02', title: 'I read it and reply', copy: "I'll answer you personally on WhatsApp." },
+  { n: '02', title: 'I read it and reply', copy: "I'll answer you personally, by email or WhatsApp, whichever you prefer." },
   { n: '03', title: 'We agree it first', copy: 'We settle what you are getting before I start designing.' },
 ];
 
