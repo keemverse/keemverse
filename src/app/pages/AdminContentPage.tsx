@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { RotateCcw, Check, Lock } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
-import { AdminNav } from "../components/AdminNav";
+import { AdminShell } from "../components/AdminShell";
 import { useAdminAuth } from "../lib/useAdminAuth";
 import { Accent, CONTENT_GROUPS, DEFAULTS, type FieldDef } from "../lib/siteContent";
 
@@ -99,22 +99,16 @@ export default function AdminContentPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
-      <div className="mx-auto max-w-5xl px-5 pb-40 pt-10 md:px-8">
-        <AdminNav />
-
-        <header className="mt-8">
-          <p className="eyebrow text-amber-ink">Admin</p>
-          <h1 className="mt-2 text-display-lg">Site content</h1>
-          <p className="mt-3 max-w-xl text-muted-foreground">
-            Every headline, supporting line and button label you can change without touching code. Product details, prices
-            and photos stay in Products.
-          </p>
-        </header>
-
-        <div className="mt-8 grid gap-8 md:grid-cols-[13rem_1fr]">
+    <AdminShell
+      role="admin"
+      eyebrow="Admin"
+      title="Site content"
+      description="Every headline, supporting line and button label you can change without touching code. Product details, prices and photos stay in Products."
+    >
+      <div>
+        <div className="grid gap-8 md:grid-cols-[13rem_1fr]">
           {/* group switcher: a rail on desktop, scrolling chips on phones */}
-          <nav aria-label="Content groups" className="md:sticky md:top-6 md:self-start">
+          <nav aria-label="Content groups" className="md:sticky md:top-20 md:self-start">
             <ul className="rail md:flex-col md:gap-1">
               {CONTENT_GROUPS.map((g) => {
                 const count = g.fields.filter((f) => dirtyKeys.includes(f.key)).length;
@@ -149,7 +143,7 @@ export default function AdminContentPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-60px" }}
                 transition={{ duration: 0.45 }}
-                className="glass scroll-mt-6 rounded-3xl p-6 md:p-8"
+                className="glass scroll-mt-24 rounded-3xl p-6 md:p-8"
               >
                 <h2 className="text-display-md">{g.title}</h2>
                 <p className="mt-1.5 text-sm text-muted-foreground">{g.description}</p>
@@ -205,7 +199,7 @@ export default function AdminContentPage() {
           </motion.div>
         )}
       </AnimatePresence>
-    </div>
+    </AdminShell>
   );
 }
 

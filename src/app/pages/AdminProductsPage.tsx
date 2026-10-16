@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { parseQuickAdd, type QuickAddItem } from "../lib/quickAdd";
-import { AdminNav } from "../components/AdminNav";
+import { AdminShell } from "../components/AdminShell";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import {
@@ -257,6 +257,8 @@ export default function AdminProductsPage() {
   const [sortKey, setSortKey] = useState<SortKey>("manual");
   const [orderDirty, setOrderDirty] = useState(false);
   const [savingOrder, setSavingOrder] = useState(false);
+  const [q, setQ] = useState("");
+  const [statusFilter, setStatusFilter] = useState<"All" | Product["status"]>("All");
   // "admin" sees everything; "editor" (a helper) only sees status and price.
   // The server enforces this too, so this is only about showing the right screen.
   const [role, setRole] = useState<"admin" | "editor" | null>(null);
@@ -529,33 +531,48 @@ export default function AdminProductsPage() {
   const craft = isCraftItem(form.type);
   const craftDesign = form.type === "design";
 
+  const search = q.trim().toLowerCase();
+  const visibleProducts = sortProducts(products, sortKey).filter(
+    (p) =>
+      (statusFilter === "All" || p.status === statusFilter) &&
+      (!search || String(p.name || "").toLowerCase().includes(search) || String(p.tags || "").toLowerCase().includes(search))
+  );
+  // Arrow reordering only makes sense on the full, unfiltered list.
+  const reorderEnabled = sortKey === "manual" && !search && statusFilter === "All";
+  const statusCounts = {
+    Live: products.filter((p) => p.status === "Live").length,
+    Hidden: products.filter((p) => p.status === "Hidden").length,
+    "Sold Out": products.filter((p) => p.status === "Sold Out").length,
+  };
+
   return (
-    <div className="min-h-screen bg-background text-foreground px-5 md:px-8 py-10">
-      <div className="max-w-5xl mx-auto space-y-8">
-        <AdminNav />
-        <h1 className="font-serif text-2xl">Product Catalog</h1>
-
-        <div className="flex items-center justify-between gap-2 flex-wrap">
-          <div className="flex flex-wrap gap-2">
-            {TYPES.map((t) => (
-              <button
-                key={t}
-                onClick={() => {
-                  setTypeFilter(t);
-                  resetForm(t);
-                  setSortKey("manual");
-                  setOrderDirty(false);
-                }}
-                className={`rounded-full px-4 py-2 text-xs uppercase tracking-[0.15em] border ${
-                  typeFilter === t ? "bg-foreground text-background" : "border-input"
-                }`}
-              >
-                {t.replace("_", " ")}
-              </button>
-            ))}
-          </div>
-
-          <Button onClick={openNew}>+ Add new item</Button>
+    <AdminShell
+      role="admin"
+      eyebrow="Admin"
+      title="Products"
+      description="Add, edit, hide and reorder everything on the shop pages. Changes go live within about a minute."
+      actions={<Button onClick={openNew}>+ Add new item</Button>}
+    >
+      <div className="space-y-6">
+        <div className="rail gap-2">
+          {TYPES.map((t) => (
+            <button
+              key={t}
+              onClick={() => {
+                setTypeFilter(t);
+                resetForm(t);
+                setSortKey("manual");
+                setOrderDirty(false);
+                setQ("");
+                setStatusFilter("All");
+              }}
+              className={`press whitespace-nowrap rounded-full px-4 py-2 text-[13px] font-medium capitalize transition-colors ${
+                typeFilter === t ? "bg-foreground text-background" : "glass text-foreground/80 hover:text-foreground"
+              }`}
+            >
+              {t.replace("_", " ")}
+            </button>
+          ))}
         </div>
 
         {error && <p className="text-sm text-destructive">{error}</p>}
@@ -760,22 +777,65 @@ export default function AdminProductsPage() {
         </Dialog>
 
         {/* List controls */}
-        <div className="flex items-center justify-between gap-2 flex-wrap">
-          <select
-            className="h-9 rounded-md border border-input bg-input-background px-3 text-sm"
-            value={sortKey}
-            onChange={(e) => setSortKey(e.target.value as SortKey)}
-          >
-            {(Object.keys(SORT_LABELS) as SortKey[]).map((k) => (
-              <option key={k} value={k}>{SORT_LABELS[k]}</option>
-            ))}
-          </select>
+        <div className="flex flex-col gap-3">
+          <div className="flex flex-wrap items-center gap-3">
+            <div className="glass flex min-w-0 flex-1 items-center gap-2 rounded-full px-4 py-2.5 sm:max-w-sm">
+              <span aria-hidden="true" className="text-muted-foreground">&#8981;</span>
+              <input
+                value={q}
+                onChange={(e) => setQ(e.target.value)}
+                placeholder={`Search ${typeFilter.replace("_", " ")}...`}
+                aria-label="Search the list"
+                className="min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
+              />
+              {q && (
+                <button type="button" onClick={() => setQ("")} aria-label="Clear search" className="text-muted-foreground hover:text-foreground">
+                  &times;
+                </button>
+              )}
+            </div>
 
-          {sortKey === "manual" && orderDirty && (
-            <Button size="sm" onClick={saveOrder} disabled={savingOrder}>
-              {savingOrder ? "Saving…" : "Save order"}
-            </Button>
-          )}
+            <select
+              className="glass h-10 rounded-full px-4 text-sm outline-none"
+              value={sortKey}
+              onChange={(e) => setSortKey(e.target.value as SortKey)}
+              aria-label="Sort the list"
+            >
+              {(Object.keys(SORT_LABELS) as SortKey[]).map((k) => (
+                <option key={k} value={k}>{SORT_LABELS[k]}</option>
+              ))}
+            </select>
+
+            {sortKey === "manual" && orderDirty && (
+              <Button size="sm" onClick={saveOrder} disabled={savingOrder}>
+                {savingOrder ? "Saving..." : "Save order"}
+              </Button>
+            )}
+          </div>
+
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <div className="rail gap-1.5">
+              {(["All", "Live", "Hidden", "Sold Out"] as const).map((st) => {
+                const active = statusFilter === st;
+                const n = st === "All" ? products.length : statusCounts[st];
+                return (
+                  <button
+                    key={st}
+                    type="button"
+                    onClick={() => setStatusFilter(st)}
+                    className={`press whitespace-nowrap rounded-full px-3.5 py-1.5 text-[12px] font-medium transition-colors ${
+                      active ? "bg-foreground text-background" : "glass text-foreground/80 hover:text-foreground"
+                    }`}
+                  >
+                    {st} <span className={`ml-1 tabular-nums ${active ? "opacity-70" : "text-muted-foreground"}`}>{n}</span>
+                  </button>
+                );
+              })}
+            </div>
+            <p className="text-xs tabular-nums text-muted-foreground" aria-live="polite">
+              {loading ? "" : `${visibleProducts.length} shown`}
+            </p>
+          </div>
         </div>
 
         {typeFilter === "fashion_find" && sortKey === "manual" && (
@@ -786,60 +846,79 @@ export default function AdminProductsPage() {
         )}
 
         {/* List */}
-        <div className="space-y-2">
+        <div className="space-y-2.5">
           {loading ? (
-            <p className="text-sm text-muted-foreground">Loading…</p>
-          ) : products.length === 0 ? (
-            <p className="text-sm text-muted-foreground">No {typeFilter.replace("_", " ")} rows yet.</p>
+            Array.from({ length: 5 }).map((_, i) => (
+              <div key={i} className="skeleton-shimmer h-[4.5rem] rounded-2xl" aria-hidden="true" />
+            ))
+          ) : visibleProducts.length === 0 ? (
+            <div className="glass rounded-2xl px-6 py-12 text-center">
+              <p className="text-lg font-medium">{products.length === 0 ? `No ${typeFilter.replace("_", " ")} items yet` : "Nothing matches that"}</p>
+              <p className="mt-1 text-sm text-muted-foreground">
+                {products.length === 0 ? "Use Add new item to create the first one." : "Try another word or clear the filters."}
+              </p>
+              {products.length > 0 && (
+                <Button className="mt-5" variant="outline" size="sm" onClick={() => { setQ(""); setStatusFilter("All"); }}>
+                  Clear filters
+                </Button>
+              )}
+            </div>
           ) : (
-            sortProducts(products, sortKey).map((p, i) => (
+            visibleProducts.map((p, i) => (
               <div
                 key={p.id}
-                className="flex flex-col gap-3 border border-input rounded-md px-4 py-3 sm:flex-row sm:items-center sm:justify-between"
+                className="glass card-lift flex flex-col gap-3 rounded-2xl px-4 py-3 sm:flex-row sm:items-center sm:justify-between"
               >
-                <div className="flex items-center gap-3 min-w-0">
-                  {sortKey === "manual" && (
-                    <span className="w-5 shrink-0 text-right text-xs text-muted-foreground">{i + 1}</span>
+                <div className="flex min-w-0 items-center gap-3">
+                  {reorderEnabled && (
+                    <span className="w-5 shrink-0 text-right text-xs tabular-nums text-muted-foreground">{i + 1}</span>
                   )}
-                  {sortKey === "manual" && (
-                    <div className="flex flex-col shrink-0">
+                  {reorderEnabled && (
+                    <div className="flex shrink-0 flex-col">
                       <button
                         onClick={() => moveProduct(i, -1)}
                         disabled={i === 0}
                         aria-label="Move up"
-                        className="text-muted-foreground disabled:opacity-30 leading-none px-1"
+                        className="px-1 leading-none text-muted-foreground disabled:opacity-30"
                       >
-                        ▲
+                        &#9650;
                       </button>
                       <button
                         onClick={() => moveProduct(i, 1)}
                         disabled={i === products.length - 1}
                         aria-label="Move down"
-                        className="text-muted-foreground disabled:opacity-30 leading-none px-1"
+                        className="px-1 leading-none text-muted-foreground disabled:opacity-30"
                       >
-                        ▼
+                        &#9660;
                       </button>
                     </div>
                   )}
-                  {(p.image_url || p.thumbnail) && (
-                    <img src={p.image_url || p.thumbnail || ""} alt="" className="w-10 h-10 rounded object-cover shrink-0" />
+                  {(p.image_url || p.thumbnail) ? (
+                    <img src={p.image_url || p.thumbnail || ""} alt="" className="h-12 w-12 shrink-0 rounded-xl object-cover" />
+                  ) : (
+                    <span aria-hidden="true" className="h-12 w-12 shrink-0 rounded-xl bg-muted" />
                   )}
                   <div className="min-w-0">
-                    <p className="truncate">{p.name}</p>
-                    <p className="text-xs text-muted-foreground">
-                      {p.status} · {p.price} {p.featured && "· Featured"}
+                    <p className="truncate font-medium">{p.name}</p>
+                    <p className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-muted-foreground">
+                      <span className="inline-flex items-center gap-1.5">
+                        <span
+                          aria-hidden="true"
+                          className={`h-1.5 w-1.5 rounded-full ${
+                            p.status === "Live" ? "bg-emerald-500" : p.status === "Sold Out" ? "bg-[var(--fashion-display)]" : "bg-muted-foreground/50"
+                          }`}
+                        />
+                        {p.status}
+                      </span>
+                      {p.price && <span className="tabular-nums">{p.price}</span>}
+                      {p.featured && <span className="rounded-full bg-[var(--fashion-display)]/20 px-2 py-0.5 text-[10px] font-semibold text-amber-ink">Featured</span>}
                     </p>
                   </div>
                 </div>
-                <div className="flex gap-2 shrink-0 self-end sm:self-auto">
-                  {sortKey === "manual" && (
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => moveToTop(p.id)}
-                      disabled={i === 0 || savingOrder}
-                    >
-                      ↑ Top
+                <div className="flex shrink-0 gap-2 self-end sm:self-auto">
+                  {reorderEnabled && (
+                    <Button size="sm" variant="outline" onClick={() => moveToTop(p.id)} disabled={i === 0 || savingOrder}>
+                      &uarr; Top
                     </Button>
                   )}
                   <Button size="sm" variant="outline" onClick={() => startEdit(p)}>
@@ -854,13 +933,10 @@ export default function AdminProductsPage() {
           )}
         </div>
       </div>
-    </div>
+    </AdminShell>
   );
 }
 
-// The limited screen for the "editor" login: change a product's status and
-// price, nothing else. No links, images, descriptions, files, ordering,
-// creating or deleting. (The server rejects anything else regardless.)
 function EditorView({
   products,
   typeFilter,
