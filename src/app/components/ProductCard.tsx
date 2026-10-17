@@ -14,7 +14,7 @@ interface ProductCardProps {
   onOpen?: () => void;
 }
 
-// Portrait photo, details underneath. The whole picture opens the quick view;
+// Square (1:1) photo, details underneath. The whole picture opens the quick view;
 // the round arrow goes straight to the shop. Everything is a real button or
 // link, so it works by keyboard and screen reader too.
 export default function ProductCard({
@@ -48,7 +48,7 @@ export default function ProductCard({
             onOpen?.();
           }
         }}
-        className="card-lift relative aspect-[4/5] cursor-pointer overflow-hidden rounded-2xl bg-muted"
+        className="card-lift relative aspect-square cursor-pointer overflow-hidden rounded-2xl bg-muted"
       >
         <ImageWithFallback src={image} alt={name} className="card-img h-full w-full object-cover" />
 

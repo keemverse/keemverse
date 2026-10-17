@@ -48,9 +48,9 @@ export default function ProductPopup({
             transition={{duration:.55, ease:[0.22,1,0.36,1]}}
             className="fixed inset-0 z-50 flex items-center justify-center p-4"
           >
-            <div className="w-full max-w-4xl max-h-[92vh] overflow-hidden rounded-[32px] bg-background shadow-2xl">
-              <div className="grid lg:grid-cols-2 overflow-y-auto max-h-[92vh] pb-28">
-                <div className="relative h-[320px] lg:h-auto lg:aspect-[4/5] overflow-hidden rounded-t-[32px] lg:rounded-l-[32px] lg:rounded-tr-none">
+            <div className="w-full max-w-4xl max-h-[92vh] overflow-y-auto rounded-[32px] bg-background shadow-2xl">
+              <div className="grid lg:grid-cols-2">
+                <div className="relative aspect-square self-start overflow-hidden rounded-t-[32px] lg:sticky lg:top-0 lg:rounded-l-[32px] lg:rounded-tr-none">
                 
 <ImageWithFallback
   src={image}

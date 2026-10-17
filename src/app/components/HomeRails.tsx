@@ -87,13 +87,13 @@ function Rail({
         {loading
           ? Array.from({ length: 5 }).map((_, i) => (
               <div key={i} className="w-40 sm:w-48 md:w-56" aria-hidden="true">
-                <div className="skeleton-shimmer aspect-[4/5] rounded-2xl" />
+                <div className="skeleton-shimmer aspect-square rounded-2xl" />
                 <div className="skeleton-shimmer mt-3 h-3.5 w-3/4 rounded-full" />
               </div>
             ))
           : items.map((it) => (
               <Link key={it.id} to={href} className="group block w-40 sm:w-48 md:w-56" aria-label={it.name}>
-                <div className="card-lift relative aspect-[4/5] overflow-hidden rounded-2xl bg-muted">
+                <div className="card-lift relative aspect-square overflow-hidden rounded-2xl bg-muted">
                   <ImageWithFallback
                     src={it.image}
                     alt={it.name}

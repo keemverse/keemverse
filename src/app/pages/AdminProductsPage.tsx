@@ -675,7 +675,7 @@ export default function AdminProductsPage() {
               <>
                 <Input placeholder="Collection (e.g. Editorial)" value={form.collection} onChange={(e) => setForm({ ...form, collection: e.target.value })} />
                 <Input placeholder="Display order (1, 2, 3…)" value={form.display_order} onChange={(e) => setForm({ ...form, display_order: e.target.value })} />
-                <Input placeholder="Thumbnail image URL" value={form.thumbnail} onChange={(e) => setForm({ ...form, thumbnail: e.target.value })} className="col-span-2" />
+                <Input placeholder="Thumbnail image URL (square, 1:1, looks best)" value={form.thumbnail} onChange={(e) => setForm({ ...form, thumbnail: e.target.value })} className="col-span-2" />
                 <Input placeholder="Banner image URL" value={form.banner} onChange={(e) => setForm({ ...form, banner: e.target.value })} className="col-span-2" />
                 <Input placeholder="Before photo URL (drag-to-compare slider, optional)" value={form.before_image} onChange={(e) => setForm({ ...form, before_image: e.target.value })} />
                 <Input placeholder="After photo URL (same framing as before)" value={form.after_image} onChange={(e) => setForm({ ...form, after_image: e.target.value })} />
@@ -686,7 +686,7 @@ export default function AdminProductsPage() {
               <>
                 <Input placeholder="Source (e.g. Temu)" value={form.source} onChange={(e) => setForm({ ...form, source: e.target.value })} />
                 <Input placeholder="Category" list="category-options" value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} />
-                <Input placeholder="Image URL" value={form.image_url} onChange={(e) => setForm({ ...form, image_url: e.target.value })} className="col-span-2" />
+                <Input placeholder="Image URL (square, 1:1, looks best)" value={form.image_url} onChange={(e) => setForm({ ...form, image_url: e.target.value })} className="col-span-2" />
                 <Input placeholder="Affiliate/checkout link" value={form.affiliate_link} onChange={(e) => setForm({ ...form, affiliate_link: e.target.value })} className="col-span-2" />
                 <Input placeholder="Direct product link" value={form.direct_product_link} onChange={(e) => setForm({ ...form, direct_product_link: e.target.value })} className="col-span-2" />
                 <Input placeholder="Rating" value={form.rating} onChange={(e) => setForm({ ...form, rating: e.target.value })} />
