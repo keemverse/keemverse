@@ -660,6 +660,8 @@
     "thumbnail": "/presets/amber-hour-thumbnail.webp",
     "image_url": "/presets/amber-hour-thumbnail.webp",
     "banner": "/presets/amber-hour-banner.webp",
+    "before_image": "/presets/amber-hour-before.webp",
+    "after_image": "/presets/amber-hour-after.webp",
     "description": "Soft, muted tones with a faint amber tint in the shadows and a desaturated background, so your subject stays the focus — made for lifestyle, outdoor and portrait work. Three depth tiers: Essential (the core tone), Graded (stronger contrast and softer clarity, with light grain and a vignette), Cinematic (faded, lifted blacks, with light grain and a vignette). One-tap, desktop and mobile. Part of the KEEMVERSE Preset Pack, which grows over time. 30-day money-back guarantee.",
     "whats_included": "3 tiers as .xmp files: Essential, Graded, Cinematic",
     "installation": "Lightroom Mobile: open a photo → Presets → ••• → Import Presets → select the .xmp files. Desktop: Develop module → right-click the Presets panel → Import Profiles & Presets.",

@@ -16,6 +16,7 @@ import { useContent } from "../lib/siteContent";
 import PresetPopup from "../components/PresetPopup";
 import RestoreDownloadForm from "../components/RestoreDownloadForm";
 import PresetFAQ from "../components/PresetFAQ";
+import BeforeAfter from "../components/ui/BeforeAfter";
 
 const categories = [
   "All",
@@ -61,6 +62,10 @@ export default function LightroomPresetsPage() {
 
   const featured = presets.filter((preset) => preset.featured === true);
 
+  // The look shown in the auto-playing before/after reveal: the first preset
+  // that has both photos (set them in the admin to change it).
+  const hookPreset = presets.find((preset) => preset.before_image && preset.after_image);
+
   const filteredPresets = presets.filter((preset) => {
     const matchesCategory =
       activeTab === "All" ||
@@ -105,6 +110,40 @@ export default function LightroomPresetsPage() {
             {t("presets.subtitle")}
           </p>
         </motion.section>
+
+        {/* ---------- Before / after reveal (the ad hook) ---------- */}
+
+        {!loading && !filtering && hookPreset && (
+          <motion.section
+            aria-label="Before and after"
+            initial={{ opacity: 0, y: 28, scale: 0.94 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ type: "spring", stiffness: 130, damping: 17, delay: 0.2 }}
+            className="mx-auto mb-14 grid max-w-4xl items-center gap-8 md:mb-16 md:grid-cols-2 md:gap-12"
+          >
+            <BeforeAfter
+              autoplay
+              aspect="aspect-[3/4]"
+              className="mx-auto max-w-[22rem] shadow-2xl md:max-w-none"
+              before={hookPreset.before_image}
+              after={hookPreset.after_image}
+              alt={String(hookPreset.name || "Preset").replace(": Lightroom Preset", "")}
+            />
+
+            <div className="text-center md:text-left">
+              <p className="eyebrow text-amber-ink">{String(hookPreset.name || "").replace(": Lightroom Preset", "")}</p>
+              <h2 className="mt-3 text-display-md">{t("presets.hookTitle")}</h2>
+              <p className="mx-auto mt-3 max-w-sm text-muted-foreground md:mx-0">{t("presets.hookBody")}</p>
+              <button
+                type="button"
+                onClick={() => setSelected(hookPreset)}
+                className="press mt-6 rounded-full bg-foreground px-6 py-3 text-sm font-semibold text-background"
+              >
+                {t("presets.hookCta")}
+              </button>
+            </div>
+          </motion.section>
+        )}
 
         {/* ---------- Search + Collections ---------- */}
 
