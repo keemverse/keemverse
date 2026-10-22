@@ -12,6 +12,10 @@ interface BeforeAfterProps {
   aspect?: string;
   /** Sweeps the divider across by itself when the slider scrolls into view, until the visitor touches it. */
   autoplay?: boolean;
+  /** Called once after a full sweep and pause. When given, the sweep plays once instead of looping (a carousel moves on). */
+  onCycle?: () => void;
+  /** Called the first time the visitor touches, drags or uses the keyboard on the slider. */
+  onTakeOver?: () => void;
 }
 
 const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
@@ -37,14 +41,17 @@ export default function BeforeAfter({
   className = '',
   aspect = 'aspect-[4/3]',
   autoplay = false,
+  onCycle,
+  onTakeOver,
 }: BeforeAfterProps) {
   const reduce = useReducedMotion();
   const play = autoplay && !reduce;
   const ref = useRef<HTMLDivElement>(null);
+  const cycleRef = useRef(onCycle);
+  cycleRef.current = onCycle;
   const inView = useInView(ref, { amount: 0.55 });
   const touched = useRef(false);
   const [pos, setPos] = useState(play ? 100 : 50);
-  const [hint, setHint] = useState(true);
 
   useEffect(() => {
     if (!play || !inView || touched.current) return;
@@ -76,7 +83,12 @@ export default function BeforeAfter({
         await sweep(100, 0, 1.9); // uncover the "after"
         if (stopped || touched.current) break;
         await sweep(0, 50, 0.9); // settle in the middle so both sides show
-        await pause(3600);
+        await pause(3200);
+        if (stopped || touched.current) break;
+        if (cycleRef.current) {
+          cycleRef.current(); // a carousel takes over: play once, then move on
+          break;
+        }
       }
     })();
 
@@ -88,8 +100,8 @@ export default function BeforeAfter({
   }, [play, inView]);
 
   const takeOver = () => {
+    if (!touched.current) onTakeOver?.();
     touched.current = true;
-    setHint(false);
   };
 
   return (
@@ -124,12 +136,6 @@ export default function BeforeAfter({
           </svg>
         </span>
       </div>
-
-      {play && hint && (
-        <span className="pointer-events-none absolute bottom-3 left-1/2 -translate-x-1/2 rounded-full bg-black/60 px-3 py-1.5 text-[11px] font-semibold tracking-wide text-white backdrop-blur">
-          Drag to compare
-        </span>
-      )}
 
       <input
         type="range"

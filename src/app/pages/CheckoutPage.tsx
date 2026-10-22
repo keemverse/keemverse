@@ -42,6 +42,8 @@ export default function CheckoutPage() {
   }
 
   const { item, image, collection } = state;
+  // The pack is the one product that grows: buyers get every future look free.
+  const isPack = /preset pack/i.test(item.name);
   const canPay = name.trim().length > 0 && /\S+@\S+\.\S+/.test(email);
 
   const handlePay = async () => {
@@ -133,7 +135,7 @@ export default function CheckoutPage() {
               className="mt-0.5 w-4 h-4 rounded border-border text-foreground focus:ring-foreground/40"
             />
             <span className="text-sm text-muted-foreground leading-relaxed">
-              Keep me updated on new drops and promotions
+              {isPack ? "Email me when new looks are added to my pack" : "Keep me updated on new drops and promotions"}
             </span>
           </label>
 

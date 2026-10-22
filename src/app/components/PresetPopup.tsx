@@ -170,10 +170,7 @@ export default function PresetPopup({
 
                   {beforeImage && afterImage && (
                     <section className="mt-10">
-                      <h3 className="text-sm font-semibold tracking-[.15em] uppercase text-muted-foreground">
-                        Drag to compare
-                      </h3>
-                      <BeforeAfter className="mx-auto mt-4 max-w-sm" aspect="aspect-[3/4]" before={beforeImage} after={afterImage} alt={name} />
+                      <BeforeAfter className="mx-auto max-w-sm" aspect="aspect-[3/4]" before={beforeImage} after={afterImage} alt={name} />
                     </section>
                   )}
 

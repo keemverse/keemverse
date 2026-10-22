@@ -67,6 +67,12 @@ export default function CheckoutSuccessPage() {
               <p className="text-muted-foreground mb-8">
                 {state.item.name} is ready. A copy of this link has also been sent to your email.
               </p>
+              {/preset pack/i.test(state.item.name) && (
+                <p className="mx-auto -mt-3 mb-8 max-w-sm rounded-2xl border border-border bg-card px-5 py-4 text-sm leading-relaxed text-foreground/80">
+                  New looks are added to your pack free. When one drops, open the Presets page, scroll to
+                  &ldquo;Already purchased?&rdquo; and enter this email to get it.
+                </p>
+              )}
               <a
                 href={downloadUrl!}
                 target="_blank"

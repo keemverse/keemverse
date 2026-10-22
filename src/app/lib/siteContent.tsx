@@ -116,7 +116,6 @@ export const CONTENT_GROUPS: GroupDef[] = [
       { key: 'presets.title', label: 'Title', default: 'Create timeless photographs' },
       { key: 'presets.subtitle', label: 'Subtitle', default: "Edit once, keep the look. Pick a collection and open any preset to see what's inside.", multiline: true },
       { key: 'presets.hookTitle', label: 'Reveal headline', default: 'One tap. Watch it change.' },
-      { key: 'presets.hookBody', label: 'Reveal text', default: 'Same photo, one preset. Drag the line to compare, or open the look to see everything inside.', multiline: true },
       { key: 'presets.hookCta', label: 'Reveal button', default: 'See what is inside' },
     ],
   },

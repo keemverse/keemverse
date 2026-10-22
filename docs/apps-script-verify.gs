@@ -196,9 +196,27 @@ function handleVerify(e) {
     ]);
   }
 
+  // 4b. Supabase move, phase 1: also copy the order to Supabase. Best effort only, so it can
+  //     never block delivery; the Orders sheet stays the source of truth (see roadmap.md).
+  mirrorOrderToSupabase({
+    tx_ref: String(txRef),
+    email: String(buyerEmail || '').toLowerCase(),
+    buyer_name: buyerName || null,
+    item: String(itemId),
+    amount: paid,
+    currency: currency,
+    status: 'Paid',
+    marketing_opt_in: !!optIn,
+  });
+
   var downloadUrl = webAppUrl + '?action=download&token=' + token;
 
   // 5. Email the buyer the tokenised link (also expiry/cap controlled).
+  // Pack buyers are also told how future looks reach them (no accounts: they re-request links).
+  var packNote = String(itemId).indexOf('Preset Pack') > -1
+    ? 'New looks are added to your pack free. When one drops, go to keemverse.com/fashion/presets, ' +
+      'scroll to "Already purchased?" and enter this email to get it.\n\n'
+    : '';
   if (buyerEmail) {
     try {
       MailApp.sendEmail({
@@ -211,6 +229,7 @@ function handleVerify(e) {
           'This link works for ' + DOWNLOAD_EXPIRY_HOURS + ' hours and up to ' +
           MAX_DOWNLOADS + ' downloads. If it expires or you lose your files, ' +
           'reply to this email with your order reference and we\'ll re-send.\n\n' +
+          packNote +
           'Order reference: ' + txRef + '\n\n— KEEMVERSE',
       });
     } catch (mailErr) {
@@ -395,6 +414,7 @@ function handleRestore(e) {
     var body = 'Hi,\n\nHere ' + (links.length === 1 ? 'is your download link' : 'are your download links') +
       ', refreshed and ready:\n\n';
     links.forEach(function (l) { body += l.name + ':\n' + l.url + '\n\n'; });
+    body += 'If you own the Preset Pack, new looks are added to it free. Request your links again any time to get the latest.\n\n';
     body += 'Each link works for ' + DOWNLOAD_EXPIRY_HOURS + ' hours and up to ' + MAX_DOWNLOADS +
       ' downloads. Reply to this email if you need anything else.\n\n— KEEMVERSE';
     try {
@@ -403,6 +423,36 @@ function handleRestore(e) {
   }
 
   return jsonResponse(generic);
+}
+
+/**
+ * Best-effort copy of a paid order into Supabase (table `orders`, see
+ * supabase/migrations/0002_orders.sql). Needs two Script Properties:
+ *   SUPABASE_URL         = https://<your-project>.supabase.co
+ *   SUPABASE_SERVICE_KEY = the project's SECRET key (server-side only; never in the repo)
+ * If either is missing, or Supabase is down, this does nothing and never throws.
+ * `on_conflict=tx_ref` with ignore-duplicates makes retries harmless.
+ */
+function mirrorOrderToSupabase(order) {
+  try {
+    var props = PropertiesService.getScriptProperties();
+    var url = props.getProperty('SUPABASE_URL');
+    var key = props.getProperty('SUPABASE_SERVICE_KEY');
+    if (!url || !key) return;
+    UrlFetchApp.fetch(url + '/rest/v1/orders?on_conflict=tx_ref', {
+      method: 'post',
+      contentType: 'application/json',
+      headers: {
+        apikey: key,
+        Authorization: 'Bearer ' + key,
+        Prefer: 'resolution=ignore-duplicates,return=minimal',
+      },
+      payload: JSON.stringify(order),
+      muteHttpExceptions: true,
+    });
+  } catch (err) {
+    // Intentionally silent: the sheet already has the order.
+  }
 }
 
 function htmlMessage(title, msg) {

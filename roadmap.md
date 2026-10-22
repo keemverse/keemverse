@@ -1,8 +1,8 @@
 KEEMVERSE Roadmap
 
-# Supabase: accounts and orders (PARKED, planned 15 Oct 2026)
+# Supabase: accounts and orders (PHASE 1 STARTED 22 Oct 2026)
 
-**Status:** parked on purpose. Nothing here should be started until a trigger below is true.
+**Status:** Phase 1 started. Project `keemverse` created on the Free plan (West EU, Ireland), signed up with GitHub. `supabase/migrations/0002_orders.sql` (private orders table, RLS on, no policies) and the Apps Script `mirrorOrderToSupabase()` copy step are prepared; the Orders sheet stays the source of truth. Still to do: run the SQL, add the two Script Properties, redeploy the script, then compare Sheet and Supabase for a few weeks. Move to the Pro plan (needs a USD-capable card) before relying on it. The trigger was the Preset Pack promise of free future looks (a buyer library and update list). The original notes below still apply.
 
 ## Why it is parked
 

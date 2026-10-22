@@ -31,6 +31,7 @@ export default function PresetCard({
       <div
         role="button"
         tabIndex={0}
+        aria-label={`${name} (${collection})`}
         onClick={onOpen}
         onKeyDown={(e) => {
           if (e.key === "Enter" || e.key === " ") {
@@ -43,19 +44,14 @@ export default function PresetCard({
         <ImageWithFallback src={image} alt={name} className="card-img h-full w-full object-cover" />
 
         <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/45 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
-
-        {price && (
-          <span className="absolute bottom-3 right-3 rounded-full bg-foreground px-3 py-1.5 text-[12px] font-semibold text-background shadow-lg">
-            {price}
-          </span>
-        )}
       </div>
 
       <div className="px-1 pt-3.5">
         <h3 className="line-clamp-2 text-[15px] font-medium leading-snug text-foreground md:text-base">{name}</h3>
-        <p className="mt-1 text-[12px] text-muted-foreground transition-colors group-hover:text-foreground">
-          Tap to see the look →
-        </p>
+        <div className="mt-1.5 flex items-center justify-between gap-2">
+          {price ? <p className="text-[12px] text-muted-foreground transition-colors group-hover:text-foreground">{price}</p> : <span />}
+          <p className="text-[12px] text-muted-foreground transition-colors group-hover:text-foreground">See the look →</p>
+        </div>
       </div>
     </motion.article>
   );
