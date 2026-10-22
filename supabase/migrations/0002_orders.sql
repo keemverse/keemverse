@@ -48,3 +48,8 @@ with (security_invoker = true) as
 
 revoke all on orders from anon, authenticated;
 revoke all on pack_update_list from anon, authenticated;
+
+-- The server-side key (service_role) is the only thing allowed in. New tables
+-- are not granted to it automatically, so say so explicitly.
+grant select, insert on public.orders to service_role;
+grant select on public.pack_update_list to service_role;
