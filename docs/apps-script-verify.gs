@@ -455,6 +455,41 @@ function mirrorOrderToSupabase(order) {
   }
 }
 
+/**
+ * Run this once by hand (Run button) after adding the two Script Properties.
+ * Unlike mirrorOrderToSupabase it reports what Supabase answered, so a wrong URL
+ * or key shows up in the Execution log. 201 = row saved. Delete the TEST row after.
+ */
+function testMirror() {
+  var props = PropertiesService.getScriptProperties();
+  var url = props.getProperty('SUPABASE_URL');
+  var key = props.getProperty('SUPABASE_SERVICE_KEY');
+  if (!url || !key) {
+    Logger.log('Missing SUPABASE_URL or SUPABASE_SERVICE_KEY in Script Properties.');
+    return;
+  }
+  var res = UrlFetchApp.fetch(url + '/rest/v1/orders?on_conflict=tx_ref', {
+    method: 'post',
+    contentType: 'application/json',
+    headers: {
+      apikey: key,
+      Authorization: 'Bearer ' + key,
+      Prefer: 'resolution=ignore-duplicates,return=minimal',
+    },
+    payload: JSON.stringify({
+      tx_ref: 'TEST-' + new Date().getTime(),
+      email: 'test@example.com',
+      item: 'TEST ROW - delete me',
+      amount: 0,
+      currency: 'USD',
+      status: 'Test',
+      marketing_opt_in: false,
+    }),
+    muteHttpExceptions: true,
+  });
+  Logger.log('Supabase answered ' + res.getResponseCode() + ' ' + res.getContentText());
+}
+
 function htmlMessage(title, msg) {
   var html =
     '<!doctype html><meta charset="utf-8"><title>' + title + '</title>' +
