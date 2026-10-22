@@ -35,9 +35,9 @@ const SHOTS = 3;
 // Used until the live lists arrive, or if they cannot be fetched.
 const FALLBACK_FINDS = [fashionPageHero];
 const FALLBACK_PRESETS = [
-  '/presets/amber-hour-thumbnail.webp',
-  '/presets/cold-frame-thumbnail.webp',
-  '/presets/storm-grey-thumbnail.webp',
+  '/presets/amber-hour-thumbnail-clean.webp',
+  '/presets/cold-frame-thumbnail-clean.webp',
+  '/presets/storm-grey-thumbnail-clean.webp',
 ];
 
 type Door = {
