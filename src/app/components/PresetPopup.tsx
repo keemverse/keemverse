@@ -34,6 +34,10 @@ interface PresetPopupProps {
   tags?: string[];
   rating?: string;
   purchaseLink?: string;
+  /** On the pack: what it saves over buying every look, e.g. "₦2,100". */
+  saveLabel?: string;
+  /** On a single look: offers the pack instead. */
+  upsell?: { packLabel: string; saveLabel: string; onOpen: () => void };
 }
 
 export default function PresetPopup({
@@ -55,6 +59,8 @@ export default function PresetPopup({
   tags = [],
   rating,
   purchaseLink,
+  saveLabel,
+  upsell,
 }: PresetPopupProps) {
   const navigate = useNavigate();
   const region = useRegion();
@@ -156,6 +162,12 @@ export default function PresetPopup({
                       <span className="rounded-full bg-foreground text-background px-4 py-1 text-sm font-semibold">
                         {price}
                       </span>
+
+                      {saveLabel && (
+                        <span className="text-sm font-medium text-amber-ink">
+                          Save {saveLabel} compared with buying each look
+                        </span>
+                      )}
 
                       {rating && (
                         <span className="flex items-center gap-1 text-amber-500 font-semibold">
@@ -281,6 +293,26 @@ export default function PresetPopup({
                         </span>
                       ))}
                     </div>
+                  )}
+
+                  {/* ---------- Pack offer (single looks only) ---------- */}
+
+                  {upsell && (
+                    <section className="mt-10 rounded-2xl border border-border bg-card p-5 md:p-6">
+                      <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-amber-ink">Better value</p>
+                      <h3 className="mt-2 font-serif text-xl text-foreground md:text-2xl">Want every look?</h3>
+                      <p className="mt-2 text-[15px] leading-7 text-muted-foreground">
+                        The Preset Pack has all the looks in one download, and every look added later is free. {upsell.packLabel}, so
+                        you save {upsell.saveLabel} over buying them one by one.
+                      </p>
+                      <button
+                        type="button"
+                        onClick={upsell.onOpen}
+                        className="press mt-4 rounded-full border border-foreground/25 px-5 py-2.5 text-sm font-semibold text-foreground transition-colors hover:bg-foreground hover:text-background"
+                      >
+                        See the pack →
+                      </button>
+                    </section>
                   )}
 
                 </div>

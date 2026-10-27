@@ -156,6 +156,12 @@ export default function CheckoutPage() {
           <p className="text-xs text-muted-foreground text-center">
             Secure checkout via Flutterwave. Your card details never touch our servers.
           </p>
+
+          <ul className="flex flex-col gap-1 border-t border-border pt-4 text-center text-xs text-muted-foreground">
+            <li>Your download link opens on the next page and is also emailed to you</li>
+            <li>Works in Lightroom Mobile and Desktop</li>
+            {isPack && <li>Every look added to the pack later is included free</li>}
+          </ul>
         </div>
       </main>
 

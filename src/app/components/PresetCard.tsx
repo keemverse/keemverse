@@ -7,6 +7,8 @@ interface PresetCardProps {
   image: string;
   collection: string;
   index?: number;
+  /** Small tag over the corner of the photo, e.g. "Save ₦2,100". */
+  badge?: string;
   onOpen?: () => void;
 }
 
@@ -16,6 +18,7 @@ export default function PresetCard({
   image,
   collection,
   index = 0,
+  badge,
   onOpen,
 }: PresetCardProps) {
   const reduce = useReducedMotion();
@@ -42,6 +45,12 @@ export default function PresetCard({
         className="card-lift relative aspect-square cursor-pointer overflow-hidden rounded-2xl bg-muted"
       >
         <ImageWithFallback src={image} alt={name} className="card-img h-full w-full object-cover" />
+
+        {badge && (
+          <span className="pointer-events-none absolute left-2.5 top-2.5 rounded-full bg-foreground px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-background shadow-md">
+            {badge}
+          </span>
+        )}
 
         <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/45 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
       </div>

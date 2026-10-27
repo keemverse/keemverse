@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { motion } from "motion/react";
 
 import SkeletonCard from "../components/SkeletonCard";
@@ -17,6 +18,7 @@ import PresetPopup from "../components/PresetPopup";
 import RestoreDownloadForm from "../components/RestoreDownloadForm";
 import PresetFAQ from "../components/PresetFAQ";
 import PresetReveal from "../components/PresetReveal";
+import { isPack, lookSlug, packDeal } from "../lib/presetDeal";
 
 const categories = [
   "All",
@@ -37,9 +39,26 @@ export default function LightroomPresetsPage() {
   const [query, setQuery] = useState("");
   const [activeTab, setActiveTab] = useState("All");
   const [selected, setSelected] = useState<any | null>(null);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const deepLinked = useRef(false);
 
   const [presets, setPresets] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+
+  // Opening a look puts it in the address (?look=amber-hour), so a story, a bio
+  // link or a message can send someone straight to that look. Closing removes it.
+  const openLook = (preset: any | null) => {
+    setSelected(preset);
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev);
+        if (preset) next.set("look", lookSlug(preset));
+        else next.delete("look");
+        return next;
+      },
+      { replace: true }
+    );
+  };
 
   useEffect(() => {
     getCatalogProducts("preset")
@@ -60,7 +79,17 @@ export default function LightroomPresetsPage() {
       });
   }, []);
 
+  // Once the catalog is in, open the look named in the address, if there is one.
+  useEffect(() => {
+    if (deepLinked.current || presets.length === 0) return;
+    deepLinked.current = true;
+    const wanted = searchParams.get("look")?.toLowerCase();
+    const match = wanted ? presets.find((preset) => lookSlug(preset) === wanted) : null;
+    if (match) setSelected(match);
+  }, [presets, searchParams]);
+
   const featured = presets.filter((preset) => preset.featured === true);
+  const deal = packDeal(presets, region);
 
   // Every preset that has both a before and an after photo takes a turn in the
   // auto-rotating reveal at the top (set the photos in the admin to add one).
@@ -85,6 +114,11 @@ export default function LightroomPresetsPage() {
   const counts: Record<string, number> = {};
   for (const p of presets) counts[p.collection] = (counts[p.collection] ?? 0) + 1;
   const filtering = activeTab !== "All" || query.trim().length > 0;
+
+  // The featured section already shows these, so the list below leaves them out
+  // instead of showing the same card twice.
+  const showingFeatured = !filtering && featured.length > 0;
+  const listed = showingFeatured ? filteredPresets.filter((preset) => preset.featured !== true) : filteredPresets;
 
   return (
     <div
@@ -114,8 +148,16 @@ export default function LightroomPresetsPage() {
         {/* ---------- Before / after reveal (the ad hook) ---------- */}
 
         {!loading && !filtering && revealLooks.length > 0 && (
-          <PresetReveal looks={revealLooks} onOpen={setSelected} />
+          <PresetReveal looks={revealLooks} onOpen={openLook} />
         )}
+
+        {/* ---------- What every purchase includes (all true of the shop today) ---------- */}
+
+        <ul className="mx-auto mb-8 flex max-w-3xl flex-wrap justify-center gap-x-5 gap-y-1.5 text-[12px] text-muted-foreground">
+          <li>Download link by email as soon as you pay</li>
+          <li>Lightroom Mobile and Desktop</li>
+          <li>One payment, no subscription</li>
+        </ul>
 
         {/* ---------- Search + Collections ---------- */}
 
@@ -160,7 +202,8 @@ export default function LightroomPresetsPage() {
     image={preset.thumbnail}
     collection={preset.collection}
     index={index}
-    onOpen={() => setSelected(preset)}
+    badge={deal && isPack(preset) ? `Save ${deal.saveLabel}` : undefined}
+    onOpen={() => openLook(preset)}
   />
 ))}
             </div>
@@ -173,8 +216,8 @@ export default function LightroomPresetsPage() {
         <section className="mb-24">
 
           <SectionDivider
-            label={filtering ? "Results" : "All presets"}
-            meta={loading ? undefined : `${filteredPresets.length} ${filteredPresets.length === 1 ? "look" : "looks"}`}
+            label={filtering ? "Results" : showingFeatured ? "More presets" : "All presets"}
+            meta={loading ? undefined : `${listed.length} ${listed.length === 1 ? "look" : "looks"}`}
           />
 
           {loading ? (
@@ -183,7 +226,7 @@ export default function LightroomPresetsPage() {
                 <SkeletonCard key={index} />
               ))}
             </div>
-          ) : filteredPresets.length === 0 ? (
+          ) : listed.length === 0 ? (
             <EmptyState
               title="No presets match that"
               body="Try another word, or browse a different collection."
@@ -202,7 +245,7 @@ export default function LightroomPresetsPage() {
           ) : (
             <div className="grid grid-cols-2 gap-x-4 gap-y-8 md:grid-cols-3 md:gap-x-6 xl:grid-cols-4">
 
-              {filteredPresets.map((preset, index) => (
+              {listed.map((preset, index) => (
   <PresetCard
     key={preset.id}
     name={preset.name}
@@ -210,7 +253,8 @@ export default function LightroomPresetsPage() {
     image={preset.thumbnail}
     collection={preset.collection}
     index={index}
-    onOpen={() => setSelected(preset)}
+    badge={deal && isPack(preset) ? `Save ${deal.saveLabel}` : undefined}
+    onOpen={() => openLook(preset)}
   />
 ))}
 
@@ -222,7 +266,7 @@ export default function LightroomPresetsPage() {
         {/* ---------- Restore Download ---------- */}
 
         <section className="mb-24">
-          <SectionDivider label="Already Purchased?" />
+          <SectionDivider label="Your downloads" />
           <RestoreDownloadForm />
         </section>
 
@@ -235,7 +279,7 @@ export default function LightroomPresetsPage() {
         {selected && (
           <PresetPopup
             open={true}
-            onClose={() => setSelected(null)}
+            onClose={() => openLook(null)}
             name={selected.name}
             price={formatPrice(selected.price, region)}
             rawPrice={selected.price}
@@ -258,6 +302,12 @@ export default function LightroomPresetsPage() {
                 : []
             }
             purchaseLink={selected.purchase_link}
+            saveLabel={deal && isPack(selected) ? deal.saveLabel : undefined}
+            upsell={
+              deal && !isPack(selected)
+                ? { packLabel: deal.packLabel, saveLabel: deal.saveLabel, onOpen: () => openLook(deal.pack) }
+                : undefined
+            }
           />
         )}
 

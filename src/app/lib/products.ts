@@ -32,6 +32,18 @@ export async function getRateCard() {
 type CatalogType = "fashion_find" | "preset" | "design_bundle" | "design" | "design_pack";
 
 export async function getCatalogProducts(type: CatalogType) {
+  // index.html starts the presets download before the scripts load when the page
+  // is opened directly. Use it once; any failure falls through to a normal request.
+  const early = type === "preset" ? (window as any).__kvPresets : undefined;
+  if (early) {
+    (window as any).__kvPresets = undefined;
+    try {
+      return await early;
+    } catch {
+      /* fall back to the request below */
+    }
+  }
+
   const response = await fetch(`/api/products?type=${type}`);
 
   if (!response.ok) {

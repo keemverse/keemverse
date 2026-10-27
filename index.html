@@ -29,6 +29,33 @@
       <link rel="preload" href="/fonts/Satoshi-Variable.woff2" as="font" type="font/woff2" crossorigin />
       <style>html, body { height: 100%; margin: 0; } #root { height: 100%; }</style>
 
+      <!-- Presets page, opened straight from a link: start downloading the catalog now instead of
+           after the scripts have loaded, and preload the first before/after photos as soon as their
+           names are known. The page picks the early download up (lib/products.ts) and falls back to
+           its own request if this one fails. -->
+      <script>
+        if (location.pathname.indexOf('/fashion/presets') === 0) {
+          var early = fetch('/api/products?type=preset').then(function (r) {
+            if (!r.ok) throw new Error('catalog');
+            return r.json();
+          });
+          window.__kvPresets = early;
+          early.then(function (items) {
+            var shown = items
+              .filter(function (i) { return i.before_image && i.after_image; })
+              .sort(function (a, b) { return (a.display_order == null ? 999 : a.display_order) - (b.display_order == null ? 999 : b.display_order); })[0];
+            if (!shown) return;
+            [shown.before_image, shown.after_image].forEach(function (href) {
+              var l = document.createElement('link');
+              l.rel = 'preload';
+              l.as = 'image';
+              l.href = href;
+              document.head.appendChild(l);
+            });
+          }).catch(function () {});
+        }
+      </script>
+
       <!-- Vercel Web Analytics: page views and referrers (TikTok vs Instagram vs direct).
            Loaded only on the live domain, so local work and preview URLs never count.
            Needs Web Analytics switched on in the Vercel project (Analytics tab). -->
