@@ -70,7 +70,13 @@ export default function LightroomPresetsPage() {
     const wanted = searchParams.get("look")?.toLowerCase();
     if (!wanted || presets.length === 0) return;
     const match = presets.find((preset) => lookSlug(preset) === wanted);
-    if (match) navigate(`/fashion/presets/${lookSlug(match)}`, { replace: true });
+    if (match) {
+      // Keep the tracking parameters (utm_source and friends) so the visit is still counted.
+      const rest = new URLSearchParams(searchParams);
+      rest.delete("look");
+      const qs = rest.toString();
+      navigate(`/fashion/presets/${lookSlug(match)}${qs ? `?${qs}` : ""}`, { replace: true });
+    }
   }, [presets, searchParams, navigate]);
 
   const featured = presets.filter((preset) => preset.featured === true);
