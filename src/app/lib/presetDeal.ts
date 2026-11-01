@@ -24,6 +24,10 @@ export type PackDeal = {
   pack: any;
   /** "₦2,100" or "$2": what the pack saves over buying every single look. */
   saveLabel: string;
+  /** "₦16,000" or "$12": what every single look costs added together. */
+  separateLabel: string;
+  /** How many single looks the pack holds. */
+  lookCount: number;
   /** "₦9,900" or "$7": what the pack costs this visitor. */
   packLabel: string;
 };
@@ -49,5 +53,5 @@ export function packDeal(presets: any[], region: Region | null): PackDeal | null
   if (save <= 0) return null;
 
   const money = (n: number) => (packPrice.currency === 'USD' ? `$${n.toLocaleString()}` : `₦${n.toLocaleString()}`);
-  return { pack, saveLabel: money(save), packLabel: money(packPrice.amount) };
+  return { pack, saveLabel: money(save), packLabel: money(packPrice.amount), separateLabel: money(total), lookCount: singles.length };
 }

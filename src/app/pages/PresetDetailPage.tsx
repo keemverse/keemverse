@@ -18,6 +18,78 @@ const splitList = (text?: string) =>
     .map((s) => s.trim())
     .filter(Boolean);
 
+const TIERS = ["Essential", "Graded", "Cinematic"];
+
+/** The pack, opened up: every look with its three tiers, what it adds up to, and the free-future-looks promise. */
+function PackInside({ looks, deal, onOpen }: { looks: any[]; deal: ReturnType<typeof packDeal>; onOpen: (p: any) => void }) {
+  const count = looks.length;
+  return (
+    <section className="mt-9" aria-label="Inside the pack">
+      <dl className="grid grid-cols-3 gap-px overflow-hidden rounded-2xl border border-border bg-border text-center">
+        {[
+          [String(count), "looks"],
+          [String(count * TIERS.length), "presets"],
+          [String(TIERS.length), "tiers each"],
+        ].map(([n, l]) => (
+          <div key={l} className="bg-card px-2 py-4">
+            <dt className="font-serif text-3xl leading-none text-foreground">{n}</dt>
+            <dd className="mt-1.5 text-[11px] uppercase tracking-[0.16em] text-muted-foreground">{l}</dd>
+          </div>
+        ))}
+      </dl>
+
+      <ul className="mt-4 space-y-3">
+        {looks.map((p) => {
+          const tags = String(p.tags || "").split(",").map((t) => t.trim()).filter(Boolean).slice(0, 3).join(" · ");
+          return (
+            <li key={p.id}>
+              <button
+                type="button"
+                onClick={() => onOpen(p)}
+                className="press flex w-full items-center gap-4 rounded-2xl border border-border bg-card p-3 text-left transition-colors hover:border-foreground/30"
+              >
+                <ImageWithFallback src={p.thumbnail} alt="" className="h-16 w-16 shrink-0 rounded-xl object-cover" />
+                <span className="min-w-0 flex-1">
+                  <span className="block truncate text-[15px] font-semibold text-foreground">{plainName(p.name)}</span>
+                  <span className="mt-0.5 block truncate text-[12px] capitalize text-muted-foreground">{tags}</span>
+                  <span className="mt-2 flex flex-wrap gap-1.5">
+                    {TIERS.map((t) => (
+                      <span key={t} className="rounded-full bg-muted px-2 py-0.5 text-[10px] font-medium uppercase tracking-[0.1em] text-foreground/75">
+                        {t}
+                      </span>
+                    ))}
+                  </span>
+                </span>
+                <span aria-hidden="true" className="pr-1 text-muted-foreground">→</span>
+              </button>
+            </li>
+          );
+        })}
+
+        <li className="flex items-center gap-4 rounded-2xl border border-dashed border-amber-ink/50 p-3">
+          <span aria-hidden="true" className="flex h-16 w-16 shrink-0 items-center justify-center rounded-xl bg-muted font-serif text-3xl text-amber-ink">+</span>
+          <span className="min-w-0">
+            <span className="block text-[15px] font-semibold text-foreground">The next look</span>
+            <span className="mt-0.5 block text-[12px] text-muted-foreground">Added to the pack free, for everyone who owns it.</span>
+          </span>
+        </li>
+      </ul>
+
+      {deal && (
+        <div className="mt-5 rounded-2xl bg-foreground px-5 py-4 text-background">
+          <p className="text-[12px] uppercase tracking-[0.16em] opacity-70">Bought one by one</p>
+          <p className="mt-1 flex items-baseline gap-3">
+            <span className="text-lg opacity-60 line-through">{deal.separateLabel}</span>
+            <span className="text-2xl font-semibold">{deal.packLabel}</span>
+            <span className="ml-auto rounded-full bg-background px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-foreground">Save {deal.saveLabel}</span>
+          </p>
+          <p className="mt-2 text-[12px] leading-5 opacity-75">The pack grows with every new look, and the price goes up with it. Buy now and every future look is already yours.</p>
+        </div>
+      )}
+    </section>
+  );
+}
+
 /** One collapsible block. Open by default for the parts people read first. */
 function Section({ title, defaultOpen = false, children }: { title: string; defaultOpen?: boolean; children: React.ReactNode }) {
   return (
@@ -203,6 +275,11 @@ export default function PresetDetailPage() {
               <li className="flex items-start gap-2"><span aria-hidden="true" className="text-amber-ink">✓</span>One payment, no subscription</li>
             </ul>
 
+            {/* The pack, opened up */}
+            {pack && others.length > 0 && (
+              <PackInside looks={others} deal={deal} onOpen={(p) => navigate(`/fashion/presets/${lookSlug(p)}`)} />
+            )}
+
             {/* Pack offer for a single look */}
             {!pack && deal && (
               <Link
@@ -240,9 +317,9 @@ export default function PresetDetailPage() {
         </div>
 
         {/* ---------- Other looks ---------- */}
-        {others.length > 0 && (
+        {!pack && others.length > 0 && (
           <section className="mt-20">
-            <h2 className="mb-6 text-display-md">{pack ? "The looks inside" : "More looks"}</h2>
+            <h2 className="mb-6 text-display-md">More looks</h2>
             <div className="grid grid-cols-2 gap-x-4 gap-y-8 md:grid-cols-3 md:gap-x-6 xl:grid-cols-4">
               {others.map((p, i) => (
                 <PresetCard
