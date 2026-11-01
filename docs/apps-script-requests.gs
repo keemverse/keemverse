@@ -48,6 +48,8 @@ var REQUEST_STATUSES = ['New', 'Replied', 'Quoted', 'Won', 'Closed'];
 function doPost(e) {
   var req = parseRequestPost(e);
   if (req) return handleCustomRequest(req);
+  var rd = parseAdminRead(e);
+  if (rd) return handleAdminRead(rd);
   return jsonResponse({ ok: false, error: 'Unknown request.' });
 }
 
@@ -143,3 +145,63 @@ function handleCustomRequest(p) {
 
   return jsonResponse({ ok: true, ref: ref });
 }
+
+// ===== Console read access (Orders, Downloads, Custom Requests) =====
+// The admin console asks for these tabs through /api/admin-data. The request
+// carries the same shared secret as the custom-requests form (REQUESTS_SECRET).
+// Download tokens are never sent: a token is a working download link.
+var ADMIN_READ_SHEETS = ['Orders', 'Downloads', 'Custom Requests'];
+var ADMIN_READ_HIDE = { 'Token': true };
+var ADMIN_READ_MAX = 500;
+
+function parseAdminRead(e) {
+  try {
+    var p = JSON.parse(e.postData.contents);
+    return p && p.action === 'admin_read' ? p : null;
+  } catch (err) {
+    return null;
+  }
+}
+
+function handleAdminRead(p) {
+  var secret = PropertiesService.getScriptProperties().getProperty('REQUESTS_SECRET');
+  if (!secret || p.secret !== secret) return jsonResponse({ ok: false, error: 'Not authorised.' });
+  if (ADMIN_READ_SHEETS.indexOf(p.sheet) === -1) return jsonResponse({ ok: false, error: 'Unknown sheet.' });
+
+  var sh = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(p.sheet);
+  if (!sh || sh.getLastRow() < 2) return jsonResponse({ ok: true, sheet: p.sheet, headers: [], rows: [], total: 0 });
+
+  var tz = Session.getScriptTimeZone();
+  var values = sh.getDataRange().getValues();
+  var head = values[0];
+  var keep = [];
+  for (var c = 0; c < head.length; c++) {
+    var h = String(head[c] || '').trim();
+    if (h && !ADMIN_READ_HIDE[h]) keep.push({ i: c, name: h });
+  }
+
+  var out = [];
+  for (var r = 1; r < values.length; r++) {
+    var row = values[r];
+    var any = false;
+    var obj = { _row: r + 1 };
+    for (var k = 0; k < keep.length; k++) {
+      var v = row[keep[k].i];
+      if (v instanceof Date) v = Utilities.formatDate(v, tz, "yyyy-MM-dd'T'HH:mm:ss");
+      if (v !== '' && v !== null) any = true;
+      obj[keep[k].name] = v;
+    }
+    if (any) out.push(obj);
+  }
+
+  var total = out.length;
+  if (total > ADMIN_READ_MAX) out = out.slice(total - ADMIN_READ_MAX);
+  return jsonResponse({
+    ok: true,
+    sheet: p.sheet,
+    headers: keep.map(function (x) { return x.name; }),
+    rows: out,
+    total: total,
+  });
+}
+// ===== end console read access =====
