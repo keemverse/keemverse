@@ -6,8 +6,10 @@ import { AdminShell } from "../components/AdminShell";
 import { useAdminAuth } from "../lib/useAdminAuth";
 
 // Orders, download links and custom-design requests, read from the private
-// sheet tabs through /api/admin-data. Read-only for now. Admin login only: the
-// editor login cannot open this page, and the API refuses it too.
+// sheet tabs through /api/admin-data. Two things can be changed from here:
+// switching an order's download links off or on, and a request's status and
+// note. Admin login only: the editor login cannot open this page, and the API
+// refuses it too.
 
 type Sheet = "Orders" | "Downloads" | "Custom Requests";
 type Row = Record<string, any>;
@@ -35,6 +37,22 @@ const asTime = (v: unknown): number => {
   if (uk) return new Date(Number(uk[3]), Number(uk[2]) - 1, Number(uk[1]), Number(uk[4] || 0), Number(uk[5] || 0)).getTime();
   return 0;
 };
+
+const STATUSES = ["New", "Replied", "Quoted", "Won", "Closed"];
+
+async function send(secret: string, body: Record<string, unknown>): Promise<string | null> {
+  try {
+    const res = await fetch("/api/admin-data", {
+      method: "POST",
+      headers: { "x-admin-secret": secret, "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
+    const out = await res.json().catch(() => ({}));
+    return res.ok ? null : out.error || `Could not save (${res.status})`;
+  } catch (e: any) {
+    return e.message || "Could not save";
+  }
+}
 
 const money = (n: number, cur: string) => (cur === "USD" ? `$${n.toLocaleString()}` : `₦${n.toLocaleString()}`);
 const yes = (v: unknown) => /^(yes|true)$/i.test(String(v ?? "").trim());
@@ -126,8 +144,23 @@ const waLink = (contact: string) => {
   return digits.length >= 8 && !/@/.test(contact) ? `https://wa.me/${digits}` : "";
 };
 
-function Requests({ rows, q }: { rows: Row[]; q: string }) {
+function Requests({ rows, q, secret, onChanged }: { rows: Row[]; q: string; secret: string; onChanged: () => void }) {
   const [status, setStatus] = useState("All");
+  const [notes, setNotes] = useState<Record<string, string>>({});
+  const [busy, setBusy] = useState("");
+  const [saved, setSaved] = useState("");
+  const [err, setErr] = useState("");
+
+  const save = async (ref: string, patch: { status?: string; note?: string }) => {
+    setBusy(ref);
+    setErr("");
+    const problem = await send(secret, { op: "request_update", ref, ...patch });
+    setBusy("");
+    if (problem) return setErr(`${ref}: ${problem}`);
+    setSaved(ref);
+    setTimeout(() => setSaved((x) => (x === ref ? "" : x)), 2000);
+    onChanged();
+  };
   const sorted = useMemo(() => [...rows].sort((a, b) => asTime(b["Timestamp"]) - asTime(a["Timestamp"])), [rows]);
   const statuses = ["All", ...Array.from(new Set(rows.map((r) => String(r["Status"] || "New"))))];
   const shown = sorted.filter((r) => (status === "All" || String(r["Status"] || "New") === status) && (!q || JSON.stringify(r).toLowerCase().includes(q)));
@@ -153,9 +186,12 @@ function Requests({ rows, q }: { rows: Row[]; q: string }) {
         ))}
       </div>
 
+      {err && <p className="mt-4 rounded-xl border border-destructive/40 bg-destructive/10 px-4 py-3 text-sm">{err}</p>}
+
       <ul className="mt-5 space-y-4">
         {shown.map((r, i) => {
           const contact = String(r["Contact"] || "");
+          const ref = String(r["Ref"] || "");
           const wa = waLink(contact);
           const st = String(r["Status"] || "New");
           return (
@@ -186,7 +222,43 @@ function Requests({ rows, q }: { rows: Row[]; q: string }) {
               </p>
               <p className="mt-3 whitespace-pre-line text-[15px] leading-7 text-foreground/85">{String(r["What they want"] || "")}</p>
               {r["Examples"] && <p className="mt-2 break-words text-sm text-muted-foreground">Examples: {String(r["Examples"])}</p>}
-              {r["Notes (yours)"] && <p className="mt-2 rounded-lg bg-muted px-3 py-2 text-sm">Your note: {String(r["Notes (yours)"])}</p>}
+              <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-border pt-4">
+                <label className="text-xs text-muted-foreground" htmlFor={`st-${ref}`}>
+                  Status
+                </label>
+                <select
+                  id={`st-${ref}`}
+                  className="h-9 rounded-md border border-input bg-input-background px-3 text-sm"
+                  value={st}
+                  disabled={busy === ref}
+                  onChange={(e) => void save(ref, { status: e.target.value })}
+                >
+                  {STATUSES.map((x) => (
+                    <option key={x} value={x}>
+                      {x}
+                    </option>
+                  ))}
+                </select>
+                {saved === ref && <span className="text-xs text-emerald-600 dark:text-emerald-400">Saved ✓</span>}
+              </div>
+              <textarea
+                aria-label={`Your note for ${ref}`}
+                className="mt-3 w-full rounded-md border border-input bg-input-background px-3 py-2 text-sm"
+                rows={2}
+                maxLength={500}
+                placeholder="Your note (only you see this)"
+                value={notes[ref] ?? String(r["Notes (yours)"] || "")}
+                onChange={(e) => setNotes((n) => ({ ...n, [ref]: e.target.value }))}
+              />
+              <Button
+                size="sm"
+                variant="outline"
+                className="mt-2"
+                disabled={busy === ref || notes[ref] === undefined || notes[ref] === String(r["Notes (yours)"] || "")}
+                onClick={() => void save(ref, { note: notes[ref] })}
+              >
+                {busy === ref ? "Saving…" : "Save note"}
+              </Button>
             </li>
           );
         })}
@@ -202,7 +274,22 @@ function Requests({ rows, q }: { rows: Row[]; q: string }) {
 
 /* ------------------------------ Downloads ------------------------------ */
 
-function Downloads({ rows, q }: { rows: Row[]; q: string }) {
+function Downloads({ rows, q, secret, onChanged }: { rows: Row[]; q: string; secret: string; onChanged: () => void }) {
+  const [confirm, setConfirm] = useState("");
+  const [busy, setBusy] = useState("");
+  const [err, setErr] = useState("");
+
+  const setRevoked = async (r: Row, revoked: boolean) => {
+    const key = `${r["Order Ref"]}|${r["Item"]}`;
+    setBusy(key);
+    setErr("");
+    const problem = await send(secret, { op: "set_revoked", orderRef: String(r["Order Ref"] || ""), item: String(r["Item"] || ""), revoked });
+    setBusy("");
+    setConfirm("");
+    if (problem) return setErr(problem);
+    onChanged();
+  };
+
   const sorted = useMemo(() => [...rows].sort((a, b) => asTime(b["Issued"]) - asTime(a["Issued"])), [rows]);
   const shown = sorted.filter((r) => !q || JSON.stringify(r).toLowerCase().includes(q));
   const now = Date.now();
@@ -216,8 +303,9 @@ function Downloads({ rows, q }: { rows: Row[]; q: string }) {
         <Stat label="Downloads so far" value={String(used)} />
         <Stat label="Switched off" value={String(revoked)} sub="revoked links" />
       </div>
+      {err && <p className="mt-4 rounded-xl border border-destructive/40 bg-destructive/10 px-4 py-3 text-sm">{err}</p>}
       <div className="mt-6 overflow-x-auto rounded-2xl border border-border">
-        <table className="w-full min-w-[680px] text-left text-sm">
+        <table className="w-full min-w-[820px] text-left text-sm">
           <thead className="bg-muted/60 text-xs uppercase tracking-[0.12em] text-muted-foreground">
             <tr>
               <th className="px-4 py-3 font-medium">Issued</th>
@@ -225,6 +313,7 @@ function Downloads({ rows, q }: { rows: Row[]; q: string }) {
               <th className="px-4 py-3 font-medium">Item</th>
               <th className="px-4 py-3 font-medium">Used</th>
               <th className="px-4 py-3 font-medium">State</th>
+              <th className="px-4 py-3 text-right font-medium">Links</th>
             </tr>
           </thead>
           <tbody>
@@ -244,12 +333,44 @@ function Downloads({ rows, q }: { rows: Row[]; q: string }) {
                   <td className="px-4 py-3">
                     <Chip tone={state[1] as any}>{state[0]}</Chip>
                   </td>
+                  <td className="whitespace-nowrap px-4 py-3 text-right">
+                    {(() => {
+                      const key = `${r["Order Ref"]}|${r["Item"]}`;
+                      const isRevoked = yes(r["Revoked"]);
+                      if (busy === key) return <span className="text-xs text-muted-foreground">Saving…</span>;
+                      if (isRevoked) {
+                        return (
+                          <Button size="sm" variant="outline" onClick={() => void setRevoked(r, false)}>
+                            Switch back on
+                          </Button>
+                        );
+                      }
+                      if (confirm === key) {
+                        return (
+                          <span className="inline-flex items-center gap-2">
+                            <span className="text-xs text-muted-foreground">Stop all links for this order?</span>
+                            <Button size="sm" variant="destructive" onClick={() => void setRevoked(r, true)}>
+                              Yes, switch off
+                            </Button>
+                            <Button size="sm" variant="outline" onClick={() => setConfirm("")}>
+                              No
+                            </Button>
+                          </span>
+                        );
+                      }
+                      return (
+                        <Button size="sm" variant="outline" onClick={() => setConfirm(key)}>
+                          Switch off
+                        </Button>
+                      );
+                    })()}
+                  </td>
                 </tr>
               );
             })}
             {shown.length === 0 && (
               <tr>
-                <td colSpan={5} className="px-4 py-10 text-center text-muted-foreground">
+                <td colSpan={6} className="px-4 py-10 text-center text-muted-foreground">
                   {rows.length === 0 ? "No links issued yet." : "Nothing matches that search."}
                 </td>
               </tr>
@@ -257,7 +378,7 @@ function Downloads({ rows, q }: { rows: Row[]; q: string }) {
           </tbody>
         </table>
       </div>
-      <p className="mt-3 text-xs text-muted-foreground">Links expire after 72 hours or 3 downloads. A buyer can ask for new ones on the Presets page. Revoking from here comes next.</p>
+      <p className="mt-3 text-xs text-muted-foreground">Links expire after 72 hours or 3 downloads. A buyer can ask for new ones on the Presets page. “Switch off” stops every link for that order and also stops new ones being issued for it; “Switch back on” undoes it.</p>
     </>
   );
 }
@@ -328,7 +449,7 @@ export default function AdminBusinessPage() {
       role="admin"
       eyebrow="Admin"
       title="Business"
-      description="Orders, custom design requests and download links, read from your private sheet. Read-only for now."
+      description="Orders, custom design requests and download links, from your private sheet. You can switch download links off and update a request's status and note here."
       actions={
         <Button variant="outline" onClick={() => load(tab)} disabled={loading}>
           {loading ? "Refreshing…" : "Refresh"}
@@ -365,9 +486,9 @@ export default function AdminBusinessPage() {
         ) : tab === "Orders" ? (
           <Orders rows={rows} q={query} />
         ) : tab === "Custom Requests" ? (
-          <Requests rows={rows} q={query} />
+          <Requests rows={rows} q={query} secret={secret} onChanged={() => void load("Custom Requests")} />
         ) : (
-          <Downloads rows={rows} q={query} />
+          <Downloads rows={rows} q={query} secret={secret} onChanged={() => void load("Downloads")} />
         )}
       </div>
     </AdminShell>

@@ -50,6 +50,8 @@ function doPost(e) {
   if (req) return handleCustomRequest(req);
   var rd = parseAdminRead(e);
   if (rd) return handleAdminRead(rd);
+  var wr = parseAdminWrite(e);
+  if (wr) return handleAdminWrite(wr);
   return jsonResponse({ ok: false, error: 'Unknown request.' });
 }
 
@@ -205,3 +207,80 @@ function handleAdminRead(p) {
   });
 }
 // ===== end console read access =====
+
+// ===== Console write access (two narrow actions) =====
+// 1. set_revoked: switch every download link of one order + item off (or back on).
+//    A revoked link stops working and "Already purchased?" will not mint a new one.
+// 2. request_update: change a custom request's status and your note, found by its Ref.
+// Nothing else can be written from the console. Same shared secret as the read access.
+function parseAdminWrite(e) {
+  try {
+    var p = JSON.parse(e.postData.contents);
+    return p && p.action === 'admin_write' ? p : null;
+  } catch (err) {
+    return null;
+  }
+}
+
+function colIndex(headers, name) {
+  for (var i = 0; i < headers.length; i++) if (String(headers[i]).trim() === name) return i;
+  return -1;
+}
+
+function handleAdminWrite(p) {
+  var secret = PropertiesService.getScriptProperties().getProperty('REQUESTS_SECRET');
+  if (!secret || p.secret !== secret) return jsonResponse({ ok: false, error: 'Not authorised.' });
+
+  var lock = LockService.getScriptLock();
+  lock.waitLock(10000);
+  try {
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+
+    if (p.op === 'set_revoked') {
+      var orderRef = String(p.orderRef || '');
+      var item = String(p.item || '');
+      if (!orderRef || !item) return jsonResponse({ ok: false, error: 'Missing order or item.' });
+      var dl = ss.getSheetByName('Downloads');
+      if (!dl) return jsonResponse({ ok: false, error: 'No Downloads tab.' });
+      var dv = dl.getDataRange().getValues();
+      var cRef = colIndex(dv[0], 'Order Ref'), cItem = colIndex(dv[0], 'Item'), cRev = colIndex(dv[0], 'Revoked');
+      if (cRef < 0 || cItem < 0 || cRev < 0) return jsonResponse({ ok: false, error: 'Downloads tab columns not found.' });
+      var changed = 0;
+      for (var r = 1; r < dv.length; r++) {
+        if (String(dv[r][cRef]) === orderRef && String(dv[r][cItem]) === item) {
+          dl.getRange(r + 1, cRev + 1).setValue(p.revoked ? 'TRUE' : 'FALSE');
+          changed++;
+        }
+      }
+      if (changed === 0) return jsonResponse({ ok: false, error: 'No matching links found.' });
+      return jsonResponse({ ok: true, changed: changed, revoked: !!p.revoked });
+    }
+
+    if (p.op === 'request_update') {
+      var ref = String(p.ref || '');
+      if (!ref) return jsonResponse({ ok: false, error: 'Missing request ref.' });
+      var cr = ss.getSheetByName(REQUESTS_TAB);
+      if (!cr) return jsonResponse({ ok: false, error: 'No Custom Requests tab.' });
+      var rv = cr.getDataRange().getValues();
+      var kRef = colIndex(rv[0], 'Ref'), kStatus = colIndex(rv[0], 'Status'), kNote = colIndex(rv[0], 'Notes (yours)');
+      if (kRef < 0 || kStatus < 0 || kNote < 0) return jsonResponse({ ok: false, error: 'Custom Requests columns not found.' });
+      for (var q = 1; q < rv.length; q++) {
+        if (String(rv[q][kRef]) !== ref) continue;
+        if (p.status !== undefined) {
+          if (REQUEST_STATUSES.indexOf(p.status) === -1) return jsonResponse({ ok: false, error: 'Unknown status.' });
+          cr.getRange(q + 1, kStatus + 1).setValue(p.status);
+        }
+        if (p.note !== undefined) {
+          cr.getRange(q + 1, kNote + 1).setValue(safeCell(String(p.note).slice(0, 500)));
+        }
+        return jsonResponse({ ok: true, ref: ref });
+      }
+      return jsonResponse({ ok: false, error: 'Request not found.' });
+    }
+
+    return jsonResponse({ ok: false, error: 'Unknown action.' });
+  } finally {
+    lock.releaseLock();
+  }
+}
+// ===== end console write access =====
