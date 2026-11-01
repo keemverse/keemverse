@@ -147,8 +147,13 @@ export default function PresetDetailPage() {
             {hasCompare ? (
               <BeforeAfter autoplay aspect="aspect-[3/4]" className="mx-auto max-w-md shadow-2xl lg:max-w-none" before={preset.before_image} after={preset.after_image} alt={name} />
             ) : (
-              <div className="overflow-hidden rounded-3xl bg-muted">
-                <ImageWithFallback src={preset.banner || preset.thumbnail} alt={name} className="aspect-[4/3] w-full object-cover" />
+              // No before/after photos (the pack): show the square image made for it, uncropped.
+              <div className="mx-auto max-w-md overflow-hidden rounded-3xl bg-muted shadow-2xl lg:max-w-none">
+                <ImageWithFallback
+                  src={preset.thumbnail || preset.banner}
+                  alt={name}
+                  className={`w-full object-cover ${preset.thumbnail ? "aspect-square" : "aspect-video"}`}
+                />
               </div>
             )}
 
