@@ -15,7 +15,7 @@ const faqs = [
   {
     question: "I lost my download link. Can I get it back?",
     answer:
-      "Yes — use the \"Already Purchased?\" form above with the email you paid with, and we'll send your download link again. No need to contact support for this.",
+      "Yes — use the \"Your downloads\" box on the Presets page with the email you paid with, and we'll send your download link again. No need to contact support for this.",
   },
   {
     question: "Can I share or resell the presets I bought?",

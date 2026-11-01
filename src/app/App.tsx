@@ -16,6 +16,7 @@ import { LandingPage } from './pages/LandingPage';
 import { FashionPage } from './pages/FashionPage';
 import FashionFindsPage from './pages/FashionFindsPage';
 import LightroomPresetsPage from './pages/LightroomPresetsPage';
+import PresetDetailPage from './pages/PresetDetailPage';
 
 const DigitalCraftPage = lazy(() => import('./pages/DigitalCraftPage').then((m) => ({ default: m.DigitalCraftPage })));
 const AboutPage = lazy(() => import('./pages/AboutPage'));
@@ -79,6 +80,11 @@ export default function App() {
 <Route
   path="/fashion/presets"
   element={<LightroomPresetsPage />}
+/>
+
+<Route
+  path="/fashion/presets/:slug"
+  element={<PresetDetailPage />}
 />
 
 <Route

@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { motion } from "motion/react";
 
 import SkeletonCard from "../components/SkeletonCard";
@@ -14,7 +14,6 @@ import { getCatalogProducts } from "../lib/products";
 import { formatPrice } from "../lib/currency";
 import { useRegion } from "../lib/geo";
 import { useContent } from "../lib/siteContent";
-import PresetPopup from "../components/PresetPopup";
 import RestoreDownloadForm from "../components/RestoreDownloadForm";
 import PresetFAQ from "../components/PresetFAQ";
 import PresetReveal from "../components/PresetReveal";
@@ -38,27 +37,14 @@ export default function LightroomPresetsPage() {
   const region = useRegion();
   const [query, setQuery] = useState("");
   const [activeTab, setActiveTab] = useState("All");
-  const [selected, setSelected] = useState<any | null>(null);
-  const [searchParams, setSearchParams] = useSearchParams();
-  const deepLinked = useRef(false);
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
 
   const [presets, setPresets] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Opening a look puts it in the address (?look=amber-hour), so a story, a bio
-  // link or a message can send someone straight to that look. Closing removes it.
-  const openLook = (preset: any | null) => {
-    setSelected(preset);
-    setSearchParams(
-      (prev) => {
-        const next = new URLSearchParams(prev);
-        if (preset) next.set("look", lookSlug(preset));
-        else next.delete("look");
-        return next;
-      },
-      { replace: true }
-    );
-  };
+  // Every look has its own page. Cards and the reveal button go there.
+  const openLook = (preset: any) => navigate(`/fashion/presets/${lookSlug(preset)}`);
 
   useEffect(() => {
     getCatalogProducts("preset")
@@ -79,14 +65,13 @@ export default function LightroomPresetsPage() {
       });
   }, []);
 
-  // Once the catalog is in, open the look named in the address, if there is one.
+  // Old links like /fashion/presets?look=amber-hour go to that look's page.
   useEffect(() => {
-    if (deepLinked.current || presets.length === 0) return;
-    deepLinked.current = true;
     const wanted = searchParams.get("look")?.toLowerCase();
-    const match = wanted ? presets.find((preset) => lookSlug(preset) === wanted) : null;
-    if (match) setSelected(match);
-  }, [presets, searchParams]);
+    if (!wanted || presets.length === 0) return;
+    const match = presets.find((preset) => lookSlug(preset) === wanted);
+    if (match) navigate(`/fashion/presets/${lookSlug(match)}`, { replace: true });
+  }, [presets, searchParams, navigate]);
 
   const featured = presets.filter((preset) => preset.featured === true);
   const deal = packDeal(presets, region);
@@ -273,43 +258,6 @@ export default function LightroomPresetsPage() {
         {/* ---------- FAQ ---------- */}
 
         <PresetFAQ />
-
-        {/* ---------- Preset Popup ---------- */}
-
-        {selected && (
-          <PresetPopup
-            open={true}
-            onClose={() => openLook(null)}
-            name={selected.name}
-            price={formatPrice(selected.price, region)}
-            rawPrice={selected.price}
-            previewImage={selected.thumbnail}
-            banner={selected.banner}
-            beforeImage={selected.before_image}
-            afterImage={selected.after_image}
-            collection={selected.collection}
-            description={selected.description}
-            whyCreated={selected.why_created}
-            whatsIncluded={selected.whats_included}
-            installation={selected.installation}
-            compatibleWith={selected.compatible_with}
-            rating={selected.rating}
-            tags={
-              selected.tags
-                ? String(selected.tags)
-                    .split(",")
-                    .map((tag: string) => tag.trim())
-                : []
-            }
-            purchaseLink={selected.purchase_link}
-            saveLabel={deal && isPack(selected) ? deal.saveLabel : undefined}
-            upsell={
-              deal && !isPack(selected)
-                ? { packLabel: deal.packLabel, saveLabel: deal.saveLabel, onOpen: () => openLook(deal.pack) }
-                : undefined
-            }
-          />
-        )}
 
       </main>
 

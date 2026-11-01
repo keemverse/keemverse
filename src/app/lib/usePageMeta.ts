@@ -56,7 +56,11 @@ export function usePageMeta() {
   useEffect(() => {
     const path = pathname.length > 1 ? pathname.replace(/\/+$/, '') : pathname;
     const isPrivate = path.startsWith('/admin') || path.startsWith('/checkout');
-    const meta = PAGES[path] ?? PAGES['/'];
+    const lookMatch = /^\/fashion\/presets\/([a-z0-9-]+)$/.exec(path);
+    const lookName = lookMatch ? (lookMatch[1] === 'pack' ? 'Keemverse Preset Pack' : lookMatch[1].split('-').map((w) => w[0].toUpperCase() + w.slice(1)).join(' ') + ' Lightroom Preset') : '';
+    const meta: Meta = lookMatch
+      ? { title: `${lookName} | ${BRAND}`, description: 'A Lightroom preset with three depth tiers: Essential, Graded and Cinematic. Your download link is sent to your email after purchase.' }
+      : PAGES[path] ?? PAGES['/'];
 
     document.title = meta.title;
 
