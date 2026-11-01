@@ -135,6 +135,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         if ("status" in body && !STATUSES.includes(body.status)) {
           return res.status(400).json({ error: `status must be one of: ${STATUSES.join(", ")}` });
         }
+        // A preset's price is also checked against the Lightroom Presets tab in the
+        // product database when someone pays, so changing it here alone would make
+        // real payments fail. Only the admin changes it, together with the sheet.
+        if ("price" in body && products[index].type === "preset") {
+          return res.status(403).json({
+            error: "Preset prices are checked against the sheet when someone pays, so only Keem changes them.",
+            notAllowed: ["price"],
+          });
+        }
         if ("price" in body) {
           const price = body.price;
           if (typeof price !== "string" || price.length > 24 || !/\d/.test(price)) {

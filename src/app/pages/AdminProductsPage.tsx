@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { lookSlug } from "../lib/presetDeal";
 import { parseQuickAdd, type QuickAddItem } from "../lib/quickAdd";
 import { AdminShell } from "../components/AdminShell";
 import { Button } from "../components/ui/button";
@@ -640,6 +641,12 @@ export default function AdminProductsPage() {
           <div className="grid grid-cols-2 gap-3">
             <Input placeholder="Name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
             <Input placeholder="Price (e.g. ₦4,586 or $12)" value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} />
+            {form.type === "preset" && (
+              <p className="col-span-2 rounded-md border border-amber-500/40 bg-amber-500/10 px-3 py-2 text-xs leading-5 text-foreground/80">
+                Payments are checked against the <strong>Lightroom Presets</strong> tab in the KEEMVERSE Product Database, matched by name.
+                If you change this price or the name, change the same row there at the same time, or a buyer can pay and be rejected.
+              </p>
+            )}
 
             {craft ? (
               <>
@@ -915,11 +922,36 @@ export default function AdminProductsPage() {
                     </p>
                   </div>
                 </div>
-                <div className="flex shrink-0 gap-2 self-end sm:self-auto">
+                <div className="flex shrink-0 flex-wrap justify-end gap-2 self-end sm:self-auto">
                   {reorderEnabled && (
                     <Button size="sm" variant="outline" onClick={() => moveToTop(p.id)} disabled={i === 0 || savingOrder}>
                       &uarr; Top
                     </Button>
+                  )}
+                  {p.type === "preset" && (
+                    <>
+                      <a
+                        href={`/fashion/presets/${lookSlug(p)}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex h-8 items-center rounded-md border border-input px-3 text-sm hover:bg-muted"
+                      >
+                        View page ↗
+                      </a>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() =>
+                          navigator.clipboard
+                            ?.writeText(
+                              `https://www.keemverse.com/fashion/presets/${lookSlug(p)}?utm_source=tiktok&utm_medium=story&utm_campaign=${lookSlug(p)}`
+                            )
+                            .catch(() => undefined)
+                        }
+                      >
+                        Copy story link
+                      </Button>
+                    </>
                   )}
                   <Button size="sm" variant="outline" onClick={() => startEdit(p)}>
                     Edit
@@ -1153,6 +1185,8 @@ function EditorView({
                       aria-label={`Price for ${p.name}`}
                       className="w-32"
                       value={d.price}
+                      disabled={p.type === "preset"}
+                      title={p.type === "preset" ? "Preset prices are also set in the sheet, so only Keem changes them." : undefined}
                       onChange={(e) => setDraft(p, { price: e.target.value })}
                     />
                     <Button size="sm" onClick={() => save(p)} disabled={!dirty(p) || busyId === p.id}>
