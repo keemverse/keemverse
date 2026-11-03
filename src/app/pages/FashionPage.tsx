@@ -15,6 +15,7 @@ import img2 from '../../imports/IMG_7549.webp';
 import img3 from '../../imports/IMG_4929.webp';
 import img4 from '../../imports/IMG_6867_Original.webp';
 import img5 from '../../imports/IMG_8935.webp';
+import modelingImg from '../../imports/trend-territory-modeling.webp';
 
 const carouselImages = [img1, img2, img3, img4, img5];
 
@@ -34,8 +35,8 @@ const services = [
     tag: 'Select campaigns',
     desc: 'Available for fashion, lifestyle and creative campaigns that suit the look.',
     points: ['Fashion', 'Lifestyle', 'Creative campaigns'],
-    image: img4,
-    position: '50% 62%',
+    image: modelingImg,
+    position: '15% 50%',
   },
 ];
 
@@ -191,7 +192,7 @@ export function FashionPage() {
                   <div className="relative aspect-[4/3] overflow-hidden lg:absolute lg:inset-0 lg:aspect-auto">
                     <ImageWithFallback
                       src={svc.image}
-                      alt={`${svc.title}: Keem on a shoot`}
+                      alt={`${svc.title}: Keem in a brand shoot`}
                       className="h-full w-full object-cover transition-transform duration-[1400ms] ease-out group-hover:scale-[1.04] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
                       style={{ objectPosition: svc.position }}
                     />
