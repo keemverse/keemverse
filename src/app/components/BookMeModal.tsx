@@ -7,6 +7,8 @@ import { TikTokIcon } from './Icons';
 interface BookMeModalProps {
   open: boolean;
   onClose: () => void;
+  /** What the visitor is booking (e.g. "Brand Collaborations"); personalises the heading. */
+  topic?: string;
 }
 
 const platforms = [
@@ -30,7 +32,7 @@ const platforms = [
   },
 ];
 
-export function BookMeModal({ open, onClose }: BookMeModalProps) {
+export function BookMeModal({ open, onClose, topic }: BookMeModalProps) {
   return (
     <AnimatePresence>
       {open && (
@@ -63,10 +65,12 @@ export function BookMeModal({ open, onClose }: BookMeModalProps) {
               <div className="flex items-start justify-between mb-6">
                 <div>
                   <h2 className="font-bold text-foreground" style={{ fontSize: '1.25rem' }}>
-                    Book Me
+                    {topic ?? 'Book Me'}
                   </h2>
                   <p className="text-muted-foreground text-sm mt-1">
-                    Reach out through your preferred platform.
+                    {topic
+                      ? 'Message me on either platform with the brand and what you have in mind.'
+                      : 'Reach out through your preferred platform.'}
                   </p>
                 </div>
                 <button

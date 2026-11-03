@@ -18,22 +18,24 @@ import img5 from '../../imports/IMG_8935.webp';
 
 const carouselImages = [img1, img2, img3, img4, img5];
 
+// Two offers only: collaborations already include creative direction on set, and
+// modeling is for select campaigns. Both open the same "Book me" pop-up (DMs).
 const services = [
   {
-    title: 'Brand Modeling',
-    desc: 'Available for select fashion, lifestyle and creative campaigns.',
-  },
-  {
     title: 'Brand Collaborations',
-    desc: 'Authentic content creation and brand promotion for aligned brands.',
+    tag: 'Open for brands',
+    desc: 'Authentic content, creative direction on set and promotion for brands that fit.',
+    points: ['Content', 'Creative direction', 'TikTok + Instagram'],
+    image: img2,
+    position: '50% 62%',
   },
   {
-    title: 'Wardrobe Styling',
-    desc: 'Build a wardrobe that reflects your identity and lifestyle.',
-  },
-  {
-    title: 'Creative Direction',
-    desc: 'Visual concepts, campaigns, moodboards, and aesthetics.',
+    title: 'Brand Modeling',
+    tag: 'Select campaigns',
+    desc: 'Available for fashion, lifestyle and creative campaigns that suit the look.',
+    points: ['Fashion', 'Lifestyle', 'Creative campaigns'],
+    image: img4,
+    position: '50% 62%',
   },
 ];
 
@@ -60,7 +62,7 @@ export function FashionPage() {
   const t = useContent();
   const [current, setCurrent] = useState(0);
   const [paused, setPaused] = useState(false);
-  const [modalOpen, setModalOpen] = useState(false);
+  const [bookTopic, setBookTopic] = useState<string | null>(null);
 
   useEffect(() => {
     if (paused) return;
@@ -73,7 +75,7 @@ export function FashionPage() {
   return (
     <div className="relative min-h-screen bg-background text-foreground">
       <GeometricBackdrop />
-      <BookMeModal open={modalOpen} onClose={() => setModalOpen(false)} />
+      <BookMeModal open={bookTopic !== null} topic={bookTopic ?? undefined} onClose={() => setBookTopic(null)} />
 
       <main className="relative z-10 pt-8 pb-0 px-5 md:px-8">
         <div className="max-w-6xl mx-auto">
@@ -174,25 +176,46 @@ export function FashionPage() {
             <SharedSectionDivider label="Work with me" />
             {/* Media kit link removed while /fashion/media-kit is held in
                 draft — add back once that page is routed live again. */}
-            <div className="grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-5">
+            <div className="grid gap-4 md:grid-cols-2 md:gap-6">
               {services.map((svc, i) => (
-                <motion.button
-                  type="button"
+                <motion.article
                   key={svc.title}
-                  onClick={() => setModalOpen(true)}
-                  initial={{ opacity: 0, y: 18 }}
+                  initial={{ opacity: 0, y: 22 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, margin: '-40px' }}
-                  transition={{ duration: 0.5, delay: i * 0.07, ease: [0.22, 1, 0.36, 1] }}
-                  className="card-lift glass group flex flex-col rounded-2xl p-5 text-left md:p-6"
+                  transition={{ duration: 0.6, delay: i * 0.1, ease: [0.22, 1, 0.36, 1] }}
+                  className="group relative isolate overflow-hidden rounded-3xl bg-stone-900 lg:aspect-square"
                 >
-                  <span className="text-[13px] font-medium tabular-nums text-amber-ink">{String(i + 1).padStart(2, '0')}</span>
-                  <h3 className="mt-6 text-[15px] font-semibold leading-snug text-foreground md:text-base">{svc.title}</h3>
-                  <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground md:text-sm">{svc.desc}</p>
-                  <span className="mt-auto pt-5 text-[13px] font-semibold text-foreground">
-                    Book me <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">→</span>
+                  {/* Phones: photo on top, text panel below (nothing sits on the faces).
+                      Wide screens (lg): the photo fills the card and the text sits on a gradient. */}
+                  <div className="relative aspect-[4/3] overflow-hidden lg:absolute lg:inset-0 lg:aspect-auto">
+                    <ImageWithFallback
+                      src={svc.image}
+                      alt={`${svc.title}: Keem on a shoot`}
+                      className="h-full w-full object-cover transition-transform duration-[1400ms] ease-out group-hover:scale-[1.04] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
+                      style={{ objectPosition: svc.position }}
+                    />
+                  </div>
+                  <div className="pointer-events-none absolute inset-0 hidden bg-gradient-to-t from-stone-950/90 via-stone-950/45 to-transparent lg:block" />
+
+                  <span className="absolute left-4 top-4 rounded-full border border-white/20 bg-black/35 px-3 py-1 text-[11px] font-medium uppercase tracking-[0.12em] text-white/90 backdrop-blur-sm lg:left-7 lg:top-7">
+                    {svc.tag}
                   </span>
-                </motion.button>
+
+                  <div className="relative p-6 pt-5 text-white lg:absolute lg:inset-x-0 lg:bottom-0 lg:p-8">
+                    <h3 className="text-display-md text-white">{svc.title}</h3>
+                    <p className="mt-2 max-w-[34ch] text-sm leading-relaxed text-white/80 md:text-[15px]">{svc.desc}</p>
+                    <p className="mt-3 text-xs tracking-wide text-white/60">{svc.points.join('  ·  ')}</p>
+                    <button
+                      type="button"
+                      onClick={() => setBookTopic(svc.title)}
+                      className="mt-5 inline-flex h-11 items-center gap-2 rounded-full bg-white px-6 text-sm font-semibold text-stone-900 transition-colors hover:bg-white/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                    >
+                      Book me
+                      <span aria-hidden className="inline-block transition-transform duration-300 group-hover:translate-x-1">→</span>
+                    </button>
+                  </div>
+                </motion.article>
               ))}
             </div>
           </section>
