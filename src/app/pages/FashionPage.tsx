@@ -1,7 +1,7 @@
 import fashionFindsHero from '../../imports/fashion-finds-hero.webp';
 import photoPresetsHero from '../../imports/photo-presets-hero.webp';
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import React, { useState, useEffect, useRef } from 'react';
+import { motion, useScroll, useTransform, useReducedMotion } from 'motion/react';
 import { ImageWithFallback } from '../components/figma/ImageWithFallback';
 import { SocialFooter } from '../components/SocialFooter';
 import { BookMeModal } from '../components/BookMeModal';
@@ -15,7 +15,7 @@ import img2 from '../../imports/IMG_7549.webp';
 import img3 from '../../imports/IMG_4929.webp';
 import img4 from '../../imports/IMG_6867_Original.webp';
 import img5 from '../../imports/IMG_8935.webp';
-import modelingImg from '../../imports/trend-territory-modeling.webp';
+import modelingImg from '../../imports/trend-territory-modeling-portrait.webp';
 
 const carouselImages = [img1, img2, img3, img4, img5];
 
@@ -27,16 +27,18 @@ const services = [
     tag: 'Open for brands',
     desc: 'Authentic content, creative direction on set and promotion for brands that fit.',
     points: ['Content', 'Creative direction', 'TikTok + Instagram'],
+    word: 'Collab',
     image: img2,
-    position: '50% 62%',
+    position: '50% 55%',
   },
   {
     title: 'Brand Modeling',
     tag: 'Select campaigns',
     desc: 'Available for fashion, lifestyle and creative campaigns that suit the look.',
     points: ['Fashion', 'Lifestyle', 'Creative campaigns'],
+    word: 'Model',
     image: modelingImg,
-    position: '15% 50%',
+    position: '50% 50%',
   },
 ];
 
@@ -59,12 +61,47 @@ const shop = [
   },
 ];
 
+// Round "Book me" button with the words circling it. Turns slowly; still for reduced motion.
+function BookBadge({ id, label, onClick, className }: { id: string; label: string; onClick: () => void; className?: string }) {
+  const reduce = useReducedMotion();
+  return (
+    <button
+      type="button"
+      aria-label={label}
+      onClick={onClick}
+      className={`group/badge grid h-28 w-28 place-items-center rounded-full bg-[#D98E2B] text-[#0F0F11] shadow-[0_14px_44px_-12px_rgba(217,142,43,0.65)] transition-transform duration-300 hover:scale-110 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#D98E2B] md:h-32 md:w-32 ${className ?? ''}`}
+    >
+      <motion.svg
+        viewBox="0 0 100 100"
+        aria-hidden
+        className="col-start-1 row-start-1 h-full w-full"
+        animate={reduce ? undefined : { rotate: 360 }}
+        transition={{ duration: 18, repeat: Infinity, ease: 'linear' }}
+      >
+        <defs>
+          <path id={id} d="M50,50 m-37,0 a37,37 0 1,1 74,0 a37,37 0 1,1 -74,0" />
+        </defs>
+        <text fontSize="9" fontWeight="700" fill="currentColor" textLength="228" lengthAdjust="spacing">
+          <textPath href={`#${id}`}>BOOK ME • BOOK ME • BOOK ME • </textPath>
+        </text>
+      </motion.svg>
+      <span aria-hidden className="col-start-1 row-start-1 text-3xl leading-none transition-transform duration-300 group-hover/badge:rotate-45">↗</span>
+    </button>
+  );
+}
+
+const marquee = ['Brand collaborations', 'Creative direction on set', 'Brand modeling', 'TikTok + Instagram'];
+
 export function FashionPage() {
   const t = useContent();
   const [current, setCurrent] = useState(0);
   const [paused, setPaused] = useState(false);
   const [bookTopic, setBookTopic] = useState<string | null>(null);
-  const [activeService, setActiveService] = useState(0);
+  const workRef = useRef<HTMLDivElement>(null);
+  const reduceMotion = useReducedMotion();
+  const { scrollYProgress: workProgress } = useScroll({ target: workRef, offset: ['start end', 'end start'] });
+  const driftA = useTransform(workProgress, [0, 1], reduceMotion ? [0, 0] : [48, -48]);
+  const driftB = useTransform(workProgress, [0, 1], reduceMotion ? [0, 0] : [-32, 64]);
 
   useEffect(() => {
     if (paused) return;
@@ -178,107 +215,75 @@ export function FashionPage() {
             <SharedSectionDivider label="Work with me" />
             {/* Media kit link removed while /fashion/media-kit is held in
                 draft — add back once that page is routed live again. */}
-            {/* One stage photo that follows the chosen offer, with a big-type index beside it.
-                No cards: tap a line and the photo changes and the line opens. */}
-            <div className="grid items-center gap-8 lg:grid-cols-12 lg:gap-16">
-              <motion.div
-                initial={{ opacity: 0, y: 22 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: '-40px' }}
-                transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-                className="relative hidden lg:order-2 lg:col-span-7 lg:block"
-              >
-                <div className="relative aspect-square overflow-hidden rounded-3xl bg-muted">
-                  {services.map((svc, i) => (
-                    <div
-                      key={svc.title}
-                      aria-hidden={activeService !== i}
-                      className="absolute inset-0 transition-[opacity,transform] duration-[900ms] ease-out motion-reduce:transition-none"
-                      style={{ opacity: activeService === i ? 1 : 0, transform: activeService === i ? 'scale(1)' : 'scale(1.05)' }}
-                    >
-                      <ImageWithFallback
-                        src={svc.image}
-                        alt={`${svc.title}: Keem in a brand shoot`}
-                        className="h-full w-full object-cover"
-                        style={{ objectPosition: svc.position }}
+            {/* Two arches, staggered, with giant type across them. Photos drift at different speeds
+                on scroll; the round badge is the Book me button. */}
+            <div ref={workRef} className="relative -mx-5 mt-6 overflow-x-clip px-5 pb-6 md:-mx-8 md:mt-10 md:px-8">
+              <div className="mx-auto flex max-w-6xl flex-col gap-20 lg:grid lg:grid-cols-12 lg:gap-x-10 lg:gap-y-0">
+                {services.map((svc, i) => (
+                  <motion.figure
+                    key={svc.title}
+                    style={{ y: i === 0 ? driftA : driftB }}
+                    className={
+                      i === 0
+                        ? 'relative w-[84%] max-w-[26rem] self-start md:max-w-[28rem] lg:col-span-5 lg:col-start-1 lg:w-auto lg:max-w-none'
+                        : 'relative w-[84%] max-w-[26rem] self-end md:max-w-[28rem] lg:col-span-6 lg:col-start-7 lg:mt-32 lg:w-auto lg:max-w-none'
+                    }
+                  >
+                    <div className="group relative">
+                      <div className="relative aspect-[3/4] overflow-hidden rounded-b-3xl rounded-t-[999px] bg-muted">
+                        <ImageWithFallback
+                          src={svc.image}
+                          alt={`${svc.title}: Keem in a brand shoot`}
+                          className="h-full w-full object-cover transition-transform duration-[1400ms] ease-out group-hover:scale-[1.05] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
+                          style={{ objectPosition: svc.position }}
+                        />
+                      </div>
+                      <span
+                        aria-hidden
+                        className={`pointer-events-none absolute top-[9%] select-none whitespace-nowrap font-[family-name:var(--font-display)] text-[clamp(3.6rem,15vw,9.5rem)] italic leading-[0.85] tracking-[-0.03em] text-white ${
+                          i === 0 ? '-left-[3%] mix-blend-difference' : 'right-[3%] text-right drop-shadow-[0_2px_18px_rgba(0,0,0,0.25)]'
+                        }`}
+                      >
+                        {svc.word}
+                      </span>
+                      <BookBadge
+                        id={`book-badge-${i}`}
+                        label={`Book me for ${svc.title}`}
+                        onClick={() => setBookTopic(svc.title)}
+                        className={`absolute -bottom-8 ${i === 0 ? '-right-3 md:-right-6' : '-left-3 md:-left-6'}`}
                       />
                     </div>
-                  ))}
-                  <span className="absolute left-6 top-6 rounded-full border border-white/20 bg-black/35 px-3 py-1 text-[11px] font-medium uppercase tracking-[0.12em] text-white/90 backdrop-blur-sm">
-                    {services[activeService].tag}
-                  </span>
-                </div>
-              </motion.div>
+                    <figcaption className={`mt-10 max-w-[36ch] ${i === 0 ? '' : 'lg:ml-auto'}`}>
+                      <span className="inline-flex rounded-full border border-border px-3 py-1 text-[11px] font-medium uppercase tracking-[0.12em] text-muted-foreground">
+                        {svc.tag}
+                      </span>
+                      <h3 className="mt-4 text-display-md text-foreground">{svc.title}</h3>
+                      <p className="mt-2 text-sm leading-relaxed text-muted-foreground md:text-base">{svc.desc}</p>
+                      <p className="mt-3 text-xs tracking-wide text-muted-foreground/70">{svc.points.join('  ·  ')}</p>
+                    </figcaption>
+                  </motion.figure>
+                ))}
+              </div>
 
-              <ul className="border-y border-border lg:order-1 lg:col-span-5">
-                {services.map((svc, i) => {
-                  const open = activeService === i;
-                  return (
-                    <li key={svc.title} className="border-border [&:not(:first-child)]:border-t">
-                      <button
-                        type="button"
-                        onClick={() => setActiveService(i)}
-                        aria-expanded={open}
-                        className="group flex w-full items-baseline gap-4 py-6 text-left lg:py-8"
-                      >
-                        <span className="w-7 shrink-0 text-[13px] font-medium tabular-nums text-amber-ink">{String(i + 1).padStart(2, '0')}</span>
-                        <span
-                          className={`text-display-lg flex-1 transition-colors duration-500 ${
-                            open ? 'text-foreground' : 'text-foreground/35 group-hover:text-foreground/60'
-                          }`}
-                        >
-                          {svc.title}
-                        </span>
-                        <span
-                          aria-hidden
-                          className={`shrink-0 text-2xl leading-none text-muted-foreground transition-transform duration-500 ${open ? 'rotate-45' : ''}`}
-                        >
-                          +
-                        </span>
-                      </button>
-                      <AnimatePresence initial={false}>
-                        {open && (
-                          <motion.div
-                            key="panel"
-                            initial={{ height: 0, opacity: 0 }}
-                            animate={{ height: 'auto', opacity: 1 }}
-                            exit={{ height: 0, opacity: 0 }}
-                            transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
-                            className="overflow-hidden"
-                          >
-                            <div className="pb-8">
-                              {/* Phones: each offer carries its own photo, so tapping a line shows it right there. */}
-                              <div className="relative mb-5 aspect-[4/3] overflow-hidden rounded-2xl bg-muted lg:hidden">
-                                <ImageWithFallback
-                                  src={svc.image}
-                                  alt={`${svc.title}: Keem in a brand shoot`}
-                                  className="h-full w-full object-cover"
-                                  style={{ objectPosition: svc.position }}
-                                />
-                                <span className="absolute left-3 top-3 rounded-full border border-white/20 bg-black/35 px-3 py-1 text-[11px] font-medium uppercase tracking-[0.12em] text-white/90 backdrop-blur-sm">
-                                  {svc.tag}
-                                </span>
-                              </div>
-                              <div className="lg:pl-11">
-                              <p className="max-w-[38ch] text-sm leading-relaxed text-muted-foreground md:text-base">{svc.desc}</p>
-                              <p className="mt-3 text-xs tracking-wide text-muted-foreground/80">{svc.points.join('  ·  ')}</p>
-                              <button
-                                type="button"
-                                onClick={() => setBookTopic(svc.title)}
-                                className="group/cta mt-6 inline-flex h-11 items-center gap-2 rounded-full bg-foreground px-6 text-sm font-semibold text-background transition-opacity hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground"
-                              >
-                                Book me
-                                <span aria-hidden className="inline-block transition-transform duration-300 group-hover/cta:translate-x-1">→</span>
-                              </button>
-                              </div>
-                            </div>
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
-                    </li>
-                  );
-                })}
-              </ul>
+              {/* Drifting strip of what is on offer */}
+              <div aria-hidden className="-mx-5 mt-24 overflow-hidden border-y border-border py-5 md:-mx-8">
+                <motion.div
+                  className="flex w-max gap-10 whitespace-nowrap"
+                  animate={reduceMotion ? undefined : { x: ['0%', '-50%'] }}
+                  transition={{ duration: 38, repeat: Infinity, ease: 'linear' }}
+                >
+                  {[0, 1].map((dup) => (
+                    <div key={dup} className="flex shrink-0 items-center gap-10">
+                      {marquee.map((m) => (
+                        <React.Fragment key={m}>
+                          <span className="text-display-md italic text-foreground/30">{m}</span>
+                          <span className="text-amber-ink">✦</span>
+                        </React.Fragment>
+                      ))}
+                    </div>
+                  ))}
+                </motion.div>
+              </div>
             </div>
           </section>
 
