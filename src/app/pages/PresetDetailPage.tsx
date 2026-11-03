@@ -348,8 +348,8 @@ export default function PresetDetailPage() {
         </p>
       </main>
 
-      {/* Phone buy bar, sitting just above the tab bar */}
-      <div className="fixed inset-x-0 bottom-[calc(3.5rem+env(safe-area-inset-bottom))] z-30 border-t border-border/70 bg-background/95 px-5 py-3 backdrop-blur md:hidden">
+      {/* Phone buy bar: sits just above the tab bar, and drops to the screen edge when the tabs slide away (.above-tabs) */}
+      <div className="above-tabs fixed inset-x-0 z-30 border-t border-border/70 bg-background/95 px-5 py-3 backdrop-blur md:hidden">
         <div className="mx-auto flex max-w-md items-center gap-4">
           <div className="min-w-0">
             <p className="truncate text-[12px] text-muted-foreground">{name}</p>
