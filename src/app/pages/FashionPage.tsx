@@ -61,35 +61,6 @@ const shop = [
   },
 ];
 
-// Round "Book me" button with the words circling it. Turns slowly; still for reduced motion.
-function BookBadge({ id, label, onClick, className }: { id: string; label: string; onClick: () => void; className?: string }) {
-  const reduce = useReducedMotion();
-  return (
-    <button
-      type="button"
-      aria-label={label}
-      onClick={onClick}
-      className={`group/badge grid h-28 w-28 place-items-center rounded-full bg-[#D98E2B] text-[#0F0F11] shadow-[0_14px_44px_-12px_rgba(217,142,43,0.65)] transition-transform duration-300 hover:scale-110 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#D98E2B] md:h-32 md:w-32 ${className ?? ''}`}
-    >
-      <motion.svg
-        viewBox="0 0 100 100"
-        aria-hidden
-        className="col-start-1 row-start-1 h-full w-full"
-        animate={reduce ? undefined : { rotate: 360 }}
-        transition={{ duration: 18, repeat: Infinity, ease: 'linear' }}
-      >
-        <defs>
-          <path id={id} d="M50,50 m-37,0 a37,37 0 1,1 74,0 a37,37 0 1,1 -74,0" />
-        </defs>
-        <text fontSize="9" fontWeight="700" fill="currentColor" textLength="228" lengthAdjust="spacing">
-          <textPath href={`#${id}`}>BOOK ME • BOOK ME • BOOK ME • </textPath>
-        </text>
-      </motion.svg>
-      <span aria-hidden className="col-start-1 row-start-1 text-3xl leading-none transition-transform duration-300 group-hover/badge:rotate-45">↗</span>
-    </button>
-  );
-}
-
 const marquee = ['Brand collaborations', 'Creative direction on set', 'Brand modeling', 'TikTok + Instagram'];
 
 export function FashionPage() {
@@ -100,8 +71,8 @@ export function FashionPage() {
   const workRef = useRef<HTMLDivElement>(null);
   const reduceMotion = useReducedMotion();
   const { scrollYProgress: workProgress } = useScroll({ target: workRef, offset: ['start end', 'end start'] });
-  const driftA = useTransform(workProgress, [0, 1], reduceMotion ? [0, 0] : [48, -48]);
-  const driftB = useTransform(workProgress, [0, 1], reduceMotion ? [0, 0] : [-32, 64]);
+  const driftA = useTransform(workProgress, [0, 1], reduceMotion ? [0, 0] : [24, -24]);
+  const driftB = useTransform(workProgress, [0, 1], reduceMotion ? [0, 0] : [-16, 32]);
 
   useEffect(() => {
     if (paused) return;
@@ -218,48 +189,49 @@ export function FashionPage() {
             {/* Two arches, staggered, with giant type across them. Photos drift at different speeds
                 on scroll; the round badge is the Book me button. */}
             <div ref={workRef} className="relative -mx-5 mt-6 overflow-x-clip px-5 pb-6 md:-mx-8 md:mt-10 md:px-8">
-              <div className="mx-auto flex max-w-6xl flex-col gap-20 lg:grid lg:grid-cols-12 lg:gap-x-10 lg:gap-y-0">
+              <div className="mx-auto flex max-w-6xl flex-col gap-16 lg:grid lg:grid-cols-12 lg:gap-x-10 lg:gap-y-0">
                 {services.map((svc, i) => (
                   <motion.figure
                     key={svc.title}
                     style={{ y: i === 0 ? driftA : driftB }}
                     className={
                       i === 0
-                        ? 'relative w-[84%] max-w-[26rem] self-start md:max-w-[28rem] lg:col-span-5 lg:col-start-1 lg:w-auto lg:max-w-none'
-                        : 'relative w-[84%] max-w-[26rem] self-end md:max-w-[28rem] lg:col-span-6 lg:col-start-7 lg:mt-32 lg:w-auto lg:max-w-none'
+                        ? 'relative w-[62%] min-w-[11rem] max-w-[17rem] self-start md:max-w-[19rem] lg:col-span-4 lg:col-start-2 lg:w-auto lg:max-w-none'
+                        : 'relative w-[62%] min-w-[11rem] max-w-[17rem] self-end md:max-w-[19rem] lg:col-span-4 lg:col-start-7 lg:mt-28 lg:w-auto lg:max-w-none'
                     }
                   >
-                    <div className="group relative">
-                      <div className="relative aspect-[3/4] overflow-hidden rounded-b-3xl rounded-t-[999px] bg-muted">
-                        <ImageWithFallback
-                          src={svc.image}
-                          alt={`${svc.title}: Keem in a brand shoot`}
-                          className="h-full w-full object-cover transition-transform duration-[1400ms] ease-out group-hover:scale-[1.05] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
-                          style={{ objectPosition: svc.position }}
-                        />
-                      </div>
-                      <span
-                        aria-hidden
-                        className={`pointer-events-none absolute top-[9%] select-none whitespace-nowrap font-[family-name:var(--font-display)] text-[clamp(3.6rem,15vw,9.5rem)] italic leading-[0.85] tracking-[-0.03em] text-white ${
-                          i === 0 ? '-left-[3%] mix-blend-difference' : 'right-[3%] text-right drop-shadow-[0_2px_18px_rgba(0,0,0,0.25)]'
-                        }`}
-                      >
-                        {svc.word}
-                      </span>
-                      <BookBadge
-                        id={`book-badge-${i}`}
-                        label={`Book me for ${svc.title}`}
-                        onClick={() => setBookTopic(svc.title)}
-                        className={`absolute -bottom-8 ${i === 0 ? '-right-3 md:-right-6' : '-left-3 md:-left-6'}`}
+                    {/* The word rests on the arch like a crown, in the page's own text colour so it reads on light and dark. */}
+                    <span
+                      aria-hidden
+                      className={`relative z-10 -mb-[0.1em] block select-none whitespace-nowrap font-[family-name:var(--font-display)] text-[clamp(3rem,13vw,5.5rem)] italic leading-[0.9] tracking-[-0.03em] text-foreground ${
+                        i === 0 ? '' : 'text-right'
+                      }`}
+                    >
+                      {svc.word}
+                    </span>
+                    <div className="group relative aspect-[3/4] overflow-hidden rounded-b-3xl rounded-t-[999px] bg-muted">
+                      <ImageWithFallback
+                        src={svc.image}
+                        alt={`${svc.title}: Keem in a brand shoot`}
+                        className="h-full w-full object-cover transition-transform duration-[1400ms] ease-out group-hover:scale-[1.05] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
+                        style={{ objectPosition: svc.position }}
                       />
                     </div>
-                    <figcaption className={`mt-10 max-w-[36ch] ${i === 0 ? '' : 'lg:ml-auto'}`}>
+                    <figcaption className="mt-6">
                       <span className="inline-flex rounded-full border border-border px-3 py-1 text-[11px] font-medium uppercase tracking-[0.12em] text-muted-foreground">
                         {svc.tag}
                       </span>
                       <h3 className="mt-4 text-display-md text-foreground">{svc.title}</h3>
-                      <p className="mt-2 text-sm leading-relaxed text-muted-foreground md:text-base">{svc.desc}</p>
+                      <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{svc.desc}</p>
                       <p className="mt-3 text-xs tracking-wide text-muted-foreground/70">{svc.points.join('  ·  ')}</p>
+                      <button
+                        type="button"
+                        onClick={() => setBookTopic(svc.title)}
+                        className="group/cta mt-5 inline-flex h-11 items-center gap-2 rounded-full bg-foreground px-6 text-sm font-semibold text-background transition-opacity hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground"
+                      >
+                        Book me
+                        <span aria-hidden className="inline-block transition-transform duration-300 group-hover/cta:translate-x-0.5 group-hover/cta:-translate-y-0.5">↗</span>
+                      </button>
                     </figcaption>
                   </motion.figure>
                 ))}
