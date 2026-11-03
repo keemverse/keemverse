@@ -1,7 +1,7 @@
 import fashionFindsHero from '../../imports/fashion-finds-hero.webp';
 import photoPresetsHero from '../../imports/photo-presets-hero.webp';
-import React, { useState, useEffect } from 'react';
-import { motion } from 'motion/react';
+import React, { useState, useEffect, useRef } from 'react';
+import { motion, useScroll, useTransform, useReducedMotion } from 'motion/react';
 import { ImageWithFallback } from '../components/figma/ImageWithFallback';
 import { SocialFooter } from '../components/SocialFooter';
 import { BookMeModal } from '../components/BookMeModal';
@@ -15,6 +15,7 @@ import img2 from '../../imports/IMG_7549.webp';
 import img3 from '../../imports/IMG_4929.webp';
 import img4 from '../../imports/IMG_6867_Original.webp';
 import img5 from '../../imports/IMG_8935.webp';
+import modelingImg from '../../imports/trend-territory-modeling-portrait.webp';
 
 const carouselImages = [img1, img2, img3, img4, img5];
 
@@ -26,16 +27,18 @@ const services = [
     tag: 'Open for brands',
     desc: 'Authentic content, creative direction on set and promotion for brands that fit.',
     points: ['Content', 'Creative direction', 'TikTok + Instagram'],
+    word: 'Collab',
     image: img2,
-    position: '50% 62%',
+    position: '50% 55%',
   },
   {
     title: 'Brand Modeling',
     tag: 'Select campaigns',
     desc: 'Available for fashion, lifestyle and creative campaigns that suit the look.',
     points: ['Fashion', 'Lifestyle', 'Creative campaigns'],
-    image: img4,
-    position: '50% 62%',
+    word: 'Model',
+    image: modelingImg,
+    position: '50% 50%',
   },
 ];
 
@@ -58,11 +61,18 @@ const shop = [
   },
 ];
 
+const marquee = ['Brand collaborations', 'Creative direction on set', 'Brand modeling', 'TikTok + Instagram'];
+
 export function FashionPage() {
   const t = useContent();
   const [current, setCurrent] = useState(0);
   const [paused, setPaused] = useState(false);
   const [bookTopic, setBookTopic] = useState<string | null>(null);
+  const workRef = useRef<HTMLDivElement>(null);
+  const reduceMotion = useReducedMotion();
+  const { scrollYProgress: workProgress } = useScroll({ target: workRef, offset: ['start end', 'end start'] });
+  const driftA = useTransform(workProgress, [0, 1], reduceMotion ? [0, 0] : [24, -24]);
+  const driftB = useTransform(workProgress, [0, 1], reduceMotion ? [0, 0] : [-16, 32]);
 
   useEffect(() => {
     if (paused) return;
@@ -176,47 +186,76 @@ export function FashionPage() {
             <SharedSectionDivider label="Work with me" />
             {/* Media kit link removed while /fashion/media-kit is held in
                 draft — add back once that page is routed live again. */}
-            <div className="grid gap-4 md:grid-cols-2 md:gap-6">
-              {services.map((svc, i) => (
-                <motion.article
-                  key={svc.title}
-                  initial={{ opacity: 0, y: 22 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: '-40px' }}
-                  transition={{ duration: 0.6, delay: i * 0.1, ease: [0.22, 1, 0.36, 1] }}
-                  className="group relative isolate overflow-hidden rounded-3xl bg-stone-900 lg:aspect-square"
-                >
-                  {/* Phones: photo on top, text panel below (nothing sits on the faces).
-                      Wide screens (lg): the photo fills the card and the text sits on a gradient. */}
-                  <div className="relative aspect-[4/3] overflow-hidden lg:absolute lg:inset-0 lg:aspect-auto">
-                    <ImageWithFallback
-                      src={svc.image}
-                      alt={`${svc.title}: Keem on a shoot`}
-                      className="h-full w-full object-cover transition-transform duration-[1400ms] ease-out group-hover:scale-[1.04] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
-                      style={{ objectPosition: svc.position }}
-                    />
-                  </div>
-                  <div className="pointer-events-none absolute inset-0 hidden bg-gradient-to-t from-stone-950/90 via-stone-950/45 to-transparent lg:block" />
-
-                  <span className="absolute left-4 top-4 rounded-full border border-white/20 bg-black/35 px-3 py-1 text-[11px] font-medium uppercase tracking-[0.12em] text-white/90 backdrop-blur-sm lg:left-7 lg:top-7">
-                    {svc.tag}
-                  </span>
-
-                  <div className="relative p-6 pt-5 text-white lg:absolute lg:inset-x-0 lg:bottom-0 lg:p-8">
-                    <h3 className="text-display-md text-white">{svc.title}</h3>
-                    <p className="mt-2 max-w-[34ch] text-sm leading-relaxed text-white/80 md:text-[15px]">{svc.desc}</p>
-                    <p className="mt-3 text-xs tracking-wide text-white/60">{svc.points.join('  ·  ')}</p>
-                    <button
-                      type="button"
-                      onClick={() => setBookTopic(svc.title)}
-                      className="mt-5 inline-flex h-11 items-center gap-2 rounded-full bg-white px-6 text-sm font-semibold text-stone-900 transition-colors hover:bg-white/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+            {/* Two arches, staggered, with giant type across them. Photos drift at different speeds
+                on scroll; the round badge is the Book me button. */}
+            <div ref={workRef} className="relative -mx-5 mt-6 overflow-x-clip px-5 pb-6 md:-mx-8 md:mt-10 md:px-8">
+              <div className="mx-auto flex max-w-6xl flex-col gap-16 lg:grid lg:grid-cols-12 lg:gap-x-10 lg:gap-y-0">
+                {services.map((svc, i) => (
+                  <motion.figure
+                    key={svc.title}
+                    style={{ y: i === 0 ? driftA : driftB }}
+                    className={
+                      i === 0
+                        ? 'relative w-[62%] min-w-[11rem] max-w-[17rem] self-start md:max-w-[19rem] lg:col-span-4 lg:col-start-2 lg:w-auto lg:max-w-none'
+                        : 'relative w-[62%] min-w-[11rem] max-w-[17rem] self-end md:max-w-[19rem] lg:col-span-4 lg:col-start-7 lg:mt-28 lg:w-auto lg:max-w-none'
+                    }
+                  >
+                    {/* The word rests on the arch like a crown, in the page's own text colour so it reads on light and dark. */}
+                    <span
+                      aria-hidden
+                      className={`relative z-10 -mb-[0.1em] block select-none whitespace-nowrap font-[family-name:var(--font-display)] text-[clamp(3rem,13vw,5.5rem)] italic leading-[0.9] tracking-[-0.03em] text-foreground ${
+                        i === 0 ? '' : 'text-right'
+                      }`}
                     >
-                      Book me
-                      <span aria-hidden className="inline-block transition-transform duration-300 group-hover:translate-x-1">→</span>
-                    </button>
-                  </div>
-                </motion.article>
-              ))}
+                      {svc.word}
+                    </span>
+                    <div className="group relative aspect-[3/4] overflow-hidden rounded-b-3xl rounded-t-[999px] bg-muted">
+                      <ImageWithFallback
+                        src={svc.image}
+                        alt={`${svc.title}: Keem in a brand shoot`}
+                        className="h-full w-full object-cover transition-transform duration-[1400ms] ease-out group-hover:scale-[1.05] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
+                        style={{ objectPosition: svc.position }}
+                      />
+                    </div>
+                    <figcaption className="mt-6">
+                      <span className="inline-flex rounded-full border border-border px-3 py-1 text-[11px] font-medium uppercase tracking-[0.12em] text-muted-foreground">
+                        {svc.tag}
+                      </span>
+                      <h3 className="mt-4 text-display-md text-foreground">{svc.title}</h3>
+                      <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{svc.desc}</p>
+                      <p className="mt-3 text-xs tracking-wide text-muted-foreground/70">{svc.points.join('  ·  ')}</p>
+                      <button
+                        type="button"
+                        onClick={() => setBookTopic(svc.title)}
+                        className="group/cta mt-5 inline-flex h-11 items-center gap-2 rounded-full bg-foreground px-6 text-sm font-semibold text-background transition-opacity hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground"
+                      >
+                        Book me
+                        <span aria-hidden className="inline-block transition-transform duration-300 group-hover/cta:translate-x-0.5 group-hover/cta:-translate-y-0.5">↗</span>
+                      </button>
+                    </figcaption>
+                  </motion.figure>
+                ))}
+              </div>
+
+              {/* Drifting strip of what is on offer */}
+              <div aria-hidden className="-mx-5 mt-24 overflow-hidden border-y border-border py-5 md:-mx-8">
+                <motion.div
+                  className="flex w-max gap-10 whitespace-nowrap"
+                  animate={reduceMotion ? undefined : { x: ['0%', '-50%'] }}
+                  transition={{ duration: 38, repeat: Infinity, ease: 'linear' }}
+                >
+                  {[0, 1].map((dup) => (
+                    <div key={dup} className="flex shrink-0 items-center gap-10">
+                      {marquee.map((m) => (
+                        <React.Fragment key={m}>
+                          <span className="text-display-md italic text-foreground/30">{m}</span>
+                          <span className="text-amber-ink">✦</span>
+                        </React.Fragment>
+                      ))}
+                    </div>
+                  ))}
+                </motion.div>
+              </div>
             </div>
           </section>
 
