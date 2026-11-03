@@ -1,7 +1,7 @@
 import fashionFindsHero from '../../imports/fashion-finds-hero.webp';
 import photoPresetsHero from '../../imports/photo-presets-hero.webp';
 import React, { useState, useEffect } from 'react';
-import { motion } from 'motion/react';
+import { motion, AnimatePresence } from 'motion/react';
 import { ImageWithFallback } from '../components/figma/ImageWithFallback';
 import { SocialFooter } from '../components/SocialFooter';
 import { BookMeModal } from '../components/BookMeModal';
@@ -64,6 +64,7 @@ export function FashionPage() {
   const [current, setCurrent] = useState(0);
   const [paused, setPaused] = useState(false);
   const [bookTopic, setBookTopic] = useState<string | null>(null);
+  const [activeService, setActiveService] = useState(0);
 
   useEffect(() => {
     if (paused) return;
@@ -177,47 +178,107 @@ export function FashionPage() {
             <SharedSectionDivider label="Work with me" />
             {/* Media kit link removed while /fashion/media-kit is held in
                 draft — add back once that page is routed live again. */}
-            <div className="grid gap-4 md:grid-cols-2 md:gap-6">
-              {services.map((svc, i) => (
-                <motion.article
-                  key={svc.title}
-                  initial={{ opacity: 0, y: 22 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: '-40px' }}
-                  transition={{ duration: 0.6, delay: i * 0.1, ease: [0.22, 1, 0.36, 1] }}
-                  className="group relative isolate overflow-hidden rounded-3xl bg-stone-900 lg:aspect-square"
-                >
-                  {/* Phones: photo on top, text panel below (nothing sits on the faces).
-                      Wide screens (lg): the photo fills the card and the text sits on a gradient. */}
-                  <div className="relative aspect-[4/3] overflow-hidden lg:absolute lg:inset-0 lg:aspect-auto">
-                    <ImageWithFallback
-                      src={svc.image}
-                      alt={`${svc.title}: Keem in a brand shoot`}
-                      className="h-full w-full object-cover transition-transform duration-[1400ms] ease-out group-hover:scale-[1.04] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
-                      style={{ objectPosition: svc.position }}
-                    />
-                  </div>
-                  <div className="pointer-events-none absolute inset-0 hidden bg-gradient-to-t from-stone-950/90 via-stone-950/45 to-transparent lg:block" />
-
-                  <span className="absolute left-4 top-4 rounded-full border border-white/20 bg-black/35 px-3 py-1 text-[11px] font-medium uppercase tracking-[0.12em] text-white/90 backdrop-blur-sm lg:left-7 lg:top-7">
-                    {svc.tag}
-                  </span>
-
-                  <div className="relative p-6 pt-5 text-white lg:absolute lg:inset-x-0 lg:bottom-0 lg:p-8">
-                    <h3 className="text-display-md text-white">{svc.title}</h3>
-                    <p className="mt-2 max-w-[34ch] text-sm leading-relaxed text-white/80 md:text-[15px]">{svc.desc}</p>
-                    <p className="mt-3 text-xs tracking-wide text-white/60">{svc.points.join('  ·  ')}</p>
-                    <button
-                      type="button"
-                      onClick={() => setBookTopic(svc.title)}
-                      className="mt-5 inline-flex h-11 items-center gap-2 rounded-full bg-white px-6 text-sm font-semibold text-stone-900 transition-colors hover:bg-white/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+            {/* One stage photo that follows the chosen offer, with a big-type index beside it.
+                No cards: tap a line and the photo changes and the line opens. */}
+            <div className="grid items-center gap-8 lg:grid-cols-12 lg:gap-16">
+              <motion.div
+                initial={{ opacity: 0, y: 22 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '-40px' }}
+                transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+                className="relative hidden lg:order-2 lg:col-span-7 lg:block"
+              >
+                <div className="relative aspect-square overflow-hidden rounded-3xl bg-muted">
+                  {services.map((svc, i) => (
+                    <div
+                      key={svc.title}
+                      aria-hidden={activeService !== i}
+                      className="absolute inset-0 transition-[opacity,transform] duration-[900ms] ease-out motion-reduce:transition-none"
+                      style={{ opacity: activeService === i ? 1 : 0, transform: activeService === i ? 'scale(1)' : 'scale(1.05)' }}
                     >
-                      Book me
-                      <span aria-hidden className="inline-block transition-transform duration-300 group-hover:translate-x-1">→</span>
-                    </button>
-                  </div>
-                </motion.article>
-              ))}
+                      <ImageWithFallback
+                        src={svc.image}
+                        alt={`${svc.title}: Keem in a brand shoot`}
+                        className="h-full w-full object-cover"
+                        style={{ objectPosition: svc.position }}
+                      />
+                    </div>
+                  ))}
+                  <span className="absolute left-6 top-6 rounded-full border border-white/20 bg-black/35 px-3 py-1 text-[11px] font-medium uppercase tracking-[0.12em] text-white/90 backdrop-blur-sm">
+                    {services[activeService].tag}
+                  </span>
+                </div>
+              </motion.div>
+
+              <ul className="border-y border-border lg:order-1 lg:col-span-5">
+                {services.map((svc, i) => {
+                  const open = activeService === i;
+                  return (
+                    <li key={svc.title} className="border-border [&:not(:first-child)]:border-t">
+                      <button
+                        type="button"
+                        onClick={() => setActiveService(i)}
+                        aria-expanded={open}
+                        className="group flex w-full items-baseline gap-4 py-6 text-left lg:py-8"
+                      >
+                        <span className="w-7 shrink-0 text-[13px] font-medium tabular-nums text-amber-ink">{String(i + 1).padStart(2, '0')}</span>
+                        <span
+                          className={`text-display-lg flex-1 transition-colors duration-500 ${
+                            open ? 'text-foreground' : 'text-foreground/35 group-hover:text-foreground/60'
+                          }`}
+                        >
+                          {svc.title}
+                        </span>
+                        <span
+                          aria-hidden
+                          className={`shrink-0 text-2xl leading-none text-muted-foreground transition-transform duration-500 ${open ? 'rotate-45' : ''}`}
+                        >
+                          +
+                        </span>
+                      </button>
+                      <AnimatePresence initial={false}>
+                        {open && (
+                          <motion.div
+                            key="panel"
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: 'auto', opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+                            className="overflow-hidden"
+                          >
+                            <div className="pb-8">
+                              {/* Phones: each offer carries its own photo, so tapping a line shows it right there. */}
+                              <div className="relative mb-5 aspect-[4/3] overflow-hidden rounded-2xl bg-muted lg:hidden">
+                                <ImageWithFallback
+                                  src={svc.image}
+                                  alt={`${svc.title}: Keem in a brand shoot`}
+                                  className="h-full w-full object-cover"
+                                  style={{ objectPosition: svc.position }}
+                                />
+                                <span className="absolute left-3 top-3 rounded-full border border-white/20 bg-black/35 px-3 py-1 text-[11px] font-medium uppercase tracking-[0.12em] text-white/90 backdrop-blur-sm">
+                                  {svc.tag}
+                                </span>
+                              </div>
+                              <div className="lg:pl-11">
+                              <p className="max-w-[38ch] text-sm leading-relaxed text-muted-foreground md:text-base">{svc.desc}</p>
+                              <p className="mt-3 text-xs tracking-wide text-muted-foreground/80">{svc.points.join('  ·  ')}</p>
+                              <button
+                                type="button"
+                                onClick={() => setBookTopic(svc.title)}
+                                className="group/cta mt-6 inline-flex h-11 items-center gap-2 rounded-full bg-foreground px-6 text-sm font-semibold text-background transition-opacity hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground"
+                              >
+                                Book me
+                                <span aria-hidden className="inline-block transition-transform duration-300 group-hover/cta:translate-x-1">→</span>
+                              </button>
+                              </div>
+                            </div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </li>
+                  );
+                })}
+              </ul>
             </div>
           </section>
 
