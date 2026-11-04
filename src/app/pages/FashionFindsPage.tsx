@@ -1,3 +1,4 @@
+import { Focus, MaskLine } from "../components/ui/Cine";
 import { useEffect, useMemo, useState } from "react";
 import { motion } from "motion/react";
 
@@ -81,18 +82,17 @@ export default function FashionFindsPage() {
   return (
     <div className="min-h-screen bg-background text-foreground">
       <main className="max-w-7xl mx-auto px-5 md:px-8 pt-8 md:pt-12 pb-12">
-        <motion.section
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-          className="mx-auto max-w-2xl text-center"
-        >
-          <p className="eyebrow text-amber-ink">{t("finds.eyebrow")}</p>
-          <h1 className="mt-3 text-display-lg">{t("finds.title")}</h1>
-          <p className="mx-auto mt-4 max-w-md text-muted-foreground">
+        <section className="mx-auto max-w-2xl text-center">
+          <Focus as="p" immediate blur={false} y={10} className="eyebrow text-amber-ink">
+            {t("finds.eyebrow")}
+          </Focus>
+          <h1 className="mt-3 text-display-lg">
+            <MaskLine immediate delay={0.1}>{t("finds.title")}</MaskLine>
+          </h1>
+          <Focus as="p" immediate delay={0.4} y={12} className="mx-auto mt-4 max-w-md text-muted-foreground">
             {t("finds.subtitle")}
-          </p>
-        </motion.section>
+          </Focus>
+        </section>
 
         <div className="mx-auto mt-8 max-w-3xl">
           <UniverseSearch value={query} onChange={setQuery} placeholder="Search finds..." />

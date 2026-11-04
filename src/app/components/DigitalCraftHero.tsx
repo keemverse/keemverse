@@ -1,3 +1,4 @@
+import { CINE_EASE } from '../lib/cine';
 import { motion } from 'motion/react';
 import { ImageWithFallback } from './figma/ImageWithFallback';
 import { Btn } from './CraftUI';
@@ -48,18 +49,18 @@ export function DigitalCraftHero({
         {/* 1. headline block */}
         <div className="order-1 lg:order-none">
           <motion.p
-            initial={{ opacity: 0, y: 12 }}
+            initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
+            transition={{ duration: 1, ease: CINE_EASE }}
             className="eyebrow mb-4 text-muted-foreground"
           >
             {t('craft.eyebrow')}
           </motion.p>
 
           <motion.h1
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.08 }}
+            initial={{ opacity: 0, y: 30, filter: 'blur(10px)' }}
+            animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+            transition={{ duration: 1.3, delay: 0.15, ease: CINE_EASE }}
             className="text-foreground"
             style={{
               fontFamily: 'var(--font-display)',
@@ -73,9 +74,9 @@ export function DigitalCraftHero({
           </motion.h1>
 
           <motion.p
-            initial={{ opacity: 0, y: 16 }}
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.16 }}
+            transition={{ duration: 1.1, delay: 0.45, ease: CINE_EASE }}
             className="mt-6 max-w-md text-base leading-relaxed text-muted-foreground md:mt-7 md:text-[17px]"
           >
             <Accent text={t('craft.sub')} />
@@ -84,9 +85,9 @@ export function DigitalCraftHero({
 
         {/* 3. actions (after the picture on phones) */}
         <motion.div
-          initial={{ opacity: 0, y: 16 }}
+          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.24 }}
+          transition={{ duration: 1, delay: 0.7, ease: CINE_EASE }}
           className="order-3 mt-8 grid grid-cols-2 items-center gap-3 sm:flex sm:flex-wrap sm:gap-4 lg:order-none lg:mt-9"
         >
           <Btn size="lg" onClick={onShop} className="w-full px-4 sm:w-auto sm:px-8" icon={<span aria-hidden="true">↓</span>}>
@@ -107,9 +108,9 @@ export function DigitalCraftHero({
 
       {/* 2. the picture, with one glass card hanging off its corner */}
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.7, delay: 0.2 }}
+        initial={{ opacity: 0, y: 28, scale: 0.965 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ duration: 1.5, delay: 0.25, ease: CINE_EASE }}
         className="relative order-2 mb-12 mt-10 md:mb-14 lg:order-none lg:mb-0 lg:mt-0"
       >
         <div className="relative overflow-hidden rounded-[1.75rem] border border-border bg-card shadow-[0_30px_80px_-40px_rgba(29,28,25,0.4)]">

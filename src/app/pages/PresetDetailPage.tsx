@@ -1,3 +1,5 @@
+import { MaskLine } from "../components/ui/Cine";
+import { CINE_EASE } from "../lib/cine";
 import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { motion } from "motion/react";
@@ -191,7 +193,7 @@ export default function PresetDetailPage() {
       <p className="eyebrow text-amber-ink">
         {pack ? "Lightroom presets · the full pack" : `Lightroom preset · ${preset.collection}`}
       </p>
-      <h1 className="mt-3 text-display-lg">{name}</h1>
+      <h1 className="mt-3 text-display-lg"><MaskLine immediate delay={0.1}>{name}</MaskLine></h1>
       <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2">
         <span className="text-3xl font-semibold tracking-tight">{priceLabel || " "}</span>
         {pack && deal && <span className="rounded-full bg-foreground px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-background">Save {deal.saveLabel}</span>}
@@ -211,9 +213,9 @@ export default function PresetDetailPage() {
         <div className="mt-6 grid items-start gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.95fr)] lg:gap-16">
           {/* ---------- Pictures ---------- */}
           <motion.div
-            initial={{ opacity: 0, y: 14 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+            initial={{ opacity: 0, y: 24, scale: 0.975 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ duration: 1.3, ease: CINE_EASE }}
             className="lg:sticky lg:top-[calc(var(--nav-h,0px)+1.5rem)]"
           >
             {hasCompare ? (
@@ -239,9 +241,9 @@ export default function PresetDetailPage() {
 
           {/* ---------- Details ---------- */}
           <motion.div
-            initial={{ opacity: 0, y: 14 }}
+            initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.08, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: 1.1, delay: 0.25, ease: CINE_EASE }}
           >
             <div className="hidden lg:block">{heading}</div>
 

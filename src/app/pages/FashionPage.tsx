@@ -1,3 +1,5 @@
+import { Focus, MaskLine } from '../components/ui/Cine';
+import { CINE_EASE } from '../lib/cine';
 import fashionFindsHero from '../../imports/fashion-finds-hero.webp';
 import photoPresetsHero from '../../imports/photo-presets-hero.webp';
 import React, { useState, useEffect, useRef } from 'react';
@@ -93,7 +95,10 @@ export function FashionPage() {
           {/* ── HERO ── */}
           <section>
             {/* Carousel container */}
-            <div
+            <motion.div
+              initial={{ opacity: 0, scale: 0.965 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 1.5, ease: CINE_EASE }}
               className="relative w-full overflow-hidden rounded-3xl"
               style={{ aspectRatio: '3/4', maxHeight: '90vh' }}
               onMouseEnter={() => setPaused(true)}
@@ -125,9 +130,9 @@ export function FashionPage() {
               {/* Fixed hero copy */}
               <div className="absolute bottom-0 left-0 right-0 p-8 md:p-14">
                 <motion.div
-                  initial={{ opacity: 0, y: 16 }}
+                  initial={{ opacity: 0, y: 24 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.7, delay: 0.2 }}
+                  transition={{ duration: 1.2, delay: 0.6, ease: CINE_EASE }}
                   style={{
                     filter: 'drop-shadow(0 0 12px rgba(29, 28, 25, 0.25))'
                   }}
@@ -136,7 +141,7 @@ export function FashionPage() {
                     {t('fashion.eyebrow')}
                   </p>
                   <h1 className="text-display-lg max-w-[18ch] text-white">
-                    {t('fashion.headline')}
+                    <MaskLine immediate delay={0.7}>{t('fashion.headline')}</MaskLine>
                   </h1>
                 </motion.div>
               </div>
@@ -163,12 +168,12 @@ export function FashionPage() {
                   </button>
                 ))}
               </div>
-            </div>
+            </motion.div>
           </section>
 
           {/* ── INTRO ── */}
           <section className="mt-16">
-            <div className="max-w-xl mx-auto text-center">
+            <Focus className="max-w-xl mx-auto text-center">
               <p className="text-foreground/80 font-medium text-lg md:text-xl mb-4">
                 {t('fashion.intro_hi')}
               </p>
@@ -178,7 +183,7 @@ export function FashionPage() {
               <p className="text-muted-foreground leading-loose text-base md:text-lg">
                 {t('fashion.intro_body')}
               </p>
-            </div>
+            </Focus>
           </section>
 
           {/* ── WORK WITH ME ── */}

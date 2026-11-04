@@ -1,3 +1,4 @@
+import { Focus, MaskLine } from "../components/ui/Cine";
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { motion } from "motion/react";
@@ -119,22 +120,19 @@ export default function LightroomPresetsPage() {
 
         {/* ---------- Intro ---------- */}
 
-        <motion.section
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-          className="mx-auto mb-10 max-w-2xl text-center"
-        >
-          <p className="eyebrow text-amber-ink">{t("presets.eyebrow")}</p>
+        <section className="mx-auto mb-10 max-w-2xl text-center">
+          <Focus as="p" immediate blur={false} y={10} className="eyebrow text-amber-ink">
+            {t("presets.eyebrow")}
+          </Focus>
 
           <h1 className="mt-3 text-display-lg">
-            {t("presets.title")}
+            <MaskLine immediate delay={0.1}>{t("presets.title")}</MaskLine>
           </h1>
 
-          <p className="mx-auto mt-4 max-w-md text-muted-foreground">
+          <Focus as="p" immediate delay={0.4} y={12} className="mx-auto mt-4 max-w-md text-muted-foreground">
             {t("presets.subtitle")}
-          </p>
-        </motion.section>
+          </Focus>
+        </section>
 
         {/* ---------- Before / after reveal (the ad hook) ---------- */}
 

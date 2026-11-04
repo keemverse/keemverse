@@ -263,8 +263,38 @@ html.theme-fade *::after {
   .scroll-reveal { animation: kv-reveal linear both; animation-timeline: view(); animation-range: entry 0% entry 55%; }
 }
 
+/* Cinematic: a soft band of light that crosses a picture as it scrolls through
+   the screen (browsers without scroll-driven animation simply skip it). Add
+   .cine-sheen to a positioned, overflow-hidden picture frame. */
+.cine-sheen { isolation: isolate; }
+@supports (animation-timeline: view()) {
+  @keyframes kv-sheen {
+    from { transform: translateX(-140%) skewX(-18deg); }
+    to   { transform: translateX(340%) skewX(-18deg); }
+  }
+  .cine-sheen::after {
+    content: ''; position: absolute; top: -10%; bottom: -10%; left: 0; width: 38%;
+    z-index: 2; pointer-events: none;
+    background: linear-gradient(90deg, transparent, rgba(255, 246, 232, .24), transparent);
+    animation: kv-sheen linear both; animation-timeline: view(); animation-range: cover 10% cover 90%;
+  }
+}
+
+/* Cinematic: a warm pool of light that follows the pointer across a card.
+   Add .spot to a positioned, overflow-hidden frame; AppShell's PointerLight
+   feeds it --mx / --my. Fine pointers only (hover devices). */
+.spot::before {
+  content: ''; position: absolute; inset: 0; z-index: 2; pointer-events: none; opacity: 0;
+  transition: opacity var(--dur-slow) var(--ease-out);
+  background: radial-gradient(340px circle at var(--mx, 50%) var(--my, 50%), rgba(255, 240, 214, .40), transparent 62%);
+}
+@media (hover: hover) and (pointer: fine) {
+  .spot:hover::before { opacity: 1; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .aurora::before, .aurora::after, .skeleton-shimmer { animation: none; }
+  .cine-sheen::after, .spot::before { display: none; }
   .scroll-reveal { animation: none; }
   .card-lift:hover { transform: none; }
   .card-img, .group:hover .card-img { transition: none; transform: none; }

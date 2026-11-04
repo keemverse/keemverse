@@ -1,6 +1,8 @@
 import { Suspense, lazy, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
+import { Focus, MaskLine, Unveil } from '../components/ui/Cine';
+import { CINE_EASE } from '../lib/cine';
 import { ShoppingBag, Camera, Palette, Layers } from 'lucide-react';
 import { SocialFooter } from '../components/SocialFooter';
 import { ComingSoonModal } from '../components/ComingSoonModal';
@@ -95,10 +97,9 @@ const hero = [
 function HeroPair({ items }: { items: typeof hero }) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.5 }}
+      initial={{ y: 28 }}
+      animate={{ y: 0 }}
+      transition={{ duration: 1.4, delay: 0.15, ease: CINE_EASE }}
       // Same geometry in light and dark so nothing moves when the theme switches:
       // only paint changes. Light: one seamless piece, no box. Dark: each half
       // becomes its own white card, so each universe stays distinct.
@@ -117,14 +118,16 @@ function HeroPair({ items }: { items: typeof hero }) {
                 <div
                   className="hero-fade absolute inset-0 will-change-transform transition-transform duration-[900ms] ease-[cubic-bezier(.22,1,.36,1)] group-hover:scale-[1.03]"
                 >
-                  <ImageWithFallback
-                    src={item.image}
-                    alt=""
-                    // The hero photos are the largest thing painted, so they load first.
-                    fetchPriority="high"
-                    decoding="async"
-                    className="w-full h-full object-cover object-[center_25%] md:object-center"
-                  />
+                  <Unveil immediate parallax={3} delay={0.2 + i * 0.18} className="h-full w-full">
+                    <ImageWithFallback
+                      src={item.image}
+                      alt=""
+                      // The hero photos are the largest thing painted, so they load first.
+                      fetchPriority="high"
+                      decoding="async"
+                      className="w-full h-full object-cover object-[center_25%] md:object-center"
+                    />
+                  </Unveil>
                 </div>
                 <span
                   className={`absolute top-2 md:top-4 rounded-full bg-white/95 text-[9px] md:text-[11px] tracking-wide font-semibold px-2 py-0.5 md:px-3 md:py-1 text-stone-900 ${
@@ -177,38 +180,17 @@ function HeroHeadline() {
         className="text-display-xl text-foreground"
         style={{ fontFamily: 'var(--font-display)' }}
       >
-        <span className="block overflow-hidden pb-[0.1em]">
-          <motion.span
-            className="inline-block"
-            initial={{ clipPath: 'inset(0 100% 0 0)' }}
-            whileInView={{ clipPath: 'inset(0 0% 0 0)' }}
-            viewport={{ once: true, margin: '0px 0px -80px 0px' }}
-            transition={{ duration: 0.9, ease: [0.65, 0, 0.35, 1] }}
-          >
-            <Accent text={t('home.headline_1')} />
-          </motion.span>
-        </span>
-        <span className="block overflow-hidden pb-[0.1em]">
-          <motion.span
-            className="inline-block"
-            initial={{ clipPath: 'inset(0 100% 0 0)' }}
-            whileInView={{ clipPath: 'inset(0 0% 0 0)' }}
-            viewport={{ once: true, margin: '0px 0px -80px 0px' }}
-            transition={{ duration: 0.9, delay: 0.35, ease: [0.65, 0, 0.35, 1] }}
-          >
-            <Accent text={t('home.headline_2')} />
-          </motion.span>
-        </span>
+        <MaskLine immediate delay={0.1}>
+          <Accent text={t('home.headline_1')} />
+        </MaskLine>
+        <MaskLine immediate delay={0.3}>
+          <Accent text={t('home.headline_2')} />
+        </MaskLine>
       </h1>
 
-      <motion.p
-        initial={{ opacity: 0, y: 6 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.45, delay: 0.1 }}
-        className="mt-5 text-muted-foreground leading-relaxed text-sm md:text-base"
-      >
+      <Focus as="p" immediate delay={0.6} y={12} className="mt-5 text-muted-foreground leading-relaxed text-sm md:text-base">
         {t('home.tagline')}
-      </motion.p>
+      </Focus>
     </div>
   );
 }

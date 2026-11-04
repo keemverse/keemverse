@@ -1,3 +1,4 @@
+import { CINE_EASE } from "../lib/cine";
 import { motion, useReducedMotion } from "motion/react";
 import { ArrowUpRight, Eye } from "lucide-react";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
@@ -32,10 +33,10 @@ export default function ProductCard({
 
   return (
     <motion.article
-      initial={reduce ? false : { opacity: 0, y: 24 }}
-      whileInView={{ opacity: 1, y: 0 }}
+      initial={reduce ? false : { opacity: 0, y: 36, scale: 0.97 }}
+      whileInView={{ opacity: 1, y: 0, scale: 1 }}
       viewport={{ once: true, margin: "-40px" }}
-      transition={{ duration: 0.55, delay: (index % 4) * 0.07, ease: [0.22, 1, 0.36, 1] }}
+      transition={{ duration: 1, delay: (index % 4) * 0.09, ease: CINE_EASE }}
       className="group"
     >
       <div
@@ -48,7 +49,7 @@ export default function ProductCard({
             onOpen?.();
           }
         }}
-        className="card-lift relative aspect-square cursor-pointer overflow-hidden rounded-2xl bg-muted"
+        className="card-lift spot cine-sheen relative aspect-square cursor-pointer overflow-hidden rounded-2xl bg-muted"
       >
         <ImageWithFallback src={image} alt={name} className="card-img h-full w-full object-cover" />
 

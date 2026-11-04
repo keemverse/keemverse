@@ -93,7 +93,7 @@ function Rail({
             ))
           : items.map((it) => (
               <Link key={it.id} to={href} className="group block w-40 sm:w-48 md:w-56" aria-label={it.name}>
-                <div className="card-lift relative aspect-square overflow-hidden rounded-2xl bg-muted">
+                <div className="card-lift spot cine-sheen relative aspect-square overflow-hidden rounded-2xl bg-muted">
                   <ImageWithFallback
                     src={it.image}
                     alt={it.name}

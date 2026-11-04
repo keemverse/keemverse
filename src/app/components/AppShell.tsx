@@ -1,6 +1,7 @@
 import { useEffect, type ReactNode } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { motion, useReducedMotion } from 'motion/react';
+import { CINE_EASE } from '../lib/cine';
 
 // Small pieces of app-wide behaviour that make the site feel like an app
 // instead of a set of separate pages.
@@ -88,8 +89,9 @@ export function InternalLinks() {
 }
 
 /**
- * A short fade as each page appears. Opacity only (no movement), so it can
- * never shift layout or break fixed-position popups.
+ * Each new page settles in with a slow fade. Opacity only (no movement or
+ * blur), so it can never shift layout or break fixed-position popups; the
+ * movement belongs to the things inside the page (see ui/Cine).
  */
 export function RouteTransition({ children }: { children: ReactNode }) {
   const { pathname } = useLocation();
@@ -99,9 +101,36 @@ export function RouteTransition({ children }: { children: ReactNode }) {
       key={pathname}
       initial={reduce ? false : { opacity: 0 }}
       animate={{ opacity: 1 }}
-      transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+      transition={{ duration: 0.8, ease: CINE_EASE }}
     >
       {children}
     </motion.div>
   );
+}
+
+/**
+ * Feeds the pointer position to any .spot card so its pool of light follows
+ * the cursor. Does nothing on touch screens.
+ */
+export function PointerLight() {
+  useEffect(() => {
+    if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+    let raf = 0;
+    const onMove = (e: PointerEvent) => {
+      const el = (e.target as Element | null)?.closest?.('.spot') as HTMLElement | null;
+      if (!el) return;
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        const r = el.getBoundingClientRect();
+        el.style.setProperty('--mx', `${e.clientX - r.left}px`);
+        el.style.setProperty('--my', `${e.clientY - r.top}px`);
+      });
+    };
+    document.addEventListener('pointermove', onMove, { passive: true });
+    return () => {
+      document.removeEventListener('pointermove', onMove);
+      cancelAnimationFrame(raf);
+    };
+  }, []);
+  return null;
 }

@@ -1,3 +1,4 @@
+import { Focus } from './ui/Cine';
 import type { CSSProperties, ReactNode } from 'react';
 import { motion, useReducedMotion } from 'motion/react';
 import { cn } from './ui/utils';
@@ -10,10 +11,11 @@ import { CRAFT, FASHION, accentText } from '../lib/theme';
 
 export const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
+/** Section-level arrival: rises and settles on the site's cinematic curve. */
 export function Reveal({
   children,
   delay = 0,
-  y = 24,
+  y = 28,
   className,
 }: {
   children: ReactNode;
@@ -21,17 +23,10 @@ export function Reveal({
   y?: number;
   className?: string;
 }) {
-  const reduce = useReducedMotion();
   return (
-    <motion.div
-      className={className}
-      initial={reduce ? false : { opacity: 0, y }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: '-60px' }}
-      transition={{ duration: 0.7, delay, ease: EASE }}
-    >
+    <Focus className={className} delay={delay} y={y} blur={false}>
       {children}
-    </motion.div>
+    </Focus>
   );
 }
 
