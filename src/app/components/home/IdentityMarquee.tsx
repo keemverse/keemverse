@@ -1,4 +1,4 @@
-const WORDS = ['Real outfits', 'Edited by me', 'Looks you can reuse', 'Picks I would wear', 'One fashion journey'];
+const WORDS = ['Real outfits', 'Presets I made', 'Looks you can reuse', 'Picks I would wear', 'One fashion journey'];
 
 /** A slim dark strip of words that slides past forever (static for reduced motion). */
 export default function IdentityMarquee() {

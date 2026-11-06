@@ -13,8 +13,8 @@ import studioImg from '../../../imports/trend-territory-modeling-portrait.webp';
 
 const ROWS = [
   { n: '01', title: 'Wear', line: 'Fashion Finds: pieces I picked for their design, quality or value.', to: '/fashion/finds', img: findsImg },
-  { n: '02', title: 'Shoot', line: 'The gallery: frames from my shoots and the looks they became.', to: '/gallery', img: studioImg },
-  { n: '03', title: 'Edit', line: 'Lightroom presets: the looks I edit with, ready for your photos.', to: '/fashion/presets', img: presetsImg },
+  { n: '02', title: 'Shoot', line: 'The gallery: frames from my shoots.', to: '/gallery', img: studioImg },
+  { n: '03', title: 'Edit', line: 'Lightroom presets: looks I made, ready for your own photos.', to: '/fashion/presets', img: presetsImg },
 ];
 
 export default function TheLoop() {

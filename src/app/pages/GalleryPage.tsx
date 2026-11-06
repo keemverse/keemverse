@@ -34,7 +34,7 @@ export default function GalleryPage() {
             <MaskLine immediate delay={0.1}>Frames</MaskLine>
           </h1>
           <Focus as="p" immediate delay={0.4} y={12} className="mx-auto mt-4 max-w-md text-muted-foreground">
-            Outfits I wore, places I walked, and the looks I edited them into.
+            Outfits I wore, places I walked, and the Lightroom looks I made.
           </Focus>
         </section>
 

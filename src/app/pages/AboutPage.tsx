@@ -6,18 +6,18 @@ export default function AboutPage() {
     <InfoPage eyebrow="Keemverse" title="About Keem" portrait={{ src: portrait, alt: "Keem, seated in a pink and cream striped outfit", position: "50% 38%" }}>
       <p>
         Hi, I'm Keem. KEEMVERSE is my fashion world: the outfits I wear, the
-        photos I shoot, the looks I edit and the pieces I pick. I believe
+        shoots I do, the Lightroom looks I make and the pieces I pick. I believe
         style is visual storytelling, and this is where mine lives.
       </p>
 
       <h2 className="font-serif text-xl text-foreground mt-8 mb-2">What you will find here</h2>
       <p>
         <a href="/gallery" className="text-foreground underline underline-offset-4">The gallery</a>{' '}
-        holds frames from my shoots and the looks they became.{' '}
+        holds frames from my shoots and the Lightroom looks I made.{' '}
         <a href="/fashion/finds" className="text-foreground underline underline-offset-4">Fashion Finds</a>{' '}
         are pieces I picked for their design, quality or value.{' '}
         <a href="/fashion/presets" className="text-foreground underline underline-offset-4">Lightroom presets</a>{' '}
-        are the looks I edit with, packaged so you can use them on your own photos.
+        are looks I made, packaged so you can use them on your own photos.
       </p>
 
       <h2 className="font-serif text-xl text-foreground mt-8 mb-2">Working with brands</h2>
