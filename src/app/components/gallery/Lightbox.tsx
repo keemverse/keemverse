@@ -134,6 +134,7 @@ export function Lightbox({
           >
             <h2 className="text-display-md font-[family-name:var(--font-display)]">{frame.title}</h2>
             <p className="text-sm text-[#F5F2EC]/70">{frame.note}</p>
+            {frame.credit && <p className="text-xs uppercase tracking-[0.16em] text-[#F5F2EC]/50">{frame.credit}</p>}
             {frame.href && (
               <Link
                 to={frame.href}

@@ -23,6 +23,8 @@ export interface Frame {
   ratio: number;
   /** Where the photo is anchored when it is cropped (CSS object-position). */
   position?: string;
+  /** Photographer credit, shown under the photo in the viewer (e.g. "Photo: Name"). Leave out when unknown. */
+  credit?: string;
   /** Optional page the frame links to (a look links to its preset page). */
   href?: string;
 }
