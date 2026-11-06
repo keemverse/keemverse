@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import { motion, useReducedMotion, useScroll, useTransform } from 'motion/react';
 import { Accent, useContent } from '../../lib/siteContent';
 import { Focus, MaskLine, Unveil } from '../ui/Cine';
-import { FRAMES } from '../../data/gallery';
 import { TikTokIcon } from '../Icons';
 import CountUp from './CountUp';
 import { useTikTokFollowers } from '../../lib/useFollowers';
@@ -11,29 +10,6 @@ import heroPhoto from '../../../imports/trend-territory-modeling-portrait.webp';
 
 // The first screen: who this is. Big title-card headline, one strong portrait in
 // an arch, and two small floating cards that point at the rest of the site.
-
-const stack = FRAMES.filter((f) => ['highway', 'pavement', 'garden'].includes(f.id));
-
-function Float({ children, delay = 0, className = '' }: { children: React.ReactNode; delay?: number; className?: string }) {
-  const reduce = useReducedMotion();
-  return (
-    <motion.div
-      className={className}
-      initial={reduce ? false : { opacity: 0, y: 18 }}
-      animate={reduce ? { opacity: 1 } : { opacity: 1, y: [0, -7, 0] }}
-      transition={
-        reduce
-          ? undefined
-          : {
-              opacity: { duration: 1, delay: 1.1 + delay, ease: [0.16, 1, 0.3, 1] },
-              y: { duration: 6.5, delay: 1.1 + delay, repeat: Infinity, ease: 'easeInOut' },
-            }
-      }
-    >
-      {children}
-    </motion.div>
-  );
-}
 
 export default function HomeHero() {
   const t = useContent();
@@ -119,29 +95,9 @@ export default function HomeHero() {
             </Unveil>
           </motion.div>
 
-          <Float delay={0} className="absolute -bottom-5 -left-3 z-20 md:-left-10">
-            <Link to="/fashion/presets" className="glass press flex items-center gap-3 rounded-2xl p-2 pr-4 shadow-lg">
-              <img src="/presets/old-garden-after.webp" alt="" className="h-12 w-12 rounded-xl object-cover" />
-              <span className="leading-tight">
-                <span className="block text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">My looks</span>
-                <span className="block text-sm font-semibold text-foreground">Lightroom presets</span>
-              </span>
-            </Link>
-          </Float>
-
-          <Float delay={0.4} className="absolute -right-2 top-[14%] z-20 md:-right-8">
-            <Link to="/gallery" className="glass press flex items-center gap-3 rounded-2xl p-2 pr-4 shadow-lg">
-              <span className="flex -space-x-3" aria-hidden="true">
-                {stack.map((f) => (
-                  <img key={f.id} src={f.src} alt="" className="h-9 w-9 rounded-full border-2 border-background object-cover" style={{ objectPosition: f.position ?? '50% 50%' }} />
-                ))}
-              </span>
-              <span className="leading-tight">
-                <span className="block text-sm font-semibold text-foreground">{FRAMES.length} frames</span>
-                <span className="block text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">Gallery</span>
-              </span>
-            </Link>
-          </Float>
+          <Focus as="p" immediate delay={1.1} y={8} blur={false} className="mt-5 text-center text-[11px] font-medium uppercase tracking-[0.24em] text-muted-foreground lg:text-right">
+            Trend Territory · studio
+          </Focus>
         </div>
       </div>
     </section>
