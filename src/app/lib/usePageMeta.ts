@@ -60,7 +60,7 @@ export function usePageMeta() {
     const lookName = lookMatch ? (lookMatch[1] === 'pack' ? 'Keemverse Preset Pack' : lookMatch[1].split('-').map((w) => w[0].toUpperCase() + w.slice(1)).join(' ') + ' Lightroom Preset') : '';
     const meta: Meta = lookMatch
       ? { title: `${lookName} | ${BRAND}`, description: 'A Lightroom preset with three depth tiers: Essential, Graded and Cinematic. Your download link is sent to your email after purchase.' }
-      : PAGES[path] ?? PAGES['/'];
+      : PAGES[path] ?? (isPrivate ? PAGES['/'] : { title: `Page not found | ${BRAND}`, description: 'This page does not exist.', noindex: true });
 
     document.title = meta.title;
 
@@ -71,7 +71,7 @@ export function usePageMeta() {
       el.setAttribute('href', ORIGIN + (path === '/' ? '/' : path))
     );
     setTag('meta[name="robots"]', () => Object.assign(document.createElement('meta'), { name: 'robots' }), (el) =>
-      el.setAttribute('content', isPrivate ? 'noindex, nofollow' : 'index, follow')
+      el.setAttribute('content', isPrivate || meta.noindex ? 'noindex, nofollow' : 'index, follow')
     );
   }, [pathname]);
 }

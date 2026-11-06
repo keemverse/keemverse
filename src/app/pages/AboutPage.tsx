@@ -1,8 +1,9 @@
 import { InfoPage } from '../components/InfoPage';
+import portrait from '../../imports/trend-territory-modeling-portrait.webp';
 
 export default function AboutPage() {
   return (
-    <InfoPage eyebrow="Keemverse" title="About Keem">
+    <InfoPage eyebrow="Keemverse" title="About Keem" portrait={{ src: portrait, alt: "Keem, seated in a pink and cream striped outfit", position: "50% 38%" }}>
       <p>
         Hi, I'm Keem. KEEMVERSE is my fashion world: the outfits I wear, the
         photos I shoot, the looks I edit and the pieces I pick. I believe

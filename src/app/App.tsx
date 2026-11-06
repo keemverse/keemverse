@@ -19,6 +19,7 @@ import LightroomPresetsPage from './pages/LightroomPresetsPage';
 import PresetDetailPage from './pages/PresetDetailPage';
 
 const GalleryPage = lazy(() => import('./pages/GalleryPage'));
+const NotFoundPage = lazy(() => import('./pages/NotFoundPage'));
 const AboutPage = lazy(() => import('./pages/AboutPage'));
 const ContactPage = lazy(() => import('./pages/ContactPage'));
 const RefundPolicyPage = lazy(() => import('./pages/RefundPolicyPage'));
@@ -110,6 +111,8 @@ export default function App() {
 <Route path="/admin/studio" element={<LayerStudioPage />} />
 
 {SHOW_UI_KIT && <Route path="/ui-kit" element={<UiKitPage />} />}
+
+<Route path="*" element={<NotFoundPage />} />
 </Routes>
         </Suspense>
         </RouteTransition>
