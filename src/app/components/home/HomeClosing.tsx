@@ -2,12 +2,15 @@ import { Link } from 'react-router-dom';
 import { useContent } from '../../lib/siteContent';
 import { socials } from '../../lib/socials';
 import { Focus, MaskLine } from '../ui/Cine';
+import CountUp from './CountUp';
+import { useTikTokFollowers } from '../../lib/useFollowers';
 
 // The last screen: follow along. TikTok is the main door, Instagram the second;
 // a quiet line below keeps the contact page one tap away.
 
 export default function HomeClosing() {
   const t = useContent();
+  const followers = useTikTokFollowers();
   const tiktok = socials.find((s) => s.name === 'TikTok');
   const insta = socials.find((s) => s.name === 'Instagram');
 
@@ -23,6 +26,11 @@ export default function HomeClosing() {
         <Focus as="p" delay={0.15} blur={false} y={12} className="mx-auto mt-5 max-w-md text-muted-foreground">
           {t('home.cta_body')}
         </Focus>
+        {followers !== null && (
+          <Focus as="p" delay={0.22} blur={false} y={10} className="mt-6 text-sm text-muted-foreground">
+            <CountUp value={followers} className="font-semibold text-foreground" /> {t('home.cta_proof')}
+          </Focus>
+        )}
         <Focus delay={0.3} blur={false} y={12} className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
           {tiktok && (
             <a

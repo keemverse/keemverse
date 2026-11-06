@@ -2,7 +2,9 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import PresetReveal from '../PresetReveal';
 import { getCatalogProducts } from '../../lib/products';
-import { lookSlug } from '../../lib/presetDeal';
+import { lookSlug, packDeal } from '../../lib/presetDeal';
+import { useRegion } from '../../lib/geo';
+import LookPicker from './LookPicker';
 import { useContent } from '../../lib/siteContent';
 import { Focus } from '../ui/Cine';
 
@@ -13,6 +15,8 @@ import { Focus } from '../ui/Cine';
 export default function HomeLooks() {
   const t = useContent();
   const navigate = useNavigate();
+  const region = useRegion();
+  const [all, setAll] = useState<any[]>([]);
   const [looks, setLooks] = useState<any[]>([]);
 
   useEffect(() => {
@@ -20,6 +24,7 @@ export default function HomeLooks() {
     getCatalogProducts('preset')
       .then((rows) => {
         if (!live) return;
+        setAll(rows.filter((p: any) => p.status === undefined || p.status === 'Live'));
         setLooks(
           [...rows]
             .filter((p: any) => (p.status === undefined || p.status === 'Live') && p.before_image && p.after_image)
@@ -41,6 +46,7 @@ export default function HomeLooks() {
         <h2 className="mt-3 text-display-lg">{t('home.looks_title')}</h2>
       </Focus>
       <PresetReveal looks={looks} onOpen={(p) => navigate(`/fashion/presets/${lookSlug(p)}`)} />
+      <LookPicker looks={looks} deal={packDeal(all, region)} />
     </section>
   );
 }

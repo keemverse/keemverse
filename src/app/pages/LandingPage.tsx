@@ -10,6 +10,7 @@ import Manifesto from '../components/home/Manifesto';
 import TheLoop from '../components/home/TheLoop';
 import HomeLooks from '../components/home/HomeLooks';
 import HomeClosing from '../components/home/HomeClosing';
+import HomeBrands from '../components/home/HomeBrands';
 import ScrollProgress from '../components/home/ScrollProgress';
 import FilmStrip from '../components/gallery/FilmStrip';
 import { FRAMES } from '../data/gallery';
@@ -68,6 +69,7 @@ export function LandingPage() {
           <Suspense fallback={<div className="min-h-[60vh]" aria-hidden="true" />}>
             <HomeRails />
           </Suspense>
+          <HomeBrands />
           <HomeClosing />
         </div>
       </div>
