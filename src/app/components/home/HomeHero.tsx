@@ -95,9 +95,6 @@ export default function HomeHero() {
             </Unveil>
           </motion.div>
 
-          <Focus as="p" immediate delay={1.1} y={8} blur={false} className="mt-5 text-center text-[11px] font-medium uppercase tracking-[0.24em] text-muted-foreground lg:text-right">
-            Trend Territory · studio
-          </Focus>
         </div>
       </div>
     </section>
