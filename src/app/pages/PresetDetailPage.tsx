@@ -1,4 +1,5 @@
 import { MaskLine } from "../components/ui/Cine";
+import { track } from "../lib/track";
 import { CINE_EASE } from "../lib/cine";
 import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
@@ -139,6 +140,7 @@ export default function PresetDetailPage() {
 
   const buy = () => {
     if (!preset || !charge) return;
+    track("buy_click", { item: lookSlug(preset), detail: "preset-page" });
     navigate("/checkout", {
       state: {
         item: { id: preset.name, name: preset.name, amount: charge.amount, currency: charge.currency },

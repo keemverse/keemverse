@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { BookMeModal } from '../BookMeModal';
 import { useContent } from '../../lib/siteContent';
 import { Focus } from '../ui/Cine';
+import { track } from '../../lib/track';
 
 // A quiet door for brands: the two ways of working together, each opening the
 // same booking note used on the Fashion page. Inbound only: nothing here asks
@@ -35,7 +36,10 @@ export default function HomeBrands() {
               </div>
               <button
                 type="button"
-                onClick={() => setTopic(o.title)}
+                onClick={() => {
+                  track('brand_click', { item: o.title });
+                  setTopic(o.title);
+                }}
                 className="press mt-8 inline-flex h-11 w-fit items-center gap-2 rounded-full bg-foreground px-6 text-sm font-semibold text-background transition-opacity hover:opacity-90"
               >
                 Book me <span aria-hidden="true">↗</span>

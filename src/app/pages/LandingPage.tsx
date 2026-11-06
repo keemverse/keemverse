@@ -11,6 +11,7 @@ import TheLoop from '../components/home/TheLoop';
 import HomeLooks from '../components/home/HomeLooks';
 import HomeClosing from '../components/home/HomeClosing';
 import HomeBrands from '../components/home/HomeBrands';
+import FreeLook from '../components/home/FreeLook';
 import ScrollProgress from '../components/home/ScrollProgress';
 import FilmStrip from '../components/gallery/FilmStrip';
 import { FRAMES } from '../data/gallery';
@@ -66,6 +67,7 @@ export function LandingPage() {
         <div className="mx-auto max-w-6xl">
           <TheLoop />
           <HomeLooks />
+          <FreeLook />
           <Suspense fallback={<div className="min-h-[60vh]" aria-hidden="true" />}>
             <HomeRails />
           </Suspense>

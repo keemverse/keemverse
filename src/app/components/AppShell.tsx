@@ -2,6 +2,7 @@ import { useEffect, type ReactNode } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { motion, useReducedMotion } from 'motion/react';
 import { CINE_EASE } from '../lib/cine';
+import { track } from '../lib/track';
 
 // Small pieces of app-wide behaviour that make the site feel like an app
 // instead of a set of separate pages.
@@ -132,5 +133,15 @@ export function PointerLight() {
       cancelAnimationFrame(raf);
     };
   }, []);
+  return null;
+}
+
+/** Counts each page a visitor opens (anonymous; see lib/track.ts). */
+export function PageViews() {
+  const { pathname } = useLocation();
+  useEffect(() => {
+    if (pathname.startsWith('/admin')) return;
+    track('page');
+  }, [pathname]);
   return null;
 }

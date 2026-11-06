@@ -6,6 +6,7 @@ import { Focus, MaskLine, Unveil } from '../ui/Cine';
 import { TikTokIcon } from '../Icons';
 import CountUp from './CountUp';
 import { useTikTokFollowers } from '../../lib/useFollowers';
+import { track } from '../../lib/track';
 import heroPhoto from '../../../imports/trend-territory-modeling-portrait.webp';
 
 // The first screen: who this is. Big title-card headline, one strong portrait in
@@ -52,6 +53,7 @@ export default function HomeHero() {
         <Focus immediate delay={0.9} y={14} className="mt-8 flex flex-wrap items-center gap-3">
           <Link
             to="/fashion/presets"
+            onClick={() => track('cta', { item: 'hero-presets' })}
             className="press inline-flex h-12 items-center gap-2 rounded-full bg-foreground px-7 text-sm font-semibold text-background transition-opacity hover:opacity-90"
           >
             {t('home.hero_cta_1')}
@@ -59,6 +61,7 @@ export default function HomeHero() {
           </Link>
           <Link
             to="/gallery"
+            onClick={() => track('cta', { item: 'hero-gallery' })}
             className="press inline-flex h-12 items-center rounded-full border border-border px-7 text-sm font-semibold text-foreground transition-colors hover:border-foreground/40"
           >
             {t('home.hero_cta_2')}

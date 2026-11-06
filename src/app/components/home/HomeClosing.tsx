@@ -4,6 +4,7 @@ import { socials } from '../../lib/socials';
 import { Focus, MaskLine } from '../ui/Cine';
 import CountUp from './CountUp';
 import { useTikTokFollowers } from '../../lib/useFollowers';
+import { track } from '../../lib/track';
 
 // The last screen: follow along. TikTok is the main door, Instagram the second;
 // a quiet line below keeps the contact page one tap away.
@@ -35,6 +36,7 @@ export default function HomeClosing() {
           {tiktok && (
             <a
               href={tiktok.href}
+              onClick={() => track('social_click', { item: 'tiktok', detail: 'closing' })}
               target="_blank"
               rel="noopener noreferrer"
               className="press inline-flex h-12 items-center gap-2 rounded-full bg-foreground px-7 text-sm font-semibold text-background transition-opacity hover:opacity-90"
@@ -46,6 +48,7 @@ export default function HomeClosing() {
           {insta && (
             <a
               href={insta.href}
+              onClick={() => track('social_click', { item: 'instagram', detail: 'closing' })}
               target="_blank"
               rel="noopener noreferrer"
               className="press inline-flex h-12 items-center gap-2 rounded-full border border-border px-7 text-sm font-semibold text-foreground transition-colors hover:border-foreground/40"

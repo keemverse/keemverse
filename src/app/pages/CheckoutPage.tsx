@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { motion } from "motion/react";
 import { ImageWithFallback } from "../components/figma/ImageWithFallback";
 import { SocialFooter } from "../components/SocialFooter";
 import { payWithFlutterwave, type CheckoutItem } from "../lib/flutterwave";
+import { track } from "../lib/track";
 
 interface CheckoutState {
   item: CheckoutItem;
@@ -23,6 +24,11 @@ export default function CheckoutPage() {
   const [marketingOptIn, setMarketingOptIn] = useState(false);
   const [status, setStatus] = useState<"idle" | "paying">("idle");
   const [error, setError] = useState<string | null>(null);
+
+  const itemId = state?.item?.id;
+  useEffect(() => {
+    if (itemId) track("checkout_view", { item: itemId });
+  }, [itemId]);
 
   if (!state?.item) {
     return (
@@ -49,6 +55,7 @@ export default function CheckoutPage() {
   const handlePay = async () => {
     setError(null);
     setStatus("paying");
+    track("pay_start", { item: item.id });
     try {
       await payWithFlutterwave({
         item,
@@ -56,6 +63,7 @@ export default function CheckoutPage() {
         name,
         marketingOptIn,
         onSuccess: (txRef, transactionId) => {
+          track("pay_success", { item: item.id });
           navigate("/checkout/success", { state: { txRef, transactionId, item } });
         },
         onClose: () => {

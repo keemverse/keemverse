@@ -5,6 +5,7 @@ import { getCatalogProducts } from '../../lib/products';
 import { lookSlug, packDeal } from '../../lib/presetDeal';
 import { useRegion } from '../../lib/geo';
 import LookPicker from './LookPicker';
+import { track } from '../../lib/track';
 import { useContent } from '../../lib/siteContent';
 import { Focus } from '../ui/Cine';
 
@@ -45,7 +46,10 @@ export default function HomeLooks() {
         <p className="eyebrow text-amber-ink">{t('home.looks_eyebrow')}</p>
         <h2 className="mt-3 text-display-lg">{t('home.looks_title')}</h2>
       </Focus>
-      <PresetReveal looks={looks} onOpen={(p) => navigate(`/fashion/presets/${lookSlug(p)}`)} />
+      <PresetReveal looks={looks} onOpen={(p) => {
+          track('look_open', { item: lookSlug(p), detail: 'reveal' });
+          navigate(`/fashion/presets/${lookSlug(p)}`);
+        }} />
       <LookPicker looks={looks} deal={packDeal(all, region)} />
     </section>
   );

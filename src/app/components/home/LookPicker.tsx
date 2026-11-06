@@ -7,6 +7,7 @@ import { useRegion } from '../../lib/geo';
 import { formatPrice } from '../../lib/currency';
 import { lookSlug, plainName, type PackDeal } from '../../lib/presetDeal';
 import { Focus } from '../ui/Cine';
+import { track } from '../../lib/track';
 
 // "Which look is yours?" A visitor picks the photo they would post first. Choosing
 // is a small commitment, the picked look then reads as theirs, and the pack is
@@ -44,7 +45,10 @@ export default function LookPicker({ looks, deal }: { looks: any[]; deal: PackDe
                 type="button"
                 role="radio"
                 aria-checked={on}
-                onClick={() => setPickedId(String(l.id))}
+                onClick={() => {
+                  setPickedId(String(l.id));
+                  track('look_pick', { item: lookSlug(l) });
+                }}
                 className={`group spot cine-sheen relative block w-full overflow-hidden rounded-2xl text-left outline-offset-4 transition-all duration-500 ${
                   on ? 'ring-2 ring-[color:var(--fashion-display)] ring-offset-4 ring-offset-background' : ''
                 } ${dim ? 'opacity-55 saturate-50' : ''}`}
@@ -92,6 +96,7 @@ export default function LookPicker({ looks, deal }: { looks: any[]; deal: PackDe
               <div className="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row">
                 <Link
                   to={`/fashion/presets/${lookSlug(picked)}`}
+                  onClick={() => track('look_open', { item: lookSlug(picked), detail: 'picker' })}
                   className="press inline-flex h-12 items-center gap-2 rounded-full bg-foreground px-7 text-sm font-semibold text-background transition-opacity hover:opacity-90"
                 >
                   Get {plainName(picked.name)} · {formatPrice(picked.price, region)}
@@ -101,7 +106,11 @@ export default function LookPicker({ looks, deal }: { looks: any[]; deal: PackDe
                 <p className="mx-auto mt-5 max-w-md text-sm leading-relaxed text-muted-foreground">
                   Want them all? The Preset Pack holds all {deal.lookCount} looks and every look added later, for {deal.packLabel}: you save{' '}
                   <strong className="text-foreground">{deal.saveLabel}</strong>. The pack price rises as new looks are added.{' '}
-                  <Link to="/fashion/presets/pack" className="text-foreground underline underline-offset-4">
+                  <Link
+                    to="/fashion/presets/pack"
+                    onClick={() => track('pack_click', { item: 'pack', detail: 'picker' })}
+                    className="text-foreground underline underline-offset-4"
+                  >
                     See the pack
                   </Link>
                 </p>

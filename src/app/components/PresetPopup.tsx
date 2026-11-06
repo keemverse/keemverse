@@ -1,3 +1,4 @@
+import { track } from '../lib/track';
 import { motion, AnimatePresence } from "motion/react";
 import { useNavigate } from "react-router-dom";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
@@ -67,6 +68,7 @@ export default function PresetPopup({
   const { amount, currency } = chargeFor(rawPrice, region);
 
   const handleBuyNow = () => {
+    track('buy_click', { item: name, detail: 'popup' });
     navigate("/checkout", {
       state: {
         item: { id: name, name, amount, currency },
