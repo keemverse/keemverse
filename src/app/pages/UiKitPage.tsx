@@ -5,7 +5,7 @@ import FilterChips from '../components/ui/FilterChips';
 import SkeletonCard from '../components/SkeletonCard';
 import EmptyState from '../components/EmptyState';
 import SectionDivider from '../components/SectionDivider';
-import { Reveal } from '../components/CraftUI';
+import { Reveal } from '../components/ui/Cine';
 import { NGN_PER_USD, formatPrice } from '../lib/currency';
 
 // Review page for the UI refresh. Only registered in development and on Vercel

@@ -172,3 +172,22 @@ export function Drift({
     </motion.div>
   );
 }
+
+/** Section-level arrival: rises and settles on the site's cinematic curve. */
+export function Reveal({
+  children,
+  delay = 0,
+  y = 28,
+  className,
+}: {
+  children: ReactNode;
+  delay?: number;
+  y?: number;
+  className?: string;
+}) {
+  return (
+    <Focus className={className} delay={delay} y={y} blur={false}>
+      {children}
+    </Focus>
+  );
+}

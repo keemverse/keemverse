@@ -1,4 +1,7 @@
 {
+  "redirects": [
+    { "source": "/digital-craft", "destination": "/", "permanent": false }
+  ],
   "rewrites": [
     {
       "source": "/fashion/presets/:slug",

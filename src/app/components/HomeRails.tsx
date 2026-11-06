@@ -1,17 +1,17 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, ShoppingBag, Camera, Layers, Palette } from 'lucide-react';
+import { ArrowRight, ShoppingBag, Camera } from 'lucide-react';
 import type { ComponentType } from 'react';
-import { FASHION, FASHION_DARK, CRAFT, CRAFT_DARK } from '../lib/theme';
-import { Reveal } from './CraftUI';
+import { FASHION, FASHION_DARK } from '../lib/theme';
+import { Reveal } from './ui/Cine';
 import { ImageWithFallback } from './figma/ImageWithFallback';
 import { getCatalogProducts } from '../lib/products';
 import { formatPrice } from '../lib/currency';
 import { useRegion } from '../lib/geo';
 import { useContent } from '../lib/siteContent';
 
-// Below the two-universe hero: a taste of what is inside each shop, so the home
-// page shows real things instead of ending after two cards. Everything here is
+// Near the bottom of the home page: a taste of what is inside each shop, so the
+// page shows real things you can open. Everything here is
 // pulled from the same catalogue the shop pages use, in the same order, and the
 // prices follow the same rule (Fashion Finds prices show only in Nigeria).
 
@@ -182,42 +182,6 @@ export default function HomeRails() {
           loading={loadingPresets}
         />
       )}
-
-      <Reveal>
-        <section className="mt-16 md:mt-24">
-          <p className="eyebrow text-teal-ink">{t('home.craft_eyebrow')}</p>
-          <h2 className="mt-3 text-display-md">{t('home.craft_title')}</h2>
-          <div className="mt-4 flex flex-wrap gap-2.5">
-            <ActionPill to="/digital-craft" label={t('home.craft_cta_1')} icon={Layers} accent={CRAFT} accentDark={CRAFT_DARK} />
-            <ActionPill to="/digital-craft" label={t('home.craft_cta_2')} icon={Palette} accent={CRAFT} accentDark={CRAFT_DARK} />
-          </div>
-        </section>
-      </Reveal>
-
-      <Reveal>
-        <section className="mt-16 md:mt-24 glass sheen overflow-hidden rounded-3xl px-6 py-12 text-center md:px-12 md:py-16">
-          <p className="eyebrow text-teal-ink">{t('home.cta_eyebrow')}</p>
-          <h2 className="mx-auto mt-3 max-w-xl text-display-lg">{t('home.cta_title')}</h2>
-          <p className="mx-auto mt-4 max-w-md text-muted-foreground">
-            {t('home.cta_body')}
-          </p>
-          <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <Link
-              to="/contact"
-              className="press inline-flex items-center gap-2 rounded-full bg-foreground px-7 py-3.5 text-sm font-semibold text-background transition-opacity hover:opacity-90"
-            >
-              {t('home.cta_primary')}
-              <ArrowRight className="h-4 w-4" />
-            </Link>
-            <Link
-              to="/digital-craft"
-              className="press inline-flex items-center gap-2 rounded-full border border-border px-7 py-3.5 text-sm font-semibold text-foreground transition-colors hover:border-foreground/40"
-            >
-              {t('home.cta_secondary')}
-            </Link>
-          </div>
-        </section>
-      </Reveal>
     </div>
   );
 }

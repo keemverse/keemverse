@@ -2,41 +2,33 @@ import { InfoPage } from '../components/InfoPage';
 
 export default function AboutPage() {
   return (
-    <InfoPage eyebrow="Keemverse" title="About us">
+    <InfoPage eyebrow="Keemverse" title="About Keem">
       <p>
-        Keemverse is a visual storytelling and digital craft studio operating
-        across two universes — Fashion and Digital Craft.
+        Hi, I'm Keem. KEEMVERSE is my fashion world: the outfits I wear, the
+        photos I shoot, the looks I edit and the pieces I pick. I believe
+        style is visual storytelling, and this is where mine lives.
       </p>
 
-      <h2 className="font-serif text-xl text-foreground mt-8 mb-2">Fashion</h2>
+      <h2 className="font-serif text-xl text-foreground mt-8 mb-2">What you will find here</h2>
       <p>
-        Hi, I'm Keem. I believe style is visual storytelling. I help people
-        build wardrobes, campaigns, and creative worlds that feel
-        unmistakably theirs — through brand modeling, brand collaborations,
-        wardrobe styling, and creative direction — alongside a curated shop
-        of fashion finds and Lightroom presets for photographers and
-        creators who want a consistent, editorial look.
+        <a href="/gallery" className="text-foreground underline underline-offset-4">The gallery</a>{' '}
+        holds frames from my shoots and the looks they became.{' '}
+        <a href="/fashion/finds" className="text-foreground underline underline-offset-4">Fashion Finds</a>{' '}
+        are pieces I picked for their design, quality or value.{' '}
+        <a href="/fashion/presets" className="text-foreground underline underline-offset-4">Lightroom presets</a>{' '}
+        are the looks I edit with, packaged so you can use them on your own photos.
       </p>
 
-      <h2 className="font-serif text-xl text-foreground mt-8 mb-2">Digital Craft</h2>
+      <h2 className="font-serif text-xl text-foreground mt-8 mb-2">Working with brands</h2>
       <p>
-        On the Digital Craft side, I help creators, apparel brands, and
-        print businesses solve design and production problems. From custom
-        graphics and production-ready artwork to print file optimization
-        and repair, I help apparel brands, creators, and print businesses
-        deliver creative designs, clean files, and better prints —
-        including production-ready graphics and apparel design packs.
-      </p>
-
-      <p>
-        Keemverse is a remote-first studio. We work with creators, brands and
-        print businesses around the world, and everything from first brief to
-        final files is handled online.
+        I take on a small number of brand collaborations and modeling projects
+        that suit the look. A short note through the contact page is the best
+        way to start.
       </p>
 
       <p>
-        For business inquiries, collaborations, or questions about any of
-        our products, visit our{' '}
+        KEEMVERSE is online-first and works with people around the world.
+        For collaborations or questions about any of our products, visit our{' '}
         <a href="/contact" className="text-foreground underline underline-offset-4">
           Contact page
         </a>.

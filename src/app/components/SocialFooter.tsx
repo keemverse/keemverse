@@ -4,10 +4,10 @@ import { socials } from '../lib/socials';
 import logImg from '../../imports/log.png';
 
 const explore = [
+  { to: '/gallery', label: 'Gallery' },
   { to: '/fashion', label: 'Fashion' },
   { to: '/fashion/finds', label: 'Fashion Finds' },
   { to: '/fashion/presets', label: 'Lightroom Presets' },
-  { to: '/digital-craft', label: 'Digital Craft' },
 ];
 
 const help = [
@@ -60,7 +60,7 @@ export function SocialFooter() {
               Create · Build · Inspire
             </p>
             <p className="mt-4 text-sm text-muted-foreground leading-relaxed max-w-xs">
-              Fashion finds, presets, and original art and apparel.
+              Keem's fashion world: outfits, presets and finds.
             </p>
           </div>
 

@@ -15,8 +15,8 @@ type Meta = { title: string; description: string; noindex?: boolean };
 
 const PAGES: Record<string, Meta> = {
   '/': {
-    title: 'KEEMVERSE: one creator, two crafts',
-    description: 'Fashion finds and Lightroom presets, plus original art to wear, download, or have made for you.',
+    title: "KEEMVERSE: Keem's fashion world",
+    description: 'Outfits, a photo gallery, Lightroom presets and fashion finds from Keem (Soft Keem).',
   },
   '/fashion': {
     title: `Fashion | ${BRAND}`,
@@ -30,11 +30,11 @@ const PAGES: Record<string, Meta> = {
     title: `Lightroom Presets | ${BRAND}`,
     description: 'Lightroom presets for a consistent, editorial look. Your download link is sent to your email after purchase.',
   },
-  '/digital-craft': {
-    title: `Digital Craft | ${BRAND}`,
-    description: 'Original art to wear, art packs to download, and custom designs made just for you.',
+  '/gallery': {
+    title: `Gallery | ${BRAND}`,
+    description: 'Frames from Keem\'s shoots and the Lightroom looks they became.',
   },
-  '/about': { title: `About | ${BRAND}`, description: 'Who is behind KEEMVERSE and what it makes.' },
+  '/about': { title: `About | ${BRAND}`, description: 'Who Keem is and what you will find on KEEMVERSE.' },
   '/contact': { title: `Contact | ${BRAND}`, description: 'Send a brief about a collaboration, a project or an order.' },
   '/refund-policy': { title: `Refund Policy | ${BRAND}`, description: 'How refunds work for presets and other digital downloads.' },
   '/privacy-policy': { title: `Privacy Policy | ${BRAND}`, description: 'How KEEMVERSE handles your information.' },

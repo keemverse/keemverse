@@ -1,6 +1,6 @@
 import { Link, useLocation } from 'react-router-dom';
 import { motion, useReducedMotion } from 'motion/react';
-import { ShoppingBag, Camera, Palette, Mail } from 'lucide-react';
+import { ShoppingBag, Camera, Images, Mail } from 'lucide-react';
 
 // Phone-only tab bar in the thumb zone: the four places people actually go.
 // It is hidden on desktop, in the admin tools and during checkout (where the
@@ -10,7 +10,7 @@ import { ShoppingBag, Camera, Palette, Mail } from 'lucide-react';
 const TABS = [
   { label: 'Finds', href: '/fashion/finds', icon: ShoppingBag },
   { label: 'Presets', href: '/fashion/presets', icon: Camera },
-  { label: 'Craft', href: '/digital-craft', icon: Palette },
+  { label: 'Gallery', href: '/gallery', icon: Images },
   { label: 'Contact', href: '/contact', icon: Mail },
 ];
 

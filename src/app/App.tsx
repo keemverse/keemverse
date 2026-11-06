@@ -1,5 +1,5 @@
 import React, { Suspense, lazy } from 'react';
-import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 
 import { NavBar } from './components/NavBar';
 import { ScrollToTop, InternalLinks, RouteTransition, ScrollChrome, PointerLight } from './components/AppShell';
@@ -18,7 +18,7 @@ import FashionFindsPage from './pages/FashionFindsPage';
 import LightroomPresetsPage from './pages/LightroomPresetsPage';
 import PresetDetailPage from './pages/PresetDetailPage';
 
-const DigitalCraftPage = lazy(() => import('./pages/DigitalCraftPage').then((m) => ({ default: m.DigitalCraftPage })));
+const GalleryPage = lazy(() => import('./pages/GalleryPage'));
 const AboutPage = lazy(() => import('./pages/AboutPage'));
 const ContactPage = lazy(() => import('./pages/ContactPage'));
 const RefundPolicyPage = lazy(() => import('./pages/RefundPolicyPage'));
@@ -89,10 +89,10 @@ export default function App() {
   element={<PresetDetailPage />}
 />
 
-<Route
-  path="/digital-craft"
-  element={<DigitalCraftPage />}
-/>
+<Route path="/gallery" element={<GalleryPage />} />
+
+{/* Craft was packed away on 6 Nov 2026 (see 02_UNIVERSES/DIGITAL CRAFT/_PACKED_...). Old links land on the home page. */}
+<Route path="/digital-craft" element={<Navigate to="/" replace />} />
 
 <Route path="/about" element={<AboutPage />} />
 <Route path="/contact" element={<ContactPage />} />

@@ -1,236 +1,78 @@
-import { Suspense, lazy, useState } from 'react';
+import { Suspense, lazy } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion } from 'motion/react';
-import { Focus, MaskLine, Unveil } from '../components/ui/Cine';
-import { CINE_EASE } from '../lib/cine';
-import { ShoppingBag, Camera, Palette, Layers } from 'lucide-react';
 import { SocialFooter } from '../components/SocialFooter';
-import { ComingSoonModal } from '../components/ComingSoonModal';
-import { ImageWithFallback } from '../components/figma/ImageWithFallback';
-import { PillButton } from '../components/ui/PillButton';
-import { AccentPillButton } from '../components/ui/AccentPillButton';
 import { BurgerMenu } from '../components/ui/BurgerMenu';
 import { GeometricBackdrop } from '../components/GeometricBackdrop';
 import { BioChooser } from '../components/BioChooser';
-import { Accent, useContent } from '../lib/siteContent';
+import HomeHero from '../components/home/HomeHero';
+import IdentityMarquee from '../components/home/IdentityMarquee';
+import Manifesto from '../components/home/Manifesto';
+import TheLoop from '../components/home/TheLoop';
+import HomeLooks from '../components/home/HomeLooks';
+import HomeClosing from '../components/home/HomeClosing';
+import ScrollProgress from '../components/home/ScrollProgress';
+import FilmStrip from '../components/gallery/FilmStrip';
+import { FRAMES } from '../data/gallery';
+import keemverseWordmark from '../../imports/keemverse-wordmark.svg';
 // Below the fold: its code and data load after the hero has painted.
 const HomeRails = lazy(() => import('../components/HomeRails'));
-import { FASHION, FASHION_DARK, CRAFT, CRAFT_DARK, accentText } from '../lib/theme';
-import fashionPageHero from '../../imports/IMG_7304.webp';
-import craftPageHero from '../../imports/craft-quality-hero_2.webp';
-import keemverseWordmark from '../../imports/keemverse-wordmark.svg';
 
-// Landing-page-only top bar: wordmark left, animated burger right.
-// The universe pages keep their own back-button/toggle nav — this is
-// a separate treatment just for "/".
+// Home-only top bar: wordmark left, animated burger right.
 function LandingNav() {
   const navigate = useNavigate();
-  const [comingSoon, setComingSoon] = useState<string | null>(null);
-
   const items = [
-    { label: 'Fashion', action: () => navigate('/fashion') },
+    { label: 'Gallery', action: () => navigate('/gallery') },
     { label: 'Fashion Finds', action: () => navigate('/fashion/finds') },
     { label: 'Lightroom Presets', action: () => navigate('/fashion/presets') },
-    { label: 'Craft', action: () => navigate('/digital-craft') },
-    { label: 'Resources', action: () => setComingSoon('Resources') },
+    { label: 'Fashion', action: () => navigate('/fashion') },
     { label: 'About', action: () => navigate('/about') },
     { label: 'Contact', action: () => navigate('/contact') },
   ];
 
   return (
     <div className="flex items-center justify-between relative">
-      <ComingSoonModal
-        open={!!comingSoon}
-        onClose={() => setComingSoon(null)}
-        title={comingSoon ? `${comingSoon} — Coming Soon` : 'Coming Soon'}
-        description="This page isn't set up yet — check back soon."
-      />
-
-      <img
-        src={keemverseWordmark}
-        alt="Keemverse"
-        className="h-[11px] md:h-[18px] w-auto object-contain"
-      />
-
+      <img src={keemverseWordmark} alt="Keemverse" className="h-[11px] md:h-[18px] w-auto object-contain" />
       <BurgerMenu items={items} />
     </div>
   );
 }
 
-const hero = [
-  {
-    title: 'fashion',
-    description: 'Curated finds, styling, and visual storytelling.',
-    image: fashionPageHero,
-    cta: 'enter',
-    tag: 'LIVE',
-    href: '/fashion',
-    accent: FASHION,
-    accentDark: FASHION_DARK,
-    pills: [
-      { label: 'fashion finds', sub: 'shop my picks', icon: ShoppingBag, href: '/fashion/finds' },
-      { label: 'presets', sub: 'lightroom presets', icon: Camera, href: '/fashion/presets' },
-    ],
-  },
-  {
-    title: 'craft',
-    description: 'Production-ready artwork and design packs.',
-    image: craftPageHero,
-    cta: 'enter',
-    tag: 'Coming Soon',
-    href: '/digital-craft',
-    accent: CRAFT,
-    accentDark: CRAFT_DARK,
-    pills: [
-      { label: 'graphics', sub: 'printable graphics', icon: Layers, href: '/digital-craft' },
-      { label: 'Apparel Designs', sub: 'apparel design packs', icon: Palette, href: '/digital-craft' },
-    ],
-  },
-];
-
-// Light mode: the two universes as ONE seamless piece, fashion on the left and
-// craft on the right, each half its own link. The original photographs fade out
-// on every edge (.hero-fade) and melt into the page, with a faint amber-to-teal
-// seam between them. Dark mode: the same markup becomes two separate white
-// cards with dark text, side by side. The quick links for each half sit
-// directly beneath, in the same two columns.
-function HeroPair({ items }: { items: typeof hero }) {
-  return (
-    <motion.div
-      initial={{ y: 28 }}
-      animate={{ y: 0 }}
-      transition={{ duration: 1.4, delay: 0.15, ease: CINE_EASE }}
-      // Same geometry in light and dark so nothing moves when the theme switches:
-      // only paint changes. Light: one seamless piece, no box. Dark: each half
-      // becomes its own white card, so each universe stays distinct.
-      className="relative"
-    >
-      <div className="grid grid-cols-2 gap-3 md:gap-8">
-        {items.map((item, i) => {
-          const side = i === 0 ? 'left' : 'right';
-          return (
-            <a
-              key={item.title}
-              href={item.href}
-              className="group flex flex-col overflow-hidden rounded-2xl md:rounded-[28px] border border-transparent bg-transparent shadow-none dark:border-stone-200/60 dark:bg-white dark:shadow-sm transition-[transform,box-shadow] duration-500 dark:hover:-translate-y-1.5 dark:hover:shadow-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-foreground"
-            >
-              <div className="relative aspect-square md:aspect-[4/3]">
-                <div
-                  className="hero-fade absolute inset-0 will-change-transform transition-transform duration-[900ms] ease-[cubic-bezier(.22,1,.36,1)] group-hover:scale-[1.03]"
-                >
-                  <Unveil immediate parallax={3} delay={0.2 + i * 0.18} className="h-full w-full">
-                    <ImageWithFallback
-                      src={item.image}
-                      alt=""
-                      // The hero photos are the largest thing painted, so they load first.
-                      fetchPriority="high"
-                      decoding="async"
-                      className="w-full h-full object-cover object-[center_25%] md:object-center"
-                    />
-                  </Unveil>
-                </div>
-                <span
-                  className={`absolute top-2 md:top-4 rounded-full bg-white/95 text-[9px] md:text-[11px] tracking-wide font-semibold px-2 py-0.5 md:px-3 md:py-1 text-stone-900 ${
-                    side === 'left' ? 'left-2 md:left-4' : 'right-2 md:right-4'
-                  }`}
-                >
-                  {item.tag}
-                </span>
-              </div>
-
-              <div className="flex flex-col flex-1 px-2 pb-3 pt-1 md:px-8 md:pb-4 -mt-6 md:-mt-12 relative z-10 text-center">
-                <h2 className="text-lg md:text-[2rem] text-foreground dark:text-stone-900" style={{ fontFamily: 'var(--font-display)' }}>
-                  {item.title}
-                </h2>
-                <p className="mt-1 text-xs md:text-sm leading-relaxed md:leading-7 text-muted-foreground dark:text-stone-600 max-w-xs mx-auto">
-                  {item.description}
-                </p>
-                {/* mt-auto pins both "enter" buttons to the same line, even when one description wraps to more lines */}
-                <div className="mt-auto pt-3 md:pt-6">
-                  <PillButton groupHover>{item.cta}</PillButton>
-                </div>
-              </div>
-            </a>
-          );
-        })}
-      </div>
-
-      {/* the seam: a faint hairline that runs amber to teal down the middle */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-y-10 left-1/2 w-px -translate-x-1/2 transition-opacity dark:!opacity-0"
-        style={{
-          background: `linear-gradient(to bottom, transparent, ${FASHION} 30%, ${CRAFT} 70%, transparent)`,
-          opacity: 0.4,
-        }}
-      />
-    </motion.div>
-  );
-}
-
-// Big color-coded headline — "creator" tinted Fashion amber, "crafts"
-// tinted Craft teal, each word tied to the universe it names. Same
-// clip-path reveal language as before, just promoted to the hero
-// statement instead of a small italic line.
-function HeroHeadline() {
-  const t = useContent();
-  return (
-    <div>
-      <h1
-        className="text-display-xl text-foreground"
-        style={{ fontFamily: 'var(--font-display)' }}
-      >
-        <MaskLine immediate delay={0.1}>
-          <Accent text={t('home.headline_1')} />
-        </MaskLine>
-        <MaskLine immediate delay={0.3}>
-          <Accent text={t('home.headline_2')} />
-        </MaskLine>
-      </h1>
-
-      <Focus as="p" immediate delay={0.6} y={12} className="mt-5 text-muted-foreground leading-relaxed text-sm md:text-base">
-        {t('home.tagline')}
-      </Focus>
-    </div>
-  );
-}
-
+// Home = Keem. One screen of who this is, a sliding strip of frames, three ways
+// in, a live before/after of the presets, a taste of the shop, and a closing
+// invitation to follow along.
 export function LandingPage() {
   return (
     <div className="relative min-h-screen overflow-x-clip bg-background text-foreground">
+      <ScrollProgress />
       <GeometricBackdrop />
       <div aria-hidden="true" className="aurora z-0" />
       <span aria-hidden="true" className="grain z-0" />
-      <main className="relative z-10 pt-8 pb-0 px-5 md:px-8">
-        <div className="max-w-6xl mx-auto">
 
-          {/* ── NAV ── */}
-          <section>
-            <LandingNav />
-          </section>
-
-          {/* ── HEADLINE ── */}
-          <section className="mt-14 md:mt-20 pb-2 max-w-2xl">
-            <HeroHeadline />
-          </section>
-
-          {/* ── ONE HERO CARD (fashion | craft) + THEIR QUICK-LINK PILLS ── */}
-          <section className="mt-12 pb-10">
-            <div className="max-w-5xl mx-auto">
-              <HeroPair items={hero} />
-
-            </div>
-          </section>
-
-          {/* ── A TASTE OF EACH SHOP ── */}
-          <Suspense fallback={<div className="min-h-[60vh]" aria-hidden="true" />}>
-            <HomeRails />
-          </Suspense>
-
+      <main className="relative z-10 px-5 pt-8 md:px-8">
+        <div className="mx-auto max-w-6xl">
+          <LandingNav />
+          <HomeHero />
+          <IdentityMarquee />
+          <Manifesto />
         </div>
       </main>
 
-      <div className="-mt-14">
+      <div className="relative z-10 mt-24 md:mt-36">
+        <FilmStrip frames={FRAMES} />
+      </div>
+
+      <div className="relative z-10 px-5 md:px-8">
+        <div className="mx-auto max-w-6xl">
+          <TheLoop />
+          <HomeLooks />
+          <Suspense fallback={<div className="min-h-[60vh]" aria-hidden="true" />}>
+            <HomeRails />
+          </Suspense>
+          <HomeClosing />
+        </div>
+      </div>
+
+      <div className="relative z-10">
         <SocialFooter />
       </div>
 
