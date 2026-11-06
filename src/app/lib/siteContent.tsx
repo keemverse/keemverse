@@ -29,9 +29,9 @@ export const CONTENT_GROUPS: GroupDef[] = [
     description: 'The first thing people see: the introduction, the gallery strip, the shop previews and the closing card.',
     fields: [
       { key: 'home.eyebrow', label: 'Small label above the headline', default: 'Keem · fashion creator' },
-      { key: 'home.headline_1', label: 'Headline, line 1', default: 'Steal the', accent: true, help: 'Wrap a word in *stars* for amber.' },
-      { key: 'home.headline_2', label: 'Headline, line 2', default: '*look.*', accent: true, help: 'Wrap a word in *stars* for amber.' },
-      { key: 'home.tagline', label: 'Tagline', default: 'Outfits to copy, pieces I picked, and Lightroom presets that give your photos a look worth posting.', multiline: true },
+      { key: 'home.headline_1', label: 'Headline, line 1', default: 'Dress sharper.', accent: true, help: 'Wrap a word in *stars* for amber.' },
+      { key: 'home.headline_2', label: 'Headline, line 2', default: 'Post *better.*', accent: true, help: 'Wrap a word in *stars* for amber.' },
+      { key: 'home.tagline', label: 'Tagline', default: 'Outfit ideas and picks from Keem, plus Lightroom presets that give your photos a look worth posting.', multiline: true },
       { key: 'home.hero_cta_1', label: 'Main button (goes to the presets)', default: 'Shop my presets' },
       { key: 'home.hero_cta_2', label: 'Second button (goes to the gallery)', default: 'See the gallery' },
       { key: 'home.proof_label', label: 'Under the buttons, after the follower count', default: 'follow along on TikTok' },
