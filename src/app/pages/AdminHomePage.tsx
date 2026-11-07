@@ -90,9 +90,6 @@ export default function AdminHomePage() {
     .filter(Boolean)
     .sort()
     .pop();
-  const designTypes = ["design", "design_pack", "design_bundle"];
-  const designTotal = rows.filter((r) => designTypes.includes(r.type)).length;
-  const designLive = rows.filter((r) => designTypes.includes(r.type) && r.status === "Live").length;
   const tools = isEditor ? TOOLS.filter((t) => t.editor) : TOOLS;
 
   return (
@@ -105,7 +102,6 @@ export default function AdminHomePage() {
       <section aria-label="At a glance" className="grid grid-cols-2 gap-3 md:grid-cols-4">
         <Stat label="Fashion finds" value={String(count("fashion_find", "Live"))} sub={`live of ${count("fashion_find")}`} loading={loadingStats} />
         <Stat label="Presets" value={String(count("preset", "Live"))} sub={`live of ${count("preset")}`} loading={loadingStats} />
-        <Stat label="Design items" value={String(designLive)} sub={`live of ${designTotal}`} loading={loadingStats} />
         <Stat label="Last change" value={ageParts(lastChange)[0]} sub={ageParts(lastChange)[1]} loading={loadingStats} />
       </section>
 

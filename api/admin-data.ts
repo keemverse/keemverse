@@ -3,7 +3,7 @@ import { isAuthorizedAdmin } from "./_github.js";
 
 // The private sheet tabs, for the admin console.
 //
-//   GET  /api/admin-data?sheet=Orders | Downloads | Custom Requests    admin only
+//   GET  /api/admin-data?sheet=Orders | Downloads | Custom Requests | Leads | Events    admin only
 //   POST /api/admin-data   admin only, two narrow actions:
 //          { op: "set_revoked", orderRef, item, revoked }   switch an order's download links off or on
 //          { op: "request_update", ref, status?, note? }    change a custom request's status or your note
@@ -17,7 +17,7 @@ import { isAuthorizedAdmin } from "./_github.js";
 const DEFAULT_WEBHOOK =
   "https://script.google.com/macros/s/AKfycbxvRs-TgA3tqIMA7tBxvjs5pZ4j52cKyP3gYODzucUM1SU2rQ3OwSNxeqsZDNjRW8gc/exec";
 
-const SHEETS = ["Orders", "Downloads", "Custom Requests"];
+const SHEETS = ["Orders", "Downloads", "Custom Requests", "Leads", "Events"];
 const REQUEST_STATUSES = ["New", "Replied", "Quoted", "Won", "Closed"];
 
 // Control characters out, newlines and tabs kept (a note can be multi-line).

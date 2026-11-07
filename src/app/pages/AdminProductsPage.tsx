@@ -51,7 +51,9 @@ type Product = {
   updated_at?: string;
 };
 
-const TYPES: Product["type"][] = ["fashion_find", "preset", "design_bundle", "design", "design_pack"];
+// Craft (design, design_pack, design_bundle) was packed away on 6 Nov 2026 and is no longer offered here.
+// The types stay in the Product type so any old rows still load; restore them here when Craft returns.
+const TYPES: Product["type"][] = ["fashion_find", "preset"];
 const STATUSES: Product["status"][] = ["Live", "Sold Out", "Hidden"];
 
 type SortKey = "manual" | "name" | "price" | "status" | "created_at";

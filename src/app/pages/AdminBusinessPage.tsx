@@ -11,13 +11,15 @@ import { useAdminAuth } from "../lib/useAdminAuth";
 // note. Admin login only: the editor login cannot open this page, and the API
 // refuses it too.
 
-type Sheet = "Orders" | "Downloads" | "Custom Requests";
+type Sheet = "Orders" | "Downloads" | "Custom Requests" | "Leads" | "Events";
 type Row = Record<string, any>;
 
 const TABS: { id: Sheet; label: string }[] = [
   { id: "Orders", label: "Orders" },
   { id: "Custom Requests", label: "Requests" },
   { id: "Downloads", label: "Download links" },
+  { id: "Leads", label: "Free look signups" },
+  { id: "Events", label: "Funnel" },
 ];
 
 function when(v: unknown): string {
@@ -385,6 +387,250 @@ function Downloads({ rows, q, secret, onChanged }: { rows: Row[]; q: string; sec
 
 /* ------------------------------ Page ------------------------------ */
 
+/* ------------------------------ Leads ------------------------------ */
+
+function Leads({ rows, q }: { rows: Row[]; q: string }) {
+  const [copied, setCopied] = useState(false);
+  const sorted = useMemo(() => [...rows].sort((a, b) => asTime(b["Timestamp"]) - asTime(a["Timestamp"])), [rows]);
+  const shown = sorted.filter((r) => !q || [r["Email"], r["Item"], r["Source"], r["Campaign"]].join(" ").toLowerCase().includes(q));
+  const optIns = rows.filter((r) => yes(r["Marketing Opt-in"]));
+  const weekAgo = Date.now() - 7 * 24 * 3600 * 1000;
+  const lastWeek = rows.filter((r) => asTime(r["Timestamp"]) >= weekAgo).length;
+
+  const copyEmails = async () => {
+    const list = Array.from(new Set(optIns.map((r) => String(r["Email"] || "").trim()).filter(Boolean))).join(", ");
+    try {
+      await navigator.clipboard.writeText(list);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2500);
+    } catch {
+      window.prompt("Copy these emails:", list);
+    }
+  };
+
+  if (rows.length === 0) {
+    return (
+      <div className="glass rounded-2xl p-6 text-sm text-muted-foreground">
+        No free look signups yet. They appear here once the free look is switched on (Admin, Content, Home page) and the Apps Script is updated.
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-5">
+      <div className="grid gap-4 sm:grid-cols-3">
+        <Stat label="Signups" value={String(rows.length)} sub="asked for the free look" />
+        <Stat label="Said yes to updates" value={String(optIns.length)} sub="ticked the optional box" />
+        <Stat label="Last 7 days" value={String(lastWeek)} />
+      </div>
+      <div className="flex items-center justify-between gap-3">
+        <p className="text-sm text-muted-foreground">Only message people who ticked the updates box.</p>
+        <Button variant="outline" onClick={copyEmails} disabled={optIns.length === 0}>
+          {copied ? "Copied" : `Copy ${optIns.length} opted-in emails`}
+        </Button>
+      </div>
+      <div className="glass overflow-x-auto rounded-2xl">
+        <table className="w-full min-w-[640px] text-left text-sm">
+          <thead className="text-[12px] uppercase tracking-[0.12em] text-muted-foreground">
+            <tr>
+              <th className="px-4 py-3">When</th>
+              <th className="px-4 py-3">Email</th>
+              <th className="px-4 py-3">Look</th>
+              <th className="px-4 py-3">Updates</th>
+              <th className="px-4 py-3">Came from</th>
+            </tr>
+          </thead>
+          <tbody>
+            {shown.map((r, i) => (
+              <tr key={i} className="border-t border-border/60">
+                <td className="whitespace-nowrap px-4 py-3 text-muted-foreground">{when(r["Timestamp"])}</td>
+                <td className="px-4 py-3">{r["Email"]}</td>
+                <td className="px-4 py-3">{r["Item"]}</td>
+                <td className="px-4 py-3">{yes(r["Marketing Opt-in"]) ? <Chip tone="good">Yes</Chip> : <Chip>No</Chip>}</td>
+                <td className="px-4 py-3 text-muted-foreground">{[r["Source"], r["Campaign"]].filter(Boolean).join(" / ") || "direct"}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
+/* ------------------------------ Funnel ------------------------------ */
+
+const DAY = 24 * 3600 * 1000;
+
+function Funnel({ rows }: { rows: Row[] }) {
+  const [days, setDays] = useState(7);
+  const cutoff = days === 0 ? 0 : Date.now() - days * DAY;
+  const inRange = useMemo(() => rows.filter((r) => asTime(r["Timestamp"]) >= cutoff), [rows, cutoff]);
+
+  // One visitor = one random per-visit id, so each step counts people, not clicks.
+  const sessions = (test: (r: Row) => boolean) => new Set(inRange.filter(test).map((r) => String(r["Session"]))).size;
+  const ev = (name: string) => (r: Row) => r["Event"] === name;
+  const path = (r: Row) => String(r["Path"] || "");
+
+  const steps = [
+    { label: "Visited the site", n: sessions(ev("page")) },
+    { label: "Looked at presets (picker, reveal or a preset page)", n: sessions((r) => ["look_pick", "look_open"].includes(String(r["Event"])) || (r["Event"] === "page" && path(r).startsWith("/fashion/presets"))) },
+    { label: "Opened a look's page", n: sessions((r) => r["Event"] === "look_open" || (r["Event"] === "page" && /^\/fashion\/presets\/.+/.test(path(r)))) },
+    { label: "Tapped Buy", n: sessions(ev("buy_click")) },
+    { label: "Opened checkout", n: sessions(ev("checkout_view")) },
+    { label: "Started payment", n: sessions(ev("pay_start")) },
+    { label: "Paid", n: sessions(ev("pay_success")) },
+  ];
+  const top = Math.max(1, steps[0].n);
+  const freeSeen = sessions(ev("freelook_view"));
+  const freeSent = sessions(ev("freelook_submit"));
+
+  const bySource = useMemo(() => {
+    const map = new Map<string, { visits: Set<string>; buys: Set<string>; paid: Set<string> }>();
+    // A visit keeps the source it arrived with, so look it up from any of its events.
+    const sourceOf = new Map<string, string>();
+    for (const r of inRange) if (r["Source"] && !sourceOf.has(String(r["Session"]))) sourceOf.set(String(r["Session"]), String(r["Source"]));
+    for (const r of inRange) {
+      const sid = String(r["Session"]);
+      const src = sourceOf.get(sid) || "direct";
+      if (!map.has(src)) map.set(src, { visits: new Set(), buys: new Set(), paid: new Set() });
+      const g = map.get(src)!;
+      if (r["Event"] === "page") g.visits.add(sid);
+      if (r["Event"] === "buy_click") g.buys.add(sid);
+      if (r["Event"] === "pay_success") g.paid.add(sid);
+    }
+    return [...map.entries()].map(([src, g]) => ({ src, visits: g.visits.size, buys: g.buys.size, paid: g.paid.size })).sort((a, b) => b.visits - a.visits);
+  }, [inRange]);
+
+  const byLook = useMemo(() => {
+    const map = new Map<string, { picks: number; opens: number; buys: number }>();
+    for (const r of inRange) {
+      const item = String(r["Item"] || "");
+      if (!item || !["look_pick", "look_open", "buy_click"].includes(String(r["Event"]))) continue;
+      if (!map.has(item)) map.set(item, { picks: 0, opens: 0, buys: 0 });
+      const g = map.get(item)!;
+      if (r["Event"] === "look_pick") g.picks++;
+      if (r["Event"] === "look_open") g.opens++;
+      if (r["Event"] === "buy_click") g.buys++;
+    }
+    return [...map.entries()].map(([item, g]) => ({ item, ...g })).sort((a, b) => b.picks + b.opens + b.buys - (a.picks + a.opens + a.buys));
+  }, [inRange]);
+
+  if (rows.length === 0) {
+    return (
+      <div className="glass rounded-2xl p-6 text-sm text-muted-foreground">
+        No visits recorded yet. Counting starts once the site with tracking is live on keemverse.com and the Apps Script has the new handlers.
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      <div className="flex flex-wrap items-center gap-2">
+        {[
+          { d: 7, l: "Last 7 days" },
+          { d: 30, l: "Last 30 days" },
+          { d: 0, l: "Everything" },
+        ].map((o) => (
+          <button
+            key={o.d}
+            onClick={() => setDays(o.d)}
+            className={`press rounded-full px-4 py-2 text-sm font-medium ${days === o.d ? "bg-foreground text-background" : "glass text-foreground/80"}`}
+          >
+            {o.l}
+          </button>
+        ))}
+        <p className="text-sm text-muted-foreground sm:ml-auto">People, not clicks. Anonymous: no names or emails.</p>
+      </div>
+
+      <div className="glass rounded-2xl p-5 md:p-6">
+        <ol className="space-y-4">
+          {steps.map((st, i) => {
+            const prev = i === 0 ? null : steps[i - 1].n;
+            const stepPct = prev && prev > 0 ? Math.round((st.n / prev) * 100) : null;
+            return (
+              <li key={st.label}>
+                <div className="flex items-baseline justify-between gap-3 text-sm">
+                  <span>{st.label}</span>
+                  <span className="tabular-nums text-muted-foreground">
+                    <strong className="text-foreground">{st.n}</strong>
+                    {stepPct !== null && <span> · {stepPct}% of the step before</span>}
+                  </span>
+                </div>
+                <div className="mt-2 h-2 overflow-hidden rounded-full bg-muted">
+                  <div className="h-full rounded-full bg-[color:var(--fashion-display)]" style={{ width: `${Math.max(2, Math.round((st.n / top) * 100))}%` }} />
+                </div>
+              </li>
+            );
+          })}
+        </ol>
+      </div>
+
+      <div className="grid gap-4 sm:grid-cols-3">
+        <Stat label="Saw the free look form" value={String(freeSeen)} />
+        <Stat label="Asked for it" value={String(freeSent)} sub={freeSeen ? `${Math.round((freeSent / freeSeen) * 100)}% of those who saw it` : undefined} />
+        <Stat label="Visit to paid" value={steps[0].n ? `${((steps[6].n / steps[0].n) * 100).toFixed(1)}%` : "0%"} />
+      </div>
+
+      <div className="grid gap-6 lg:grid-cols-2">
+        <div className="glass overflow-x-auto rounded-2xl">
+          <p className="eyebrow px-4 pt-4 text-muted-foreground">Where visitors came from</p>
+          <table className="mt-2 w-full min-w-[320px] text-left text-sm">
+            <thead className="text-[12px] uppercase tracking-[0.12em] text-muted-foreground">
+              <tr>
+                <th className="px-4 py-2">Source</th>
+                <th className="px-4 py-2 text-right">Visits</th>
+                <th className="px-4 py-2 text-right">Tapped Buy</th>
+                <th className="px-4 py-2 text-right">Paid</th>
+              </tr>
+            </thead>
+            <tbody>
+              {bySource.map((g) => (
+                <tr key={g.src} className="border-t border-border/60">
+                  <td className="px-4 py-2.5">{g.src}</td>
+                  <td className="px-4 py-2.5 text-right tabular-nums">{g.visits}</td>
+                  <td className="px-4 py-2.5 text-right tabular-nums">{g.buys}</td>
+                  <td className="px-4 py-2.5 text-right tabular-nums">{g.paid}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <div className="glass overflow-x-auto rounded-2xl">
+          <p className="eyebrow px-4 pt-4 text-muted-foreground">Which looks get attention</p>
+          <table className="mt-2 w-full min-w-[320px] text-left text-sm">
+            <thead className="text-[12px] uppercase tracking-[0.12em] text-muted-foreground">
+              <tr>
+                <th className="px-4 py-2">Look</th>
+                <th className="px-4 py-2 text-right">Picked</th>
+                <th className="px-4 py-2 text-right">Opened</th>
+                <th className="px-4 py-2 text-right">Buy taps</th>
+              </tr>
+            </thead>
+            <tbody>
+              {byLook.length === 0 ? (
+                <tr>
+                  <td className="px-4 py-3 text-muted-foreground" colSpan={4}>
+                    Nothing yet in this range.
+                  </td>
+                </tr>
+              ) : (
+                byLook.map((g) => (
+                  <tr key={g.item} className="border-t border-border/60">
+                    <td className="px-4 py-2.5">{g.item}</td>
+                    <td className="px-4 py-2.5 text-right tabular-nums">{g.picks}</td>
+                    <td className="px-4 py-2.5 text-right tabular-nums">{g.opens}</td>
+                    <td className="px-4 py-2.5 text-right tabular-nums">{g.buys}</td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function AdminBusinessPage() {
   const { secret, unlocked, checking, error, checkSecret } = useAdminAuth();
   const [secretInput, setSecretInput] = useState("");
@@ -449,7 +695,7 @@ export default function AdminBusinessPage() {
       role="admin"
       eyebrow="Admin"
       title="Business"
-      description="Orders, custom design requests and download links, from your private sheet. You can switch download links off and update a request's status and note here."
+      description="Orders, requests, download links, free look signups and the visit funnel, from your private sheet. You can switch download links off and update a request's status and note here."
       actions={
         <Button variant="outline" onClick={() => load(tab)} disabled={loading}>
           {loading ? "Refreshing…" : "Refresh"}
@@ -469,7 +715,9 @@ export default function AdminBusinessPage() {
             {t.label}
           </button>
         ))}
-        <Input className="w-full max-w-xs sm:ml-auto" placeholder="Search…" value={q} onChange={(e) => setQ(e.target.value)} />
+        {tab !== "Events" && (
+          <Input className="w-full max-w-xs sm:ml-auto" placeholder="Search…" value={q} onChange={(e) => setQ(e.target.value)} />
+        )}
       </div>
 
       <div className="mt-6">
@@ -487,6 +735,10 @@ export default function AdminBusinessPage() {
           <Orders rows={rows} q={query} />
         ) : tab === "Custom Requests" ? (
           <Requests rows={rows} q={query} secret={secret} onChanged={() => void load("Custom Requests")} />
+        ) : tab === "Leads" ? (
+          <Leads rows={rows} q={query} />
+        ) : tab === "Events" ? (
+          <Funnel rows={rows} />
         ) : (
           <Downloads rows={rows} q={query} secret={secret} onChanged={() => void load("Downloads")} />
         )}

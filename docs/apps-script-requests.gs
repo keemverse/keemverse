@@ -152,7 +152,7 @@ function handleCustomRequest(p) {
 // The admin console asks for these tabs through /api/admin-data. The request
 // carries the same shared secret as the custom-requests form (REQUESTS_SECRET).
 // Download tokens are never sent: a token is a working download link.
-var ADMIN_READ_SHEETS = ['Orders', 'Downloads', 'Custom Requests'];
+var ADMIN_READ_SHEETS = ['Orders', 'Downloads', 'Custom Requests', 'Leads', 'Events'];
 var ADMIN_READ_HIDE = { 'Token': true };
 var ADMIN_READ_MAX = 500;
 
@@ -197,7 +197,8 @@ function handleAdminRead(p) {
   }
 
   var total = out.length;
-  if (total > ADMIN_READ_MAX) out = out.slice(total - ADMIN_READ_MAX);
+  var cap = p.sheet === 'Events' ? 5000 : ADMIN_READ_MAX; // the funnel needs many small rows
+  if (total > cap) out = out.slice(total - cap);
   return jsonResponse({
     ok: true,
     sheet: p.sheet,
