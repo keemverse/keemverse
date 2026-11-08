@@ -3,7 +3,7 @@ import { InfoPage } from '../components/InfoPage';
 export default function PrivacyPolicyPage() {
   return (
     <InfoPage eyebrow="Policy" title="Privacy Policy">
-      <p className="text-sm text-muted-foreground">Last updated: September 5, 2026</p>
+      <p className="text-sm text-muted-foreground">Last updated: November 8, 2026</p>
 
       <h2 className="font-serif text-xl text-foreground mt-8 mb-2">What we collect</h2>
       <p>
@@ -25,6 +25,23 @@ export default function PrivacyPolicyPage() {
         new drops and offers. We only send these if you've actively
         checked that box — it's never assumed — and you can unsubscribe
         at any time.
+      </p>
+
+      <p>
+        If you ask for a free look, we use your email address to send you the
+        file, and you agree to join Keem&apos;s email list: new looks, tips and
+        offers. You can unsubscribe at any time using the link in every email,
+        and we never sell your address.
+      </p>
+
+      <p>
+        To see which parts of the site help people and which don&apos;t, we
+        count anonymous visits. For each visit we record a random code that is
+        thrown away when you close the tab, the pages you open, which look or
+        button you tap, and where the link came from (for example TikTok). We
+        never record your name, your email or anything you type, and we don&apos;t
+        record visits from browsers that send &quot;Do Not Track&quot;. We use
+        these counts only to improve the site.
       </p>
 
       <p>
