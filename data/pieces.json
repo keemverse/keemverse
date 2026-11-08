@@ -152,5 +152,16 @@
     "width": 244.09597776676645,
     "height": 452.04417618310254,
     "updatedAt": "2026-11-08T21:03:05.352Z"
+  },
+  {
+    "id": "39fc6331-7c1f-4b27-a8ee-86e8406ad6f5",
+    "category": "bottom",
+    "groupName": "twisted-pleat-trousers",
+    "variantName": "Black",
+    "imageUrl": "https://raw.githubusercontent.com/keemverse/keemverse/main/data/piece-assets/39fc6331-7c1f-4b27-a8ee-86e8406ad6f5.png",
+    "imagePath": "data/piece-assets/39fc6331-7c1f-4b27-a8ee-86e8406ad6f5.png",
+    "width": 241.28759956723937,
+    "height": 452.04417618310254,
+    "updatedAt": "2026-11-08T21:43:54.183Z"
   }
 ]
