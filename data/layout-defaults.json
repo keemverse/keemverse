@@ -34,5 +34,11 @@
     "y": 124,
     "width": 282,
     "height": 795
+  },
+  "duo-right:other:Body female": {
+    "x": 402,
+    "y": 146,
+    "width": 201,
+    "height": 770
   }
 }
