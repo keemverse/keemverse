@@ -41,6 +41,35 @@ const slotOf = (canvas: Canvas, side: DuoSide) => (canvas === "solo" ? "solo" : 
 // Duo canvas existed still work; Duo slots get their own prefix.
 const layoutKey = (category: string, group: string, slot: string) =>
   !slot || slot === "solo" ? `${category}:${group}` : `${slot}:${category}:${group}`;
+// Dock (bottom bar): one tab per kind of piece, like a dress-up app.
+type DockTab = "body" | PieceCategory | "bg";
+const DOCK_TABS: { id: DockTab; label: string }[] = [
+  { id: "body", label: "Body" },
+  { id: "top", label: "Tops" },
+  { id: "bottom", label: "Bottoms" },
+  { id: "footwear", label: "Shoes" },
+  { id: "headwear", label: "Hats" },
+  { id: "other", label: "Extras" },
+  { id: "bg", label: "Backdrop" },
+];
+type DockItem = {
+  key: string;
+  label: string;
+  src: string;
+  category: PieceCategory;
+  groupName: string;
+  width?: number; // known size (saved pieces); wardrobe and body are measured
+  height?: number;
+  targetHeight: number; // how tall to draw it when the size is measured
+};
+// Stacking order when a piece is worn: body at the back, hats on top.
+const rankOf = (l: Layer) =>
+  l.groupName === "Body model" ? 0
+  : l.groupCategory === "footwear" ? 1
+  : l.groupCategory === "bottom" ? 2
+  : l.groupCategory === "top" ? 3
+  : l.groupCategory === "headwear" ? 4
+  : 5;
 const slotLabel = (slot?: string) =>
   slot === "duo-left" ? "Duo, left person" : slot === "duo-right" ? "Duo, right person" : "Solo";
 
@@ -145,6 +174,7 @@ export default function LayerStudioPage() {
   const [canvas, setCanvas] = useState<Canvas>("solo");
   const [duoSide, setDuoSide] = useState<DuoSide>("left");
   const [sets, setSets] = useState<{ solo: Layer[]; duo: Layer[] }>({ solo: [], duo: [] });
+  const [dockTab, setDockTab] = useState<DockTab>("top");
   const [autoRemember, setAutoRemember] = useState(true);
   const [rememberNote, setRememberNote] = useState("");
   const canvasRef = useRef<Canvas>("solo");
@@ -221,7 +251,8 @@ export default function LayerStudioPage() {
     name: string,
     width: number,
     height: number,
-    group?: { category: PieceCategory; groupName: string }
+    group?: { category: PieceCategory; groupName: string },
+    replaceId?: string
   ) => {
     const slot = slotOf(canvas, duoSide);
     let x = (STAGE_WIDTH - width) / 2;
@@ -262,8 +293,58 @@ export default function LayerStudioPage() {
       groupName: group?.groupName,
       slot,
     };
-    setLayers((prev) => [...prev, layer]);
+    setLayers((prev) => {
+      // Wearing something in place of what is already worn keeps its spot in
+      // the stack; a new piece goes in front of everything that should sit
+      // behind it (body, then shoes, bottoms, tops, hats).
+      if (replaceId && prev.some((l) => l.id === replaceId)) {
+        return prev.map((l) => (l.id === replaceId ? layer : l));
+      }
+      let at = 0;
+      prev.forEach((l, i) => {
+        if (rankOf(l) <= rankOf(layer)) at = i + 1;
+      });
+      return [...prev.slice(0, at), layer, ...prev.slice(at)];
+    });
     setSelectedId(layer.id);
+  };
+
+  // What the person on the current canvas slot is wearing in a category.
+  // One top, one bottom, one pair of shoes, one hat; extras are one per piece.
+  const wornFor = (category: PieceCategory, groupName: string) => {
+    const slot = slotOf(canvas, duoSide);
+    return layers.find(
+      (l) =>
+        (l.slot || "solo") === slot &&
+        l.groupCategory === category &&
+        (category !== "other" || l.groupName === groupName)
+    );
+  };
+
+  const wearItem = async (item: DockItem) => {
+    const worn = wornFor(item.category, item.groupName);
+    if (worn && worn.src === item.src) {
+      deleteLayer(worn.id); // tap again to take it off
+      return;
+    }
+    let width = item.width;
+    let height = item.height;
+    if (!width || !height) {
+      const img = await loadImage(item.src);
+      const scale = (STAGE_HEIGHT * item.targetHeight) / img.naturalHeight;
+      width = img.naturalWidth * scale;
+      height = img.naturalHeight * scale;
+    }
+    addLayer(item.src, item.label, width, height, { category: item.category, groupName: item.groupName }, worn?.id);
+  };
+
+  const takeOff = (category: PieceCategory) => {
+    const slot = slotOf(canvas, duoSide);
+    const ids = layers
+      .filter((l) => (l.slot || "solo") === slot && l.groupCategory === category && l.groupName !== "Body model")
+      .map((l) => l.id);
+    setLayers((prev) => prev.filter((l) => !ids.includes(l.id)));
+    setSelectedId(null);
   };
 
   // Saves a piece's position for the canvas slot it sits in. Skips the save
@@ -628,98 +709,76 @@ export default function LayerStudioPage() {
   const activeBackground = BACKGROUNDS.find((b) => b.id === background);
   const selectedLayer = layers.find((l) => l.id === selectedId) || null;
 
-  // Sibling variants of the selected layer's group (if it has one), so a
-  // color/style swap can replace just the image without touching position
-  // or size. Combines built-in wardrobe variants with the user's own saved
-  // variants under the same category + group name.
-  const swapVariants: { label: string; src: string }[] = [];
-  if (selectedLayer?.groupCategory && selectedLayer.groupName) {
-    const wardrobeGroup = WARDROBE.find(
-      (g) => g.category === selectedLayer.groupCategory && g.groupName === selectedLayer.groupName
-    );
-    if (wardrobeGroup) {
-      swapVariants.push(
-        ...wardrobeGroup.variants.map((v) => ({ label: v.label, src: wardrobeSrc(v.file) }))
-      );
-    }
-    for (const piece of libraryPieces) {
-      if (piece.category === selectedLayer.groupCategory && piece.groupName === selectedLayer.groupName) {
-        swapVariants.push({ label: piece.variantName, src: piece.imageUrl });
-      }
-    }
-  }
   // Reverse for display so the topmost layer (end of the array) is listed first.
   const layersTopFirst = [...layers].map((l, i) => ({ layer: l, index: i })).reverse();
 
+  // Tiles for the open dock tab.
+  const dockItems: DockItem[] = [];
+  if (dockTab === "body") {
+    for (const sp of STARTER_PIECES) {
+      dockItems.push({ key: sp.id, label: sp.name, src: sp.src, category: sp.category, groupName: sp.groupName, targetHeight: 0.9 });
+    }
+  } else if (dockTab !== "bg") {
+    for (const g of WARDROBE.filter((w) => w.category === dockTab)) {
+      for (const v of g.variants) {
+        dockItems.push({
+          key: `w:${g.groupName}:${v.label}`,
+          label: `${g.groupName} (${v.label})`,
+          src: wardrobeSrc(v.file),
+          category: g.category,
+          groupName: g.groupName,
+          targetHeight: 0.55,
+        });
+      }
+    }
+    for (const lp of libraryPieces.filter((x) => (x.category || "other") === dockTab && x.groupName !== "Body model")) {
+      dockItems.push({
+        key: `l:${lp.id}`,
+        label: `${lp.groupName} (${lp.variantName})`,
+        src: lp.imageUrl,
+        category: lp.category || "other",
+        groupName: lp.groupName || lp.id,
+        width: lp.width,
+        height: lp.height,
+        targetHeight: 0.55,
+      });
+    }
+  }
+  const wearingSlot = slotOf(canvas, duoSide);
+  const isWorn = (item: DockItem) => layers.some((l) => (l.slot || "solo") === wearingSlot && l.src === item.src);
+  const tileCls = (on: boolean) =>
+    `relative h-16 w-16 shrink-0 snap-start rounded-2xl border-2 overflow-hidden bg-input-background transition-colors ${
+      on ? "border-foreground" : "border-transparent"
+    }`;
+
   return (
-    <div className="min-h-screen bg-background text-foreground px-5 md:px-8 py-10">
-      <div className="max-w-5xl mx-auto mb-6">
+    <div className="min-h-screen bg-background text-foreground px-4 md:px-8 pt-6 pb-0">
+      <div className="max-w-xl mx-auto mb-4">
         <AdminNav />
       </div>
-      <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-[300px_1fr] gap-8">
-        {/* Title + Import: always first, both on mobile (order-1) and desktop (top of the left column). */}
-        <div className="order-1 md:col-start-1 md:row-start-1 space-y-2">
+      <div className="max-w-xl mx-auto space-y-4">
+        <div className="flex items-center justify-between gap-3">
           <h1 className="font-serif text-2xl">Layer Studio</h1>
-          <div className="space-y-2 pb-1">
-            <div className="grid grid-cols-2 gap-1 rounded-full border border-input p-1" role="tablist" aria-label="Canvas">
-              {(["solo", "duo"] as Canvas[]).map((c) => (
-                <button
-                  key={c}
-                  role="tab"
-                  aria-selected={canvas === c}
-                  onClick={() => {
-                    setCanvas(c);
-                    setSelectedId(null);
-                  }}
-                  className={`h-9 rounded-full text-sm font-medium transition-colors ${
-                    canvas === c ? "bg-foreground text-background" : "text-muted-foreground hover:text-foreground"
-                  }`}
-                >
-                  {c === "solo" ? "Solo" : "Duo"}
-                </button>
-              ))}
-            </div>
-            {canvas === "duo" && (
-              <div className="grid grid-cols-2 gap-1 text-xs">
-                {(["left", "right"] as DuoSide[]).map((side) => (
-                  <button
-                    key={side}
-                    onClick={() => setDuoSide(side)}
-                    className={`h-8 rounded-lg border transition-colors ${
-                      duoSide === side ? "border-foreground bg-input-background font-semibold" : "border-input text-muted-foreground"
-                    }`}
-                  >
-                    Add to {side} person
-                  </button>
-                ))}
-              </div>
-            )}
-            <label className="flex items-center gap-2 text-xs text-muted-foreground cursor-pointer select-none">
-              <input
-                type="checkbox"
-                checked={autoRemember}
-                onChange={(e) => setAutoRemember(e.target.checked)}
-                className="h-3.5 w-3.5 accent-[color:var(--foreground)]"
-              />
-              Remember positions automatically
-            </label>
-            {rememberNote && <p className="text-[11px] text-muted-foreground" role="status">{rememberNote}</p>}
+          <div className="grid grid-cols-2 gap-1 rounded-full border border-input p-1 w-40" role="tablist" aria-label="Canvas">
+            {(["solo", "duo"] as Canvas[]).map((c) => (
+              <button
+                key={c}
+                role="tab"
+                aria-selected={canvas === c}
+                onClick={() => {
+                  setCanvas(c);
+                  setSelectedId(null);
+                }}
+                className={`h-8 rounded-full text-sm font-medium transition-colors ${
+                  canvas === c ? "bg-foreground text-background" : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                {c === "solo" ? "Solo" : "Duo"}
+              </button>
+            ))}
           </div>
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="image/*"
-            multiple
-            className="hidden"
-            onChange={(e) => handleImport(e.target.files)}
-          />
-          <Button className="w-full" onClick={() => fileInputRef.current?.click()}>
-            Import image(s)
-          </Button>
         </div>
 
-        {/* Canvas + layers: second on mobile, right column (spanning both rows) on desktop. */}
-        <div className="order-2 md:order-none md:col-start-2 md:row-start-1 md:row-span-2 space-y-4">
           <div className="flex justify-center">
             <div
               ref={stageWrapperRef}
@@ -802,8 +861,66 @@ export default function LayerStudioPage() {
             </div>
           </div>
 
+        <p className="text-center text-[11px] text-muted-foreground" role="status">
+          {rememberNote || "Tap a piece below to wear it. Tap it on the canvas to move or resize."}
+        </p>
+
+        <div className="grid grid-cols-2 gap-2">
+          <Button variant="outline" onClick={() => setSaveProjectOpen(true)}>
+            Save look
+          </Button>
+          <Button onClick={downloadPng} disabled={exporting || layers.length === 0}>
+            {exporting ? "Preparing…" : "Download PNG"}
+          </Button>
+        </div>
+
+        <details className="rounded-2xl border border-input px-4 py-3 group">
+          <summary className="text-xs uppercase tracking-[0.15em] text-muted-foreground cursor-pointer select-none list-none flex items-center gap-1.5">
+            <span className="inline-block transition-transform group-open:rotate-90">▶</span>
+            Layers and tools
+          </summary>
+          <div className="space-y-5 pt-4">
+            <label className="flex items-center gap-2 text-xs text-muted-foreground cursor-pointer select-none">
+              <input
+                type="checkbox"
+                checked={autoRemember}
+                onChange={(e) => setAutoRemember(e.target.checked)}
+                className="h-3.5 w-3.5 accent-[color:var(--foreground)]"
+              />
+              Remember positions automatically
+            </label>
+            {!autoRemember && selectedLayer?.groupCategory && selectedLayer.groupName && (
+              <Button
+                className="w-full h-auto min-h-9 py-2 whitespace-normal text-center leading-snug"
+                variant="outline"
+                onClick={rememberSelectedPosition}
+                disabled={savingLayout}
+              >
+                {savingLayout ? "Remembering…" : `Remember "${selectedLayer.groupName}" (${slotLabel(selectedLayer.slot)})`}
+              </Button>
+            )}
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              multiple
+              className="hidden"
+              onChange={(e) => handleImport(e.target.files)}
+            />
+            <Button className="w-full" variant="outline" onClick={() => fileInputRef.current?.click()}>
+              Import image(s)
+            </Button>
+            {selectedLayer && (
+              <Button
+                className="w-full h-auto min-h-9 py-2 whitespace-normal text-center leading-snug"
+                variant="outline"
+                onClick={() => setSaveToLibraryOpen(true)}
+              >
+                Save "{selectedLayer.name}" to library
+              </Button>
+            )}
           {layers.length > 0 && (
-            <div className="mx-auto space-y-1.5" style={{ maxWidth: DISPLAY_MAX_WIDTH }}>
+            <div className="space-y-1.5">
               <h2 className="text-xs uppercase tracking-[0.15em] text-muted-foreground">
                 Layers (top to bottom)
               </h2>
@@ -856,173 +973,37 @@ export default function LayerStudioPage() {
               ))}
             </div>
           )}
-        </div>
-
-        {/* Everything else: third on mobile, bottom of the left column on desktop. */}
-        <div className="order-3 md:col-start-1 md:row-start-2 space-y-6">
-          <div className="space-y-2">
-            <h2 className="text-xs uppercase tracking-[0.15em] text-muted-foreground">
-              Background
-            </h2>
-            <div className="flex flex-wrap gap-2">
-              {BACKGROUNDS.map((bg) => (
-                <button
-                  key={bg.id}
-                  onClick={() => setBackground(bg.id)}
-                  title={bg.label}
-                  className={`h-14 w-14 rounded-lg border overflow-hidden bg-input-background flex items-center justify-center text-[10px] text-muted-foreground ${
-                    background === bg.id ? "border-foreground border-2" : "border-input"
-                  }`}
-                >
-                  {bg.src ? (
-                    <img src={bg.src} alt={bg.label} className="w-full h-full object-cover" />
-                  ) : (
-                    "None"
-                  )}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <h2 className="text-xs uppercase tracking-[0.15em] text-muted-foreground">
-              Starter pieces
-            </h2>
-            <div className="flex flex-wrap gap-2">
-              {STARTER_PIECES.map((piece) => (
-                <button
-                  key={piece.id}
-                  onClick={() => addStarterPiece(piece)}
-                  title={piece.name}
-                  className="h-14 w-14 rounded-lg border border-input overflow-hidden bg-input-background"
-                >
-                  <img src={piece.src} alt={piece.name} className="w-full h-full object-cover" />
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {PIECE_CATEGORIES.map((cat) => {
-            const wardrobeGroups = WARDROBE.filter((g) => g.category === cat.id);
-            const savedCat = groupedLibrary.find((c) => c.id === cat.id);
-            if (wardrobeGroups.length === 0 && !savedCat) return null;
-            return (
-              <details key={cat.id} className="space-y-2 group">
-                <summary className="text-xs uppercase tracking-[0.15em] text-muted-foreground cursor-pointer select-none list-none flex items-center gap-1.5">
-                  <span className="inline-block transition-transform group-open:rotate-90">▶</span>
-                  {cat.label}
-                </summary>
-                <div className="space-y-2 pt-2">
-                  {wardrobeGroups.map((group) => (
-                    <div key={group.groupName}>
-                      <p className="text-[11px] text-muted-foreground mb-1">{group.groupName}</p>
-                      <div className="flex flex-wrap gap-2">
-                        {group.variants.map((variant) => (
-                          <button
-                            key={variant.label}
-                            onClick={() => addWardrobeVariant(cat.id, group.groupName, variant)}
-                            title={`${group.groupName} — ${variant.label}`}
-                            className="h-12 w-12 rounded-lg border border-input overflow-hidden bg-input-background"
-                          >
-                            <img src={wardrobeSrc(variant.file)} alt={variant.label} className="w-full h-full object-cover" />
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-                {savedCat && (
-                  <div className="space-y-2">
-                    {savedCat.groups.map(([groupName, variants]) => (
-                      <div key={groupName}>
-                        <p className="text-[11px] text-muted-foreground mb-1">{groupName}</p>
-                        <div className="flex flex-wrap gap-2">
-                          {variants.map((piece) => (
-                            <div key={piece.id} className="relative group">
-                              <button
-                                onClick={() => addLibraryPiece(piece)}
-                                title={`${piece.groupName} — ${piece.variantName}`}
-                                className="h-12 w-12 rounded-lg border border-input overflow-hidden bg-input-background"
-                              >
-                                <img src={piece.imageUrl} alt={piece.variantName} className="w-full h-full object-cover" />
-                              </button>
-                              <button
-                                onClick={() => removeLibraryPiece(piece.id)}
-                                title="Remove from library"
-                                className="absolute -top-1.5 -right-1.5 h-4 w-4 rounded-full bg-background border border-input text-[10px] leading-none flex items-center justify-center text-muted-foreground hover:text-destructive"
-                              >
-                                ✕
-                              </button>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    ))}
+            {libraryPieces.length > 0 && (
+              <div className="space-y-1.5">
+                <h2 className="text-xs uppercase tracking-[0.15em] text-muted-foreground">Saved pieces</h2>
+                {libraryPieces.map((piece) => (
+                  <div key={piece.id} className="flex items-center gap-2 text-xs">
+                    <img src={piece.imageUrl} alt="" className="h-8 w-8 rounded object-cover border border-input" />
+                    <span className="flex-1 truncate">{piece.groupName} ({piece.variantName})</span>
+                    <button
+                      onClick={() => removeLibraryPiece(piece.id)}
+                      title="Remove from library"
+                      className="px-1.5 py-0.5 rounded border border-input text-muted-foreground hover:text-destructive"
+                    >
+                      ✕
+                    </button>
                   </div>
-                )}
-              </details>
-            );
-          })}
-
-          {!autoRemember && selectedLayer?.groupCategory && selectedLayer.groupName && (
-            <Button
-              className="w-full h-auto min-h-9 py-2 whitespace-normal text-center leading-snug"
-              variant="outline"
-              onClick={rememberSelectedPosition}
-              disabled={savingLayout}
-            >
-              {savingLayout
-                ? "Remembering…"
-                : `Remember this position for "${selectedLayer.groupName}" (${slotLabel(selectedLayer.slot)})`}
-            </Button>
-          )}
-
-          {selectedLayer && swapVariants.length > 0 && (
-            <div className="space-y-2">
-              <h2 className="text-xs uppercase tracking-[0.15em] text-muted-foreground">
-                Swap variant (keeps position &amp; size)
-              </h2>
-              <div className="flex flex-wrap gap-2">
-                {swapVariants.map((v) => (
-                  <button
-                    key={v.label}
-                    onClick={() => replaceLayerImage(selectedLayer.id, v.src, `${selectedLayer.groupName} (${v.label})`)}
-                    title={v.label}
-                    className="h-12 w-12 rounded-lg border border-input overflow-hidden bg-input-background"
-                  >
-                    <img src={v.src} alt={v.label} className="w-full h-full object-cover" />
-                  </button>
                 ))}
               </div>
-            </div>
-          )}
-
-          {selectedLayer && (
-            <Button
-              className="w-full h-auto min-h-9 py-2 whitespace-normal text-center leading-snug"
-              variant="outline"
-              onClick={() => setSaveToLibraryOpen(true)}
-            >
-              Save "{selectedLayer.name}" to library
-            </Button>
-          )}
-
-          <div className="space-y-2">
-            <Button className="w-full" variant="outline" onClick={() => setSaveProjectOpen(true)}>
-              Save project
-            </Button>
+            )}
             {projects.length > 0 && (
-              <div className="space-y-1.5 pt-1">
-                {projects.map((p) => (
-                  <div key={p.id} className="flex items-center gap-2">
+              <div className="space-y-1.5">
+                <h2 className="text-xs uppercase tracking-[0.15em] text-muted-foreground">Saved looks</h2>
+                {projects.map((pr) => (
+                  <div key={pr.id} className="flex items-center gap-2">
                     <button
-                      onClick={() => loadProject(p)}
+                      onClick={() => loadProject(pr)}
                       className="flex-1 text-left rounded-lg border border-input px-3 py-1.5 text-xs hover:bg-input-background transition-colors"
                     >
-                      {p.id}
+                      {pr.id}
                     </button>
                     <button
-                      onClick={() => removeProject(p.id)}
+                      onClick={() => removeProject(pr.id)}
                       title="Delete"
                       className="text-xs text-muted-foreground hover:text-destructive px-1"
                     >
@@ -1033,12 +1014,74 @@ export default function LayerStudioPage() {
               </div>
             )}
           </div>
+        </details>
 
-          <Button className="w-full" onClick={downloadPng} disabled={exporting || layers.length === 0}>
-            {exporting ? "Preparing…" : "Download PNG"}
-          </Button>
+        {/* The dock: stays at the bottom of the screen, like a dress-up app. */}
+        <div className="sticky bottom-0 z-20 -mx-4 md:mx-0 md:rounded-t-3xl border-t border-input bg-background/90 backdrop-blur px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] space-y-2.5">
+          {canvas === "duo" && (
+            <div className="grid grid-cols-2 gap-1 text-xs">
+              {(["left", "right"] as DuoSide[]).map((side) => (
+                <button
+                  key={side}
+                  onClick={() => setDuoSide(side)}
+                  className={`h-8 rounded-full border transition-colors ${
+                    duoSide === side ? "border-foreground bg-foreground text-background font-semibold" : "border-input text-muted-foreground"
+                  }`}
+                >
+                  Dressing the {side} person
+                </button>
+              ))}
+            </div>
+          )}
+
+          <div className="flex gap-2 overflow-x-auto snap-x pb-1 -mx-1 px-1" aria-label="Pieces">
+            {dockTab === "bg" ? (
+              BACKGROUNDS.map((bg) => (
+                <button key={bg.id} onClick={() => setBackground(bg.id)} title={bg.label} className={tileCls(background === bg.id)}>
+                  {bg.src ? <img src={bg.src} alt={bg.label} className="w-full h-full object-cover" /> : <span className="text-[11px] text-muted-foreground">None</span>}
+                </button>
+              ))
+            ) : (
+              <>
+                {dockTab !== "body" && dockTab !== "other" && (
+                  <button
+                    onClick={() => takeOff(dockTab as PieceCategory)}
+                    title="Take off"
+                    className={`${tileCls(false)} flex items-center justify-center text-lg text-muted-foreground`}
+                  >
+                    ✕
+                  </button>
+                )}
+                {dockItems.map((item) => (
+                  <button key={item.key} onClick={() => wearItem(item)} title={item.label} className={tileCls(isWorn(item))}>
+                    <img src={item.src} alt={item.label} className="w-full h-full object-cover" draggable={false} />
+                  </button>
+                ))}
+                {dockItems.length === 0 && (
+                  <p className="self-center text-xs text-muted-foreground px-2">
+                    Nothing here yet. Import an image, then use "Save to library" under Layers and tools.
+                  </p>
+                )}
+              </>
+            )}
+          </div>
+
+          <div className="flex gap-1 overflow-x-auto" role="tablist" aria-label="Piece type">
+            {DOCK_TABS.map((t) => (
+              <button
+                key={t.id}
+                role="tab"
+                aria-selected={dockTab === t.id}
+                onClick={() => setDockTab(t.id)}
+                className={`h-9 shrink-0 rounded-full px-3.5 text-xs font-medium transition-colors ${
+                  dockTab === t.id ? "bg-foreground text-background" : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                {t.label}
+              </button>
+            ))}
+          </div>
         </div>
-
       </div>
 
       <Dialog open={saveToLibraryOpen} onOpenChange={setSaveToLibraryOpen}>
