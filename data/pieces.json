@@ -141,5 +141,16 @@
     "width": 185.59595059588844,
     "height": 709.7013037840952,
     "updatedAt": "2026-11-08T20:06:55.727Z"
+  },
+  {
+    "id": "f1e3a1cc-c7aa-4838-b3d9-a823ef3bc081",
+    "category": "other",
+    "groupName": "Body female",
+    "variantName": "Default",
+    "imageUrl": "https://raw.githubusercontent.com/keemverse/keemverse/main/data/piece-assets/f1e3a1cc-c7aa-4838-b3d9-a823ef3bc081.webp",
+    "imagePath": "data/piece-assets/f1e3a1cc-c7aa-4838-b3d9-a823ef3bc081.webp",
+    "width": 201.39321188417998,
+    "height": 770.1085319403268,
+    "updatedAt": "2026-11-08T20:57:11.977Z"
   }
 ]
