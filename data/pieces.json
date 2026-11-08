@@ -207,5 +207,16 @@
     "width": 258.03132461076893,
     "height": 354.18273523719813,
     "updatedAt": "2026-11-08T23:35:33.506Z"
+  },
+  {
+    "id": "a61989cc-e426-4728-95b5-35d8cb719903",
+    "category": "bottom",
+    "groupName": "handkerchief-skirt",
+    "variantName": "Charcoal",
+    "imageUrl": "https://raw.githubusercontent.com/keemverse/keemverse/main/data/piece-assets/a61989cc-e426-4728-95b5-35d8cb719903.png",
+    "imagePath": "data/piece-assets/a61989cc-e426-4728-95b5-35d8cb719903.png",
+    "width": 258.03132461076893,
+    "height": 354.18273523719813,
+    "updatedAt": "2026-11-08T23:36:21.413Z"
   }
 ]
