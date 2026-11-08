@@ -29,6 +29,21 @@ const EXPORT_SCALE = 2;
 // renders at its full native 667px on every device.
 const DISPLAY_MAX_WIDTH = 380;
 
+// Two canvases share one library of pieces. A piece remembers its position and
+// size separately for each: Solo, Duo-left person and Duo-right person.
+type Canvas = "solo" | "duo";
+type DuoSide = "left" | "right";
+// In Duo each person is drawn smaller and sits left or right of centre.
+const DUO_SCALE = 0.6;
+const DUO_CENTRE_X = { left: 0.26, right: 0.74 };
+const slotOf = (canvas: Canvas, side: DuoSide) => (canvas === "solo" ? "solo" : `duo-${side}`);
+// Solo keeps the original key ("top:T-shirt") so positions saved before the
+// Duo canvas existed still work; Duo slots get their own prefix.
+const layoutKey = (category: string, group: string, slot: string) =>
+  !slot || slot === "solo" ? `${category}:${group}` : `${slot}:${category}:${group}`;
+const slotLabel = (slot?: string) =>
+  slot === "duo-left" ? "Duo, left person" : slot === "duo-right" ? "Duo, right person" : "Solo";
+
 function readFileAsDataUrl(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -127,7 +142,23 @@ type DragState =
 export default function LayerStudioPage() {
   const { secret, unlocked, checking, error, checkSecret } = useAdminAuth();
   const [secretInput, setSecretInput] = useState("");
-  const [layers, setLayers] = useState<Layer[]>([]);
+  const [canvas, setCanvas] = useState<Canvas>("solo");
+  const [duoSide, setDuoSide] = useState<DuoSide>("left");
+  const [sets, setSets] = useState<{ solo: Layer[]; duo: Layer[] }>({ solo: [], duo: [] });
+  const [autoRemember, setAutoRemember] = useState(true);
+  const [rememberNote, setRememberNote] = useState("");
+  const canvasRef = useRef<Canvas>("solo");
+  canvasRef.current = canvas;
+  const layers = sets[canvas];
+  // Always writes to the canvas currently on screen, and stays the same
+  // function between renders so the drag handlers below never go stale.
+  const setLayers = useCallback((update: Layer[] | ((prev: Layer[]) => Layer[])) => {
+    setSets((prev) => {
+      const key = canvasRef.current;
+      const next = typeof update === "function" ? update(prev[key]) : update;
+      return { ...prev, [key]: next };
+    });
+  }, []);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [background, setBackground] = useState(BACKGROUNDS[0].id);
   const [projects, setProjects] = useState<LayerProject[]>([]);
@@ -148,6 +179,16 @@ export default function LayerStudioPage() {
   const stageRef = useRef<HTMLDivElement>(null);
   const stageWrapperRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const setsRef = useRef(sets);
+  setsRef.current = sets;
+  const secretRef = useRef(secret);
+  secretRef.current = secret;
+  const layoutDefaultsRef = useRef<LayoutMap>({});
+  layoutDefaultsRef.current = layoutDefaults;
+  const autoRememberRef = useRef(autoRemember);
+  autoRememberRef.current = autoRemember;
+  const rememberTimers = useRef<Record<string, ReturnType<typeof setTimeout>>>({});
+  const rememberLayerRef = useRef<(layer: Layer) => Promise<void>>(async () => {});
 
   useEffect(() => {
     if (unlocked) {
@@ -182,15 +223,31 @@ export default function LayerStudioPage() {
     height: number,
     group?: { category: PieceCategory; groupName: string }
   ) => {
+    const slot = slotOf(canvas, duoSide);
     let x = (STAGE_WIDTH - width) / 2;
     let y = (STAGE_HEIGHT - height) / 2;
     if (group) {
-      const remembered = layoutDefaults[`${group.category}:${group.groupName}`];
+      const remembered = layoutDefaults[layoutKey(group.category, group.groupName, slot)];
       if (remembered) {
         x = remembered.x;
         y = remembered.y;
         width = remembered.width;
         height = remembered.height;
+      } else if (slot !== "solo") {
+        // First time this piece goes on the Duo canvas: start from its Solo
+        // position, shrunk around the stage centre and moved over to this
+        // person. Every piece gets the same shrink, so a garment still lines
+        // up with its body. One nudge and it is remembered from then on.
+        const solo = layoutDefaults[layoutKey(group.category, group.groupName, "solo")];
+        const personX = STAGE_WIDTH * DUO_CENTRE_X[duoSide];
+        if (solo) {
+          x = personX + (solo.x - STAGE_WIDTH / 2) * DUO_SCALE;
+          y = STAGE_HEIGHT / 2 + (solo.y - STAGE_HEIGHT / 2) * DUO_SCALE;
+          width = solo.width * DUO_SCALE;
+          height = solo.height * DUO_SCALE;
+        } else {
+          x = personX - width / 2;
+        }
       }
     }
     const layer: Layer = {
@@ -203,28 +260,60 @@ export default function LayerStudioPage() {
       height,
       groupCategory: group?.category,
       groupName: group?.groupName,
+      slot,
     };
     setLayers((prev) => [...prev, layer]);
     setSelectedId(layer.id);
   };
 
-  const rememberSelectedPosition = async () => {
-    const layer = layers.find((l) => l.id === selectedId);
-    if (!layer?.groupCategory || !layer.groupName) return;
+  // Saves a piece's position for the canvas slot it sits in. Skips the save
+  // when nothing changed, so a plain click never rewrites anything.
+  const rememberLayer = async (layer: Layer) => {
+    if (!layer.groupCategory || !layer.groupName) return;
+    const key = layoutKey(layer.groupCategory, layer.groupName, layer.slot || "solo");
+    const next = {
+      x: Math.round(layer.x),
+      y: Math.round(layer.y),
+      width: Math.round(layer.width),
+      height: Math.round(layer.height),
+    };
+    const before = layoutDefaultsRef.current[key];
+    if (before && before.x === next.x && before.y === next.y && before.width === next.width && before.height === next.height) {
+      return;
+    }
     setSavingLayout(true);
     try {
-      const key = `${layer.groupCategory}:${layer.groupName}`;
-      const updated = await saveLayout(secret, key, {
-        x: layer.x,
-        y: layer.y,
-        width: layer.width,
-        height: layer.height,
-      });
+      const updated = await saveLayout(secretRef.current, key, next);
       setLayoutDefaults(updated);
+      setRememberNote(`Remembered "${layer.groupName}" for ${slotLabel(layer.slot)}`);
+    } catch {
+      setRememberNote("Could not save that position. Try again.");
     } finally {
       setSavingLayout(false);
     }
   };
+  rememberLayerRef.current = rememberLayer;
+
+  const rememberSelectedPosition = async () => {
+    const layer = layers.find((l) => l.id === selectedId);
+    if (layer) await rememberLayer(layer);
+  };
+
+  // After a drag or resize ends, wait a moment (so a run of small nudges is
+  // one save) and remember the piece's final position, if it really moved.
+  const scheduleRemember = useCallback((id: string, from: { x: number; y: number; w?: number; h?: number }) => {
+    clearTimeout(rememberTimers.current[id]);
+    rememberTimers.current[id] = setTimeout(() => {
+      const layer = [...setsRef.current.solo, ...setsRef.current.duo].find((l) => l.id === id);
+      if (!layer) return;
+      const moved =
+        Math.round(layer.x) !== Math.round(from.x) ||
+        Math.round(layer.y) !== Math.round(from.y) ||
+        (from.w !== undefined && Math.round(layer.width) !== Math.round(from.w)) ||
+        (from.h !== undefined && Math.round(layer.height) !== Math.round(from.h));
+      if (moved) void rememberLayerRef.current(layer);
+    }, 1200);
+  }, []);
 
   // Swaps a layer's image in place — keeps its exact position/size, just
   // changes which variant (color/style) it points to.
@@ -366,10 +455,19 @@ export default function LayerStudioPage() {
   }, []);
 
   const onPointerUp = useCallback(() => {
+    const finished = dragState.current;
     dragState.current = null;
     window.removeEventListener("pointermove", onPointerMove);
     window.removeEventListener("pointerup", onPointerUp);
-  }, [onPointerMove]);
+    if (finished && autoRememberRef.current) {
+      scheduleRemember(
+        finished.id,
+        finished.kind === "resize"
+          ? { x: finished.startX, y: finished.startY, w: finished.startWidth, h: finished.startHeight }
+          : { x: finished.startX, y: finished.startY }
+      );
+    }
+  }, [onPointerMove, scheduleRemember]);
 
   const startMove = (e: React.PointerEvent, layer: Layer) => {
     e.stopPropagation();
@@ -431,7 +529,7 @@ export default function LayerStudioPage() {
   const saveCurrentProject = async () => {
     const name = projectName.trim();
     if (!name) return;
-    const project: LayerProject = { id: name, layers, updatedAt: Date.now() };
+    const project: LayerProject = { id: name, layers: sets.solo, duoLayers: sets.duo, updatedAt: Date.now() };
     await saveProject(project);
     setProjects(await listProjects());
     setProjectName("");
@@ -439,7 +537,9 @@ export default function LayerStudioPage() {
   };
 
   const loadProject = (project: LayerProject) => {
-    setLayers(project.layers);
+    const duo = project.duoLayers ?? [];
+    setSets({ solo: project.layers, duo });
+    setCanvas(project.layers.length === 0 && duo.length > 0 ? "duo" : "solo");
     setSelectedId(null);
   };
 
@@ -479,7 +579,7 @@ export default function LayerStudioPage() {
       const url = canvas.toDataURL("image/png");
       const a = document.createElement("a");
       a.href = url;
-      a.download = `layer-studio-${Date.now()}.png`;
+      a.download = `layer-studio-${canvas}-${Date.now()}.png`;
       a.click();
     } catch (err) {
       console.error("PNG export failed:", err);
@@ -560,6 +660,51 @@ export default function LayerStudioPage() {
         {/* Title + Import: always first, both on mobile (order-1) and desktop (top of the left column). */}
         <div className="order-1 md:col-start-1 md:row-start-1 space-y-2">
           <h1 className="font-serif text-2xl">Layer Studio</h1>
+          <div className="space-y-2 pb-1">
+            <div className="grid grid-cols-2 gap-1 rounded-full border border-input p-1" role="tablist" aria-label="Canvas">
+              {(["solo", "duo"] as Canvas[]).map((c) => (
+                <button
+                  key={c}
+                  role="tab"
+                  aria-selected={canvas === c}
+                  onClick={() => {
+                    setCanvas(c);
+                    setSelectedId(null);
+                  }}
+                  className={`h-9 rounded-full text-sm font-medium transition-colors ${
+                    canvas === c ? "bg-foreground text-background" : "text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  {c === "solo" ? "Solo" : "Duo"}
+                </button>
+              ))}
+            </div>
+            {canvas === "duo" && (
+              <div className="grid grid-cols-2 gap-1 text-xs">
+                {(["left", "right"] as DuoSide[]).map((side) => (
+                  <button
+                    key={side}
+                    onClick={() => setDuoSide(side)}
+                    className={`h-8 rounded-lg border transition-colors ${
+                      duoSide === side ? "border-foreground bg-input-background font-semibold" : "border-input text-muted-foreground"
+                    }`}
+                  >
+                    Add to {side} person
+                  </button>
+                ))}
+              </div>
+            )}
+            <label className="flex items-center gap-2 text-xs text-muted-foreground cursor-pointer select-none">
+              <input
+                type="checkbox"
+                checked={autoRemember}
+                onChange={(e) => setAutoRemember(e.target.checked)}
+                className="h-3.5 w-3.5 accent-[color:var(--foreground)]"
+              />
+              Remember positions automatically
+            </label>
+            {rememberNote && <p className="text-[11px] text-muted-foreground" role="status">{rememberNote}</p>}
+          </div>
           <input
             ref={fileInputRef}
             type="file"
@@ -672,6 +817,11 @@ export default function LayerStudioPage() {
                 >
                   <img src={layer.src} alt={layer.name} className="h-8 w-8 rounded object-cover border border-input" />
                   <span className="flex-1 text-xs truncate">{layer.name}</span>
+                  {layer.slot && layer.slot !== "solo" && (
+                    <span className="text-[10px] px-1.5 py-0.5 rounded-full border border-input text-muted-foreground">
+                      {layer.slot === "duo-left" ? "L" : "R"}
+                    </span>
+                  )}
                   <button
                     onClick={(e) => { e.stopPropagation(); toggleLock(layer.id); }}
                     title={layer.locked ? "Unlock" : "Lock position"}
@@ -814,7 +964,7 @@ export default function LayerStudioPage() {
             );
           })}
 
-          {selectedLayer?.groupCategory && selectedLayer.groupName && (
+          {!autoRemember && selectedLayer?.groupCategory && selectedLayer.groupName && (
             <Button
               className="w-full h-auto min-h-9 py-2 whitespace-normal text-center leading-snug"
               variant="outline"
@@ -823,7 +973,7 @@ export default function LayerStudioPage() {
             >
               {savingLayout
                 ? "Remembering…"
-                : `Remember this position for "${selectedLayer.groupName}"`}
+                : `Remember this position for "${selectedLayer.groupName}" (${slotLabel(selectedLayer.slot)})`}
             </Button>
           )}
 

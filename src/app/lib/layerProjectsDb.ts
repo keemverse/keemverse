@@ -20,11 +20,15 @@ export type Layer = {
   // a piece that's already positioned correctly from being bumped while
   // working with other layers on the canvas.
   locked?: boolean;
+  // Which canvas slot the layer sits in: "solo", "duo-left" or "duo-right".
+  // Missing means "solo" (older projects). Positions are remembered per slot.
+  slot?: string;
 };
 
 export type LayerProject = {
   id: string; // project name, used as the key
-  layers: Layer[];
+  layers: Layer[]; // the Solo canvas
+  duoLayers?: Layer[]; // the Duo canvas (missing in older projects)
   updatedAt: number;
 };
 
