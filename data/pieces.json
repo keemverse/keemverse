@@ -174,5 +174,16 @@
     "width": 241.28759956723937,
     "height": 452.04417618310254,
     "updatedAt": "2026-11-08T21:43:58.438Z"
+  },
+  {
+    "id": "9ea5cfda-0505-44a4-8dbc-422a9e8c445d",
+    "category": "bottom",
+    "groupName": "twisted-pleat-trousers",
+    "variantName": "Mid Grey",
+    "imageUrl": "https://raw.githubusercontent.com/keemverse/keemverse/main/data/piece-assets/9ea5cfda-0505-44a4-8dbc-422a9e8c445d.png",
+    "imagePath": "data/piece-assets/9ea5cfda-0505-44a4-8dbc-422a9e8c445d.png",
+    "width": 241.28759956723937,
+    "height": 452.04417618310254,
+    "updatedAt": "2026-11-08T21:44:02.677Z"
   }
 ]
