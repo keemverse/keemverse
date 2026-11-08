@@ -141,5 +141,16 @@
     "width": 201.39321188417998,
     "height": 770.1085319403268,
     "updatedAt": "2026-11-08T20:57:11.977Z"
+  },
+  {
+    "id": "cbadef7c-8709-4789-ad48-e51ed601bf2c",
+    "category": "bottom",
+    "groupName": "twisted-pleat-trousers",
+    "variantName": "khaki",
+    "imageUrl": "https://raw.githubusercontent.com/keemverse/keemverse/main/data/piece-assets/cbadef7c-8709-4789-ad48-e51ed601bf2c.webp",
+    "imagePath": "data/piece-assets/cbadef7c-8709-4789-ad48-e51ed601bf2c.webp",
+    "width": 244.09597776676645,
+    "height": 452.04417618310254,
+    "updatedAt": "2026-11-08T21:03:05.352Z"
   }
 ]
