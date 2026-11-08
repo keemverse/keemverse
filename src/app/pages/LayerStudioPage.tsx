@@ -62,9 +62,12 @@ type DockItem = {
   height?: number;
   targetHeight: number; // how tall to draw it when the size is measured
 };
+// Any saved piece whose name starts with "Body" (Body model, Body female, Body
+// tall...) is a body: it shows in the Body tab and one body is worn per person.
+const isBodyGroup = (name?: string) => !!name && /^body/i.test(name.trim());
 // Stacking order when a piece is worn: body at the back, hats on top.
 const rankOf = (l: Layer) =>
-  l.groupName === "Body model" ? 0
+  isBodyGroup(l.groupName) ? 0
   : l.groupCategory === "footwear" ? 1
   : l.groupCategory === "bottom" ? 2
   : l.groupCategory === "top" ? 3
@@ -317,7 +320,7 @@ export default function LayerStudioPage() {
       (l) =>
         (l.slot || "solo") === slot &&
         l.groupCategory === category &&
-        (category !== "other" || l.groupName === groupName)
+        (isBodyGroup(groupName) ? isBodyGroup(l.groupName) : category !== "other" || l.groupName === groupName)
     );
   };
 
@@ -341,7 +344,7 @@ export default function LayerStudioPage() {
   const takeOff = (category: PieceCategory) => {
     const slot = slotOf(canvas, duoSide);
     const ids = layers
-      .filter((l) => (l.slot || "solo") === slot && l.groupCategory === category && l.groupName !== "Body model")
+      .filter((l) => (l.slot || "solo") === slot && l.groupCategory === category && !isBodyGroup(l.groupName))
       .map((l) => l.id);
     setLayers((prev) => prev.filter((l) => !ids.includes(l.id)));
     setSelectedId(null);
@@ -718,6 +721,19 @@ export default function LayerStudioPage() {
     for (const sp of STARTER_PIECES) {
       dockItems.push({ key: sp.id, label: sp.name, src: sp.src, category: sp.category, groupName: sp.groupName, targetHeight: 0.9 });
     }
+    // Bodies you saved to the library (name them "Body ...").
+    for (const lp of libraryPieces.filter((x) => isBodyGroup(x.groupName))) {
+      dockItems.push({
+        key: `l:${lp.id}`,
+        label: `${lp.groupName} (${lp.variantName})`,
+        src: lp.imageUrl,
+        category: lp.category || "other",
+        groupName: lp.groupName,
+        width: lp.width,
+        height: lp.height,
+        targetHeight: 0.9,
+      });
+    }
   } else if (dockTab !== "bg") {
     for (const g of WARDROBE.filter((w) => w.category === dockTab)) {
       for (const v of g.variants) {
@@ -731,7 +747,7 @@ export default function LayerStudioPage() {
         });
       }
     }
-    for (const lp of libraryPieces.filter((x) => (x.category || "other") === dockTab && x.groupName !== "Body model")) {
+    for (const lp of libraryPieces.filter((x) => (x.category || "other") === dockTab && !isBodyGroup(x.groupName))) {
       dockItems.push({
         key: `l:${lp.id}`,
         label: `${lp.groupName} (${lp.variantName})`,
