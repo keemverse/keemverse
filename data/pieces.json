@@ -240,5 +240,16 @@
     "width": 258.03132461076893,
     "height": 354.18273523719813,
     "updatedAt": "2026-11-08T23:36:28.652Z"
+  },
+  {
+    "id": "ee6771b3-37bb-4afa-ab46-208b8a9ace00",
+    "category": "bottom",
+    "groupName": "handkerchief-skirt",
+    "variantName": "Taupe",
+    "imageUrl": "https://raw.githubusercontent.com/keemverse/keemverse/main/data/piece-assets/ee6771b3-37bb-4afa-ab46-208b8a9ace00.png",
+    "imagePath": "data/piece-assets/ee6771b3-37bb-4afa-ab46-208b8a9ace00.png",
+    "width": 258.03132461076893,
+    "height": 354.18273523719813,
+    "updatedAt": "2026-11-08T23:36:31.939Z"
   }
 ]
