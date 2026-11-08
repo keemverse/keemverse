@@ -196,5 +196,16 @@
     "width": 328.94758280603287,
     "height": 753.3438904590621,
     "updatedAt": "2026-11-08T22:34:29.645Z"
+  },
+  {
+    "id": "ff3ee305-241f-443c-98eb-6401e7e62e1e",
+    "category": "bottom",
+    "groupName": "handkerchief-skirt",
+    "variantName": "grey",
+    "imageUrl": "https://raw.githubusercontent.com/keemverse/keemverse/main/data/piece-assets/ff3ee305-241f-443c-98eb-6401e7e62e1e.webp",
+    "imagePath": "data/piece-assets/ff3ee305-241f-443c-98eb-6401e7e62e1e.webp",
+    "width": 258.03132461076893,
+    "height": 354.18273523719813,
+    "updatedAt": "2026-11-08T23:35:33.506Z"
   }
 ]
