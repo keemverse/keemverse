@@ -85,6 +85,33 @@ function readFileAsDataUrl(file: File): Promise<string> {
   });
 }
 
+// ---- Bulk "Add variants" helpers -------------------------------------------
+type BulkRow = {
+  id: string;
+  file: File;
+  preview: string;
+  name?: string; // typed by the user; when empty the name is guessed from the file name
+  status: "ready" | "saving" | "done" | "failed";
+  note?: string;
+};
+const groupKey = (category: string, group: string) => `${category}::${group}`;
+// "twisted-pleat-trousers - khaki.png" -> "Khaki"; "Hoodie_Grey (1).jpg" -> "Grey"
+function guessVariantName(fileName: string, groupName: string): string {
+  let base = fileName.replace(/\.[a-z0-9]+$/i, "").replace(/\s*\(\d+\)$/, "").trim();
+  const parts = base.split(/\s+[-\u2013\u2014]\s+/);
+  if (parts.length > 1) {
+    base = parts[parts.length - 1];
+  } else {
+    const slug = (v: string) => v.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+    const g = slug(groupName);
+    const b = slug(base);
+    if (g && b.startsWith(g + " ")) base = b.slice(g.length + 1);
+  }
+  base = base.replace(/[-_]+/g, " ").replace(/\s+/g, " ").trim();
+  base = base.replace(/\b\w/g, (c) => c.toUpperCase());
+  return base || "Default";
+}
+
 function loadImage(src: string): Promise<HTMLImageElement> {
   return new Promise((resolve, reject) => {
     const img = new Image();
@@ -204,6 +231,14 @@ export default function LayerStudioPage() {
   const [saveVariantName, setSaveVariantName] = useState("");
   const [saving, setSaving] = useState(false);
   const [saveToLibraryOpen, setSaveToLibraryOpen] = useState(false);
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
+  const [bulkOpen, setBulkOpen] = useState(false);
+  const [bulkTarget, setBulkTarget] = useState("__new");
+  const [bulkCategory, setBulkCategory] = useState<PieceCategory>("top");
+  const [bulkGroupName, setBulkGroupName] = useState("");
+  const [bulkRows, setBulkRows] = useState<BulkRow[]>([]);
+  const [bulkBusy, setBulkBusy] = useState(false);
+  const [bulkMsg, setBulkMsg] = useState("");
   const [saveProjectOpen, setSaveProjectOpen] = useState(false);
   const [exporting, setExporting] = useState(false);
   const [stageScale, setStageScale] = useState(1);
@@ -494,6 +529,141 @@ export default function LayerStudioPage() {
     setLibraryPieces(await listPieces(secret));
   };
 
+  // ---- Bulk add variants: pick a piece, drop all its colour files, save. ----
+  const patchBulkRow = (id: string, patch: Partial<BulkRow>) =>
+    setBulkRows((prev) => prev.map((r) => (r.id === id ? { ...r, ...patch } : r)));
+
+  const openBulk = (tab?: DockTab | null, forceTarget?: string) => {
+    const catOf = (x: ApiPiece) => x.category || "other";
+    const sel = layers.find((l) => l.id === selectedId);
+    let target = "__new";
+    if (
+      sel?.groupCategory &&
+      sel.groupName &&
+      libraryPieces.some((x) => catOf(x) === sel.groupCategory && x.groupName === sel.groupName)
+    ) {
+      target = groupKey(sel.groupCategory, sel.groupName);
+    } else {
+      const inTab = (x: ApiPiece) =>
+        !tab || tab === "bg" ? true : tab === "body" ? isBodyGroup(x.groupName) : catOf(x) === tab && !isBodyGroup(x.groupName);
+      const pool = libraryPieces.filter(inTab);
+      const last = pool[pool.length - 1] ?? libraryPieces[libraryPieces.length - 1];
+      if (last) target = groupKey(catOf(last), last.groupName);
+    }
+    setBulkTarget(forceTarget ?? target);
+    setBulkCategory(tab && tab !== "body" && tab !== "bg" ? tab : "top");
+    setBulkGroupName("");
+    setBulkMsg("");
+    setBulkOpen(true);
+  };
+
+  const closeBulk = (open: boolean) => {
+    if (bulkBusy) return;
+    setBulkOpen(open);
+    if (!open) {
+      bulkRows.forEach((r) => URL.revokeObjectURL(r.preview));
+      setBulkRows([]);
+      setBulkMsg("");
+    }
+  };
+
+  const addBulkFiles = (files: FileList | File[] | null) => {
+    if (!files) return;
+    const rows: BulkRow[] = Array.from(files)
+      .filter((f) => f.type.startsWith("image/"))
+      .sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true }))
+      .map((file) => ({
+        id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+        file,
+        preview: URL.createObjectURL(file),
+        status: "ready" as const,
+      }));
+    if (rows.length) {
+      setBulkRows((prev) => [...prev, ...rows]);
+      setBulkMsg("");
+    }
+  };
+
+  const removeBulkRow = (id: string) => {
+    setBulkRows((prev) => {
+      const gone = prev.find((r) => r.id === id);
+      if (gone) URL.revokeObjectURL(gone.preview);
+      return prev.filter((r) => r.id !== id);
+    });
+  };
+
+  const saveBulk = async () => {
+    if (bulkBusy) return;
+    let category: PieceCategory = bulkCategory;
+    let groupName = bulkGroupName.trim();
+    if (bulkTarget !== "__new") {
+      const [c, ...rest] = bulkTarget.split("::");
+      category = c as PieceCategory;
+      groupName = rest.join("::");
+    }
+    if (!groupName) return;
+    const catOf = (x: ApiPiece) => x.category || "other";
+    const inGroup = libraryPieces.filter((x) => catOf(x) === category && x.groupName === groupName);
+    const taken = new Set(inGroup.map((x) => x.variantName.toLowerCase()));
+    // New variants copy the size of the piece already saved, so they line up.
+    let ref: { height: number } | null = inGroup.length ? { height: inGroup[inGroup.length - 1].height } : null;
+    setBulkBusy(true);
+    setBulkMsg("");
+    let saved = 0;
+    let skipped = 0;
+    let failed = 0;
+    for (const row of bulkRows) {
+      if (row.status === "done") continue;
+      const variantName = ((row.name ?? "").trim() || guessVariantName(row.file.name, groupName)).trim() || "Default";
+      if (taken.has(variantName.toLowerCase())) {
+        skipped++;
+        patchBulkRow(row.id, { status: "failed", note: "Already saved" });
+        continue;
+      }
+      patchBulkRow(row.id, { status: "saving", note: undefined });
+      try {
+        const src = await readFileAsDataUrl(row.file);
+        const img = await loadImage(src);
+        const aspect = img.naturalWidth / img.naturalHeight;
+        // Keep the upload small enough for the server (4.5 MB request limit).
+        let longest = Math.min(1600, Math.max(img.naturalWidth, img.naturalHeight));
+        let imageDataUrl = "";
+        for (let i = 0; i < 6 && !imageDataUrl; i++) {
+          const k = longest / Math.max(img.naturalWidth, img.naturalHeight);
+          const canvas = document.createElement("canvas");
+          canvas.width = Math.max(1, Math.round(img.naturalWidth * k));
+          canvas.height = Math.max(1, Math.round(img.naturalHeight * k));
+          canvas.getContext("2d")!.drawImage(img, 0, 0, canvas.width, canvas.height);
+          const out = canvas.toDataURL("image/png");
+          if (out.length < 4_000_000) imageDataUrl = out;
+          else longest *= 0.75;
+        }
+        if (!imageDataUrl) throw new Error("too big");
+        const height = ref?.height ?? STAGE_HEIGHT * (isBodyGroup(groupName) ? 0.9 : 0.55);
+        const width = height * aspect;
+        await createPiece(secret, { category, groupName, variantName, imageDataUrl, width, height });
+        ref = ref ?? { height };
+        taken.add(variantName.toLowerCase());
+        saved++;
+        patchBulkRow(row.id, { status: "done", note: undefined });
+      } catch {
+        failed++;
+        patchBulkRow(row.id, { status: "failed", note: "Failed, try again" });
+      }
+    }
+    try {
+      setLibraryPieces(await listPieces(secret));
+    } catch {
+      /* the list refreshes on the next load */
+    }
+    setBulkMsg(
+      `Saved ${saved} variant${saved === 1 ? "" : "s"} to "${groupName}".` +
+        (skipped ? ` ${skipped} already existed and were skipped.` : "") +
+        (failed ? ` ${failed} failed, press Save again to retry.` : "")
+    );
+    setBulkBusy(false);
+  };
+
   const onPointerMove = useCallback((e: PointerEvent) => {
     const drag = dragState.current;
     if (!drag) return;
@@ -712,6 +882,31 @@ export default function LayerStudioPage() {
   const activeBackground = BACKGROUNDS.find((b) => b.id === background);
   const selectedLayer = layers.find((l) => l.id === selectedId) || null;
 
+  // Groups already in the library, for the Add variants picker.
+  const bulkGroups: { key: string; label: string }[] = [];
+  {
+    const seen = new Set<string>();
+    for (const x of libraryPieces) {
+      const c = x.category || "other";
+      const k = groupKey(c, x.groupName);
+      if (seen.has(k)) continue;
+      seen.add(k);
+      const catLabel = PIECE_CATEGORIES.find((pc) => pc.id === c)?.label ?? c;
+      bulkGroups.push({ key: k, label: `${x.groupName} · ${catLabel}` });
+    }
+  }
+  const bulkTargetName =
+    bulkTarget === "__new" ? bulkGroupName.trim() : bulkTarget.split("::").slice(1).join("::");
+  const bulkTargetCategory = bulkTarget === "__new" ? bulkCategory : bulkTarget.split("::")[0];
+  const bulkTakenNames = new Set(
+    libraryPieces
+      .filter((x) => (x.category || "other") === bulkTargetCategory && x.groupName === bulkTargetName)
+      .map((x) => x.variantName.toLowerCase())
+  );
+  const bulkNameOf = (row: BulkRow) => (row.name ?? guessVariantName(row.file.name, bulkTargetName)).trim();
+  const bulkIsDup = (row: BulkRow) => row.status !== "done" && bulkTakenNames.has(bulkNameOf(row).toLowerCase());
+  const bulkToSave = bulkRows.filter((r) => r.status !== "done" && !bulkIsDup(r)).length;
+
   // Reverse for display so the topmost layer (end of the array) is listed first.
   const layersTopFirst = [...layers].map((l, i) => ({ layer: l, index: i })).reverse();
 
@@ -926,6 +1121,9 @@ export default function LayerStudioPage() {
             <Button className="w-full" variant="outline" onClick={() => fileInputRef.current?.click()}>
               Import image(s)
             </Button>
+            <Button className="w-full" variant="outline" onClick={() => openBulk(null)}>
+              Add variants (many images at once)
+            </Button>
             {selectedLayer && (
               <Button
                 className="w-full h-auto min-h-9 py-2 whitespace-normal text-center leading-snug"
@@ -990,19 +1188,58 @@ export default function LayerStudioPage() {
             </div>
           )}
             {libraryPieces.length > 0 && (
-              <div className="space-y-1.5">
+              <div className="space-y-3">
                 <h2 className="text-xs uppercase tracking-[0.15em] text-muted-foreground">Saved pieces</h2>
-                {libraryPieces.map((piece) => (
-                  <div key={piece.id} className="flex items-center gap-2 text-xs">
-                    <img src={piece.imageUrl} alt="" className="h-8 w-8 rounded object-cover border border-input" />
-                    <span className="flex-1 truncate">{piece.groupName} ({piece.variantName})</span>
-                    <button
-                      onClick={() => removeLibraryPiece(piece.id)}
-                      title="Remove from library"
-                      className="px-1.5 py-0.5 rounded border border-input text-muted-foreground hover:text-destructive"
-                    >
-                      ✕
-                    </button>
+                {groupedLibrary.map((cat) => (
+                  <div key={cat.id} className="space-y-2">
+                    <p className="text-[11px] text-muted-foreground">{cat.label}</p>
+                    {cat.groups.map(([groupName, pieces]) => (
+                      <div key={groupName} className="rounded-xl border border-input p-2.5 space-y-2.5">
+                        <div className="flex items-center gap-2">
+                          <span className="flex-1 truncate text-xs font-medium">{groupName}</span>
+                          <span className="text-[10px] text-muted-foreground">
+                            {pieces.length} {pieces.length === 1 ? "variant" : "variants"}
+                          </span>
+                          <button
+                            onClick={() => openBulk(null, groupKey(cat.id, groupName))}
+                            className="h-6 rounded-full border border-input px-2 text-[11px] text-muted-foreground hover:text-foreground"
+                          >
+                            + Add
+                          </button>
+                        </div>
+                        <div className="flex flex-wrap gap-x-2.5 gap-y-3">
+                          {pieces.map((piece) => (
+                            <div key={piece.id} className="relative w-12">
+                              <img
+                                src={piece.imageUrl}
+                                alt={piece.variantName}
+                                className="h-12 w-12 rounded-lg object-cover border border-input bg-input-background"
+                              />
+                              <button
+                                onClick={() => {
+                                  if (confirmDeleteId === piece.id) {
+                                    setConfirmDeleteId(null);
+                                    void removeLibraryPiece(piece.id);
+                                  } else {
+                                    setConfirmDeleteId(piece.id);
+                                  }
+                                }}
+                                onBlur={() => setConfirmDeleteId((cur) => (cur === piece.id ? null : cur))}
+                                title={confirmDeleteId === piece.id ? "Tap again to delete" : "Remove from library"}
+                                className={`absolute -top-1.5 -right-1.5 flex h-5 items-center justify-center rounded-full border text-[10px] leading-none ${
+                                  confirmDeleteId === piece.id
+                                    ? "px-1.5 border-destructive bg-destructive text-white"
+                                    : "w-5 border-input bg-background text-muted-foreground hover:text-destructive"
+                                }`}
+                              >
+                                {confirmDeleteId === piece.id ? "Delete?" : "\u2715"}
+                              </button>
+                              <p className="mt-1 truncate text-center text-[10px] text-muted-foreground">{piece.variantName}</p>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 ))}
               </div>
@@ -1073,6 +1310,14 @@ export default function LayerStudioPage() {
                     <img src={item.src} alt={item.label} className="w-full h-full object-cover" draggable={false} />
                   </button>
                 ))}
+                <button
+                  onClick={() => openBulk(dockTab)}
+                  title="Add variants (many images at once)"
+                  className="relative h-16 w-16 shrink-0 snap-start rounded-2xl border-2 border-dashed border-input flex flex-col items-center justify-center text-muted-foreground hover:text-foreground"
+                >
+                  <span className="text-xl leading-none">+</span>
+                  <span className="text-[10px]">Variants</span>
+                </button>
                 {dockItems.length === 0 && (
                   <p className="self-center text-xs text-muted-foreground px-2">
                     Nothing here yet. Import an image, then use "Save to library" under Layers and tools.
@@ -1131,6 +1376,115 @@ export default function LayerStudioPage() {
             <Button className="w-full" onClick={saveSelectedToLibrary} disabled={!saveGroupName.trim() || saving}>
               {saving ? "Saving…" : "Save piece"}
             </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={bulkOpen} onOpenChange={closeBulk}>
+        <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Add variants</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3">
+            <select
+              value={bulkTarget}
+              onChange={(e) => setBulkTarget(e.target.value)}
+              disabled={bulkBusy}
+              className="w-full h-9 text-sm rounded-md border border-input bg-background px-2"
+            >
+              {bulkGroups.map((g) => (
+                <option key={g.key} value={g.key}>{g.label}</option>
+              ))}
+              <option value="__new">+ New piece…</option>
+            </select>
+            {bulkTarget === "__new" && (
+              <div className="grid grid-cols-2 gap-2">
+                <select
+                  value={bulkCategory}
+                  onChange={(e) => setBulkCategory(e.target.value as PieceCategory)}
+                  disabled={bulkBusy}
+                  className="h-9 text-sm rounded-md border border-input bg-background px-2"
+                >
+                  {PIECE_CATEGORIES.map((c) => (
+                    <option key={c.id} value={c.id}>{c.label}</option>
+                  ))}
+                </select>
+                <Input
+                  placeholder="Piece name"
+                  value={bulkGroupName}
+                  onChange={(e) => setBulkGroupName(e.target.value)}
+                  disabled={bulkBusy}
+                  className="h-9 text-sm"
+                />
+              </div>
+            )}
+
+            <label
+              onDragOver={(e) => e.preventDefault()}
+              onDrop={(e) => {
+                e.preventDefault();
+                addBulkFiles(e.dataTransfer.files);
+              }}
+              className="block rounded-xl border-2 border-dashed border-input px-3 py-5 text-center text-sm text-muted-foreground cursor-pointer hover:text-foreground"
+            >
+              Drop all the colour images here, or tap to choose
+              <input
+                type="file"
+                accept="image/*"
+                multiple
+                className="hidden"
+                onChange={(e) => {
+                  addBulkFiles(e.target.files);
+                  e.target.value = "";
+                }}
+              />
+            </label>
+
+            {bulkRows.length > 0 && (
+              <div className="space-y-1.5 max-h-64 overflow-y-auto">
+                {bulkRows.map((row) => (
+                  <div key={row.id} className="flex items-center gap-2">
+                    <img src={row.preview} alt="" className="h-10 w-10 rounded object-cover border border-input" />
+                    <Input
+                      value={row.name ?? guessVariantName(row.file.name, bulkTargetName)}
+                      onChange={(e) => patchBulkRow(row.id, { name: e.target.value, status: row.status === "failed" ? "ready" : row.status, note: undefined })}
+                      disabled={bulkBusy || row.status === "done"}
+                      className="h-8 text-sm flex-1"
+                    />
+                    <span
+                      className={`w-20 text-right text-[11px] ${
+                        row.status === "failed" ? "text-destructive" : "text-muted-foreground"
+                      }`}
+                    >
+                      {row.status === "saving" ? "Saving…" : row.status === "done" ? "Saved ✓" : bulkIsDup(row) ? "Already saved" : row.note || ""}
+                    </span>
+                    <button
+                      onClick={() => removeBulkRow(row.id)}
+                      disabled={bulkBusy}
+                      title="Remove"
+                      className="text-xs px-1.5 py-0.5 rounded border border-input text-muted-foreground hover:text-destructive disabled:opacity-30"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {bulkMsg && <p className="text-xs text-muted-foreground">{bulkMsg}</p>}
+
+            <Button
+              className="w-full"
+              onClick={saveBulk}
+              disabled={bulkBusy || !bulkTargetName || bulkToSave === 0}
+            >
+              {bulkBusy
+                ? `Saving ${bulkRows.filter((r) => r.status === "done").length + 1} of ${bulkRows.length}…`
+                : `Save ${bulkToSave || ""} variant${bulkToSave === 1 ? "" : "s"}`}
+            </Button>
+            <p className="text-[11px] text-muted-foreground">
+              New variants copy the size of the piece already saved, so they line up. Names come from the file names, change any you like.
+            </p>
           </div>
         </DialogContent>
       </Dialog>
