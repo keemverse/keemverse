@@ -13,8 +13,8 @@ import { Focus } from '../ui/Cine';
 // can never appear before the free file and the Apps Script are set up
 // (docs/apps-script-leads-events.gs).
 //
-// Marketing email is a SEPARATE tickbox, never pre-ticked: getting the free
-// look does not require agreeing to anything else.
+// The free look is the exchange for joining Keem's email list, and the form
+// says so: a REQUIRED tickbox, never pre-ticked, so agreeing is an active choice.
 
 export default function FreeLook() {
   const t = useContent();
@@ -43,7 +43,7 @@ export default function FreeLook() {
       const res = await fetch('/api/lead', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, optIn, website, source, campaign, region: region === 'NG' ? 'NG' : 'ROW' }),
+        body: JSON.stringify({ email, optIn: true, website, source, campaign, region: region === 'NG' ? 'NG' : 'ROW' }),
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok || !data.ok) {
@@ -51,7 +51,7 @@ export default function FreeLook() {
         setStatus('idle');
         return;
       }
-      track('freelook_submit', { item: look, detail: optIn ? 'optin' : 'no-optin' });
+      track('freelook_submit', { item: look, detail: 'optin' });
       setStatus('done');
     } catch {
       setError('Could not send it right now. Please try again.');
@@ -92,7 +92,7 @@ export default function FreeLook() {
                 />
                 <button
                   type="submit"
-                  disabled={status === 'sending' || !/\S+@\S+\.\S+/.test(email)}
+                  disabled={status === 'sending' || !optIn || !/\S+@\S+\.\S+/.test(email)}
                   className="press h-12 shrink-0 rounded-full bg-foreground px-7 text-sm font-semibold text-background transition-opacity hover:opacity-90 disabled:opacity-50"
                 >
                   {status === 'sending' ? 'Sending…' : t('home.freelook_button')}
@@ -109,7 +109,7 @@ export default function FreeLook() {
                 className="absolute -left-[9999px] h-0 w-0 opacity-0"
               />
               <label className="mt-4 flex cursor-pointer items-start gap-2.5 text-[13px] leading-snug text-muted-foreground">
-                <input type="checkbox" checked={optIn} onChange={(e) => setOptIn(e.target.checked)} className="mt-0.5 h-4 w-4 shrink-0 accent-[color:var(--fashion-display)]" />
+                <input type="checkbox" required checked={optIn} onChange={(e) => setOptIn(e.target.checked)} className="mt-0.5 h-4 w-4 shrink-0 accent-[color:var(--fashion-display)]" />
                 {t('home.freelook_optin')}
               </label>
               {error && (
