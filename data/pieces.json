@@ -229,5 +229,16 @@
     "width": 258.03132461076893,
     "height": 354.18273523719813,
     "updatedAt": "2026-11-08T23:36:25.167Z"
+  },
+  {
+    "id": "d6963d2c-aaea-48dd-82fc-720c8864e79b",
+    "category": "bottom",
+    "groupName": "handkerchief-skirt",
+    "variantName": "Navy",
+    "imageUrl": "https://raw.githubusercontent.com/keemverse/keemverse/main/data/piece-assets/d6963d2c-aaea-48dd-82fc-720c8864e79b.png",
+    "imagePath": "data/piece-assets/d6963d2c-aaea-48dd-82fc-720c8864e79b.png",
+    "width": 258.03132461076893,
+    "height": 354.18273523719813,
+    "updatedAt": "2026-11-08T23:36:28.652Z"
   }
 ]
