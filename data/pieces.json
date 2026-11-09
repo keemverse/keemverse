@@ -405,5 +405,16 @@
     "width": 317.57271728515633,
     "height": 299.9709622430969,
     "updatedAt": "2026-11-09T01:07:53.922Z"
+  },
+  {
+    "id": "49b787d0-bdcb-4ac7-a9a6-f2e82c3792da",
+    "category": "top",
+    "groupName": "cropped-oxford-shirt",
+    "variantName": "Navy",
+    "imageUrl": "https://raw.githubusercontent.com/keemverse/keemverse/main/data/piece-assets/49b787d0-bdcb-4ac7-a9a6-f2e82c3792da.png",
+    "imagePath": "data/piece-assets/49b787d0-bdcb-4ac7-a9a6-f2e82c3792da.png",
+    "width": 317.57271728515633,
+    "height": 299.9709622430969,
+    "updatedAt": "2026-11-09T01:07:57.857Z"
   }
 ]
