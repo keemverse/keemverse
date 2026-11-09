@@ -273,5 +273,16 @@
     "width": 304.6793966192948,
     "height": 236.91326321629435,
     "updatedAt": "2026-11-09T00:09:47.819Z"
+  },
+  {
+    "id": "71d26466-d60e-47f2-b5bd-97e4938cadd7",
+    "category": "top",
+    "groupName": "ribbed-long-sleeve",
+    "variantName": "Charcoal",
+    "imageUrl": "https://raw.githubusercontent.com/keemverse/keemverse/main/data/piece-assets/71d26466-d60e-47f2-b5bd-97e4938cadd7.png",
+    "imagePath": "data/piece-assets/71d26466-d60e-47f2-b5bd-97e4938cadd7.png",
+    "width": 304.6793966192948,
+    "height": 236.91326321629435,
+    "updatedAt": "2026-11-09T00:09:51.582Z"
   }
 ]
