@@ -208,6 +208,9 @@ export default function LayerStudioPage() {
   const [dockTab, setDockTab] = useState<DockTab>("top");
   // The piece whose variants (colours) are showing above the strip.
   const [openGroupKey, setOpenGroupKey] = useState<string | null>(null);
+  // When on, wearing a piece adds it over what is already worn (a shirt over a
+  // T-shirt) instead of replacing it. Only the same piece swaps its colour.
+  const [layerOver, setLayerOver] = useState(false);
   const [autoRemember, setAutoRemember] = useState(true);
   const [rememberNote, setRememberNote] = useState("");
   const canvasRef = useRef<Canvas>("solo");
@@ -358,7 +361,7 @@ export default function LayerStudioPage() {
       (l) =>
         (l.slot || "solo") === slot &&
         l.groupCategory === category &&
-        (isBodyGroup(groupName) ? isBodyGroup(l.groupName) : category !== "other" || l.groupName === groupName)
+        (isBodyGroup(groupName) ? isBodyGroup(l.groupName) : (category !== "other" && !layerOver) || l.groupName === groupName)
     );
   };
 
@@ -1318,13 +1321,28 @@ export default function LayerStudioPage() {
             </div>
           )}
 
+          {dockTab !== "bg" && dockTab !== "body" && dockTab !== "other" && (
+            <button
+              onClick={() => setLayerOver((v) => !v)}
+              aria-pressed={layerOver}
+              className={`h-7 self-start rounded-full border px-3 text-[11px] font-medium transition-colors ${
+                layerOver ? "border-foreground bg-foreground text-background" : "border-input text-muted-foreground"
+              }`}
+            >
+              {layerOver ? "Layer over: ON. New pieces go on top of what's worn" : "Layer over: off"}
+            </button>
+          )}
+
           {dockTab !== "bg" && openPiece && (
             <div className="space-y-1">
               <p className="px-0.5 text-[11px] text-muted-foreground">{openPiece.groupName}: pick a variant</p>
               <div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1" aria-label="Variants">
                 <button
                   onClick={() => {
-                    const w = wornFor(openPiece.category, openPiece.groupName);
+                    const slot = slotOf(canvas, duoSide);
+                    const w =
+                      layers.find((l) => (l.slot || "solo") === slot && l.groupCategory === openPiece.category && l.groupName === openPiece.groupName) ??
+                      wornFor(openPiece.category, openPiece.groupName);
                     if (w) deleteLayer(w.id);
                   }}
                   title="Take off"
