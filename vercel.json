@@ -4,33 +4,6 @@
   ],
   "rewrites": [
     {
-      "source": "/fashion/presets/:slug",
-      "has": [
-        {
-          "type": "header",
-          "key": "user-agent",
-          "value": ".*([Bb]ot|[Cc]rawler|[Ss]pider|facebookexternalhit|Facebot|WhatsApp|Slack|Discord|Telegram|Pinterest|LinkedIn|Embedly|Skype|Viber|Snapchat|Instagram|TikTok|ByteDance|Bytespider|Preview|Applebot|Twitter).*"
-        }
-      ],
-      "destination": "/api/preset-page?slug=:slug"
-    },
-    {
-      "source": "/fashion/presets",
-      "has": [
-        {
-          "type": "query",
-          "key": "look",
-          "value": "(?<slug>[a-z0-9-]+)"
-        },
-        {
-          "type": "header",
-          "key": "user-agent",
-          "value": ".*([Bb]ot|[Cc]rawler|[Ss]pider|facebookexternalhit|Facebot|WhatsApp|Slack|Discord|Telegram|Pinterest|LinkedIn|Embedly|Skype|Viber|Snapchat|Instagram|TikTok|ByteDance|Bytespider|Preview|Applebot|Twitter).*"
-        }
-      ],
-      "destination": "/api/preset-page?slug=:slug"
-    },
-    {
       "source": "/((?!api/).*)",
       "destination": "/index.html"
     }

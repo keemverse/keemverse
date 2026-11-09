@@ -1,7 +1,6 @@
 import { Focus, MaskLine } from '../components/ui/Cine';
 import { CINE_EASE } from '../lib/cine';
 import fashionFindsHero from '../../imports/fashion-finds-hero.webp';
-import photoPresetsHero from '../../imports/photo-presets-hero.webp';
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, useScroll, useTransform, useReducedMotion } from 'motion/react';
 import { ImageWithFallback } from '../components/figma/ImageWithFallback';
@@ -52,14 +51,6 @@ const shop = [
     cta: 'Browse Finds',
     tag: 'LIVE',
     href: '/fashion/finds',
-  },
-  {
-    title: 'Lightroom Presets',
-    description: 'Premium editing presets.',
-    image: photoPresetsHero,
-    cta: 'Get Presets',
-    tag: 'LIVE',
-    href: '/fashion/presets',
   },
 ];
 
@@ -267,7 +258,7 @@ export function FashionPage() {
           {/* ── SHOP ── */}
           <section className="mt-24">
             <SharedSectionDivider label="Shop" />
-            <div className="grid grid-cols-2 gap-3 md:gap-8 max-w-5xl mx-auto">
+            <div className="grid grid-cols-1 gap-3 md:gap-8 max-w-md mx-auto">
               {shop.map((item, i) => (
   <UniverseShopCard
     key={item.title}

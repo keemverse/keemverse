@@ -5,16 +5,14 @@ import { useContent } from '../../lib/siteContent';
 import { useMediaQuery } from '../../lib/useMediaQuery';
 import { Focus } from '../ui/Cine';
 import findsImg from '../../../imports/fashion-finds-hero.webp';
-import presetsImg from '../../../imports/photo-presets-hero.webp';
 import studioImg from '../../../imports/trend-territory-modeling-portrait.webp';
 
-// Three ways in, as three big lines. On a desktop a photo follows the cursor
+// Two ways in, as two big lines. On a desktop a photo follows the cursor
 // from line to line; on a phone each line carries its own small photo.
 
 const ROWS = [
   { n: '01', title: 'Wear', line: 'Fashion Finds: pieces I picked for their design, quality or value.', to: '/fashion/finds', img: findsImg },
   { n: '02', title: 'Shoot', line: 'The gallery: frames from my shoots.', to: '/gallery', img: studioImg },
-  { n: '03', title: 'Edit', line: 'Lightroom presets: looks I made, ready for your own photos.', to: '/fashion/presets', img: presetsImg },
 ];
 
 export default function TheLoop() {

@@ -32,14 +32,14 @@ export interface Frame {
 export const FRAMES: Frame[] = [
   { id: 'highway', src: street, title: 'Highway', note: 'Leather vest, grey trousers, an empty road.', kind: 'Street', ratio: 3 / 4, position: '50% 62%' },
   { id: 'stripes', src: stripes, title: 'Trend Territory', note: 'Pink and cream stripes, shot in the studio.', kind: 'Studio', ratio: 3 / 4, position: '50% 40%' },
-  { id: 'old-garden', src: '/presets/old-garden-after.webp', title: 'Old Garden', note: 'Lightroom look: muted olive and warm shadows.', kind: 'Looks', ratio: 3 / 4, href: '/fashion/presets/old-garden' },
+  { id: 'old-garden', src: '/presets/old-garden-after.webp', title: 'Old Garden', note: 'Muted olive and warm shadows.', kind: 'Looks', ratio: 3 / 4 },
   { id: 'pair', src: pair, title: 'Same wall', note: 'Matching leather and hats on a concrete ledge.', kind: 'Pair', ratio: 3 / 4, position: '50% 60%' },
   { id: 'pavement', src: pavement, title: 'Pavement', note: 'Cap, tank, wide shorts and sneakers.', kind: 'Street', ratio: 3 / 4, position: '50% 55%' },
-  { id: 'amber-hour', src: '/presets/amber-hour-after.webp', title: 'Amber Hour', note: 'Lightroom look: warm, soft and lifted.', kind: 'Looks', ratio: 3 / 4, href: '/fashion/presets/amber-hour' },
+  { id: 'amber-hour', src: '/presets/amber-hour-after.webp', title: 'Amber Hour', note: 'Warm, soft and lifted.', kind: 'Looks', ratio: 3 / 4 },
   { id: 'garden', src: garden, title: 'White on white', note: 'A garden, two outfits and one red rose.', kind: 'Pair', ratio: 3 / 4, position: '50% 55%' },
   { id: 'welcome', src: wall, title: 'Welcome', note: 'A painted wall that says hello.', kind: 'Street', ratio: 4 / 3, position: '50% 50%' },
-  { id: 'cold-frame', src: '/presets/cold-frame-after.webp', title: 'Cold Frame', note: 'Lightroom look: cool, crisp and close.', kind: 'Looks', ratio: 3 / 4, href: '/fashion/presets/cold-frame' },
-  { id: 'storm-grey', src: '/presets/storm-grey-after.webp', title: 'Storm Grey', note: 'Lightroom look: slate tones and deep contrast.', kind: 'Looks', ratio: 3 / 4, href: '/fashion/presets/storm-grey' },
+  { id: 'cold-frame', src: '/presets/cold-frame-after.webp', title: 'Cold Frame', note: 'Cool, crisp and close.', kind: 'Looks', ratio: 3 / 4 },
+  { id: 'storm-grey', src: '/presets/storm-grey-after.webp', title: 'Storm Grey', note: 'Slate tones and deep contrast.', kind: 'Looks', ratio: 3 / 4 },
 ];
 
 export const FRAME_KINDS: ('All' | FrameKind)[] = ['All', 'Street', 'Pair', 'Studio', 'Looks'];

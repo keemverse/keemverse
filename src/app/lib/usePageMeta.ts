@@ -16,11 +16,11 @@ type Meta = { title: string; description: string; noindex?: boolean };
 const PAGES: Record<string, Meta> = {
   '/': {
     title: "KEEMVERSE: Keem's fashion world",
-    description: 'Outfits, a photo gallery, Lightroom presets and fashion finds from Keem (Soft Keem).',
+    description: 'Outfits, a photo gallery and fashion finds from Keem (Soft Keem).',
   },
   '/fashion': {
     title: `Fashion | ${BRAND}`,
-    description: 'Style as visual storytelling: brand modeling, collaborations, wardrobe styling, and a curated shop of finds and presets.',
+    description: 'Style as visual storytelling: brand modeling, collaborations, wardrobe styling, and a curated shop of finds.',
   },
   '/fashion/finds': {
     title: `Fashion Finds | ${BRAND}`,
@@ -32,7 +32,7 @@ const PAGES: Record<string, Meta> = {
   },
   '/gallery': {
     title: `Gallery | ${BRAND}`,
-    description: 'Frames from Keem\'s shoots and the Lightroom looks they became.',
+    description: 'Frames from Keem\'s shoots.',
   },
   '/about': { title: `About | ${BRAND}`, description: 'Who Keem is and what you will find on KEEMVERSE.' },
   '/contact': { title: `Contact | ${BRAND}`, description: 'Send a brief about a collaboration, a project or an order.' },

@@ -15,8 +15,6 @@ import { LandingPage } from './pages/LandingPage';
 // can even start loading.
 import { FashionPage } from './pages/FashionPage';
 import FashionFindsPage from './pages/FashionFindsPage';
-import LightroomPresetsPage from './pages/LightroomPresetsPage';
-import PresetDetailPage from './pages/PresetDetailPage';
 
 const GalleryPage = lazy(() => import('./pages/GalleryPage'));
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage'));
@@ -81,15 +79,9 @@ export default function App() {
   element={<FashionFindsPage />}
 />
 
-<Route
-  path="/fashion/presets"
-  element={<LightroomPresetsPage />}
-/>
-
-<Route
-  path="/fashion/presets/:slug"
-  element={<PresetDetailPage />}
-/>
+{/* Presets were shut down on 9 Nov 2026. Old links and shared URLs land on /fashion. The pages stay in the repo. */}
+<Route path="/fashion/presets" element={<Navigate to="/fashion" replace />} />
+<Route path="/fashion/presets/:slug" element={<Navigate to="/fashion" replace />} />
 
 <Route path="/gallery" element={<GalleryPage />} />
 

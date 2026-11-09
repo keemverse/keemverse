@@ -3,15 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import { SocialFooter } from '../components/SocialFooter';
 import { BurgerMenu } from '../components/ui/BurgerMenu';
 import { GeometricBackdrop } from '../components/GeometricBackdrop';
-import { BioChooser } from '../components/BioChooser';
 import HomeHero from '../components/home/HomeHero';
 import IdentityMarquee from '../components/home/IdentityMarquee';
 import Manifesto from '../components/home/Manifesto';
 import TheLoop from '../components/home/TheLoop';
-import HomeLooks from '../components/home/HomeLooks';
 import HomeClosing from '../components/home/HomeClosing';
 import HomeBrands from '../components/home/HomeBrands';
-import FreeLook from '../components/home/FreeLook';
 import ScrollProgress from '../components/home/ScrollProgress';
 import FilmStrip from '../components/gallery/FilmStrip';
 import { FRAMES } from '../data/gallery';
@@ -25,7 +22,6 @@ function LandingNav() {
   const items = [
     { label: 'Gallery', action: () => navigate('/gallery') },
     { label: 'Fashion Finds', action: () => navigate('/fashion/finds') },
-    { label: 'Lightroom Presets', action: () => navigate('/fashion/presets') },
     { label: 'Fashion', action: () => navigate('/fashion') },
     { label: 'About', action: () => navigate('/about') },
     { label: 'Contact', action: () => navigate('/contact') },
@@ -66,8 +62,6 @@ export function LandingPage() {
       <div className="relative z-10 px-5 md:px-8">
         <div className="mx-auto max-w-6xl">
           <TheLoop />
-          <HomeLooks />
-          <FreeLook />
           <Suspense fallback={<div className="min-h-[60vh]" aria-hidden="true" />}>
             <HomeRails />
           </Suspense>
@@ -80,7 +74,6 @@ export function LandingPage() {
         <SocialFooter />
       </div>
 
-      <BioChooser />
     </div>
   );
 }

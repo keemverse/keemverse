@@ -8,7 +8,6 @@ import { SocialFooter } from '../components/SocialFooter';
 const WAYS = [
   { to: '/', label: 'Home' },
   { to: '/gallery', label: 'Gallery' },
-  { to: '/fashion/presets', label: 'Lightroom presets' },
   { to: '/fashion/finds', label: 'Fashion Finds' },
 ];
 

@@ -7,7 +7,6 @@ const explore = [
   { to: '/gallery', label: 'Gallery' },
   { to: '/fashion', label: 'Fashion' },
   { to: '/fashion/finds', label: 'Fashion Finds' },
-  { to: '/fashion/presets', label: 'Lightroom Presets' },
 ];
 
 const help = [
@@ -60,7 +59,7 @@ export function SocialFooter() {
               Create · Build · Inspire
             </p>
             <p className="mt-4 text-sm text-muted-foreground leading-relaxed max-w-xs">
-              Keem's fashion world: outfits, presets and finds.
+              Keem's fashion world: outfits, shoots and finds.
             </p>
           </div>
 

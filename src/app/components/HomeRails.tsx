@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, ShoppingBag, Camera } from 'lucide-react';
+import { ArrowRight, ShoppingBag } from 'lucide-react';
 import type { ComponentType } from 'react';
 import { FASHION, FASHION_DARK } from '../lib/theme';
 import { Reveal } from './ui/Cine';
@@ -118,9 +118,7 @@ export default function HomeRails() {
   const t = useContent();
   const region = useRegion();
   const [finds, setFinds] = useState<any[]>([]);
-  const [presets, setPresets] = useState<any[]>([]);
   const [loadingFinds, setLoadingFinds] = useState(true);
-  const [loadingPresets, setLoadingPresets] = useState(true);
 
   useEffect(() => {
     let live = true;
@@ -128,10 +126,6 @@ export default function HomeRails() {
       .then((rows) => live && setFinds(pick(rows, 'image_url', 8)))
       .catch(() => {})
       .finally(() => live && setLoadingFinds(false));
-    getCatalogProducts('preset')
-      .then((rows) => live && setPresets(pick(rows, 'thumbnail', 6)))
-      .catch(() => {})
-      .finally(() => live && setLoadingPresets(false));
     return () => {
       live = false;
     };
@@ -145,17 +139,8 @@ export default function HomeRails() {
     tag: p.source || 'Find',
   }));
 
-  const presetItems: Item[] = presets.map((p) => ({
-    id: String(p.id ?? p.name),
-    name: p.name,
-    image: p.thumbnail || p.image_url,
-    price: formatPrice(p.price, region),
-    tag: p.collection || 'Preset',
-  }));
-
   // Hide a rail entirely if its catalogue could not be loaded or is empty.
   const showFinds = loadingFinds || findItems.length > 0;
-  const showPresets = loadingPresets || presetItems.length > 0;
 
   return (
     <div className="max-w-5xl mx-auto">
@@ -168,18 +153,6 @@ export default function HomeRails() {
           icon={ShoppingBag}
           items={findItems}
           loading={loadingFinds}
-        />
-      )}
-
-      {showPresets && (
-        <Rail
-          eyebrow={t('home.presets_eyebrow')}
-          title={t('home.presets_title')}
-          href="/fashion/presets"
-          cta={t('home.presets_cta')}
-          icon={Camera}
-          items={presetItems}
-          loading={loadingPresets}
         />
       )}
     </div>

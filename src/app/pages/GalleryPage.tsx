@@ -34,7 +34,7 @@ export default function GalleryPage() {
             <MaskLine immediate delay={0.1}>Frames</MaskLine>
           </h1>
           <Focus as="p" immediate delay={0.4} y={12} className="mx-auto mt-4 max-w-md text-muted-foreground">
-            Outfits I wore, places I walked, and the Lightroom looks I made.
+            Outfits I wore and places I walked.
           </Focus>
         </section>
 
@@ -71,13 +71,13 @@ export default function GalleryPage() {
         </div>
 
         <Focus className="mx-auto mt-16 max-w-md text-center md:mt-24">
-          <p className="text-display-md">Want the look?</p>
-          <p className="mt-3 text-muted-foreground">Every look here is a Lightroom preset you can use on your own photos.</p>
+          <p className="text-display-md">Want to work together?</p>
+          <p className="mt-3 text-muted-foreground">Brand collaborations and modeling: send me a short note.</p>
           <Link
-            to="/fashion/presets"
+            to="/contact"
             className="press mt-6 inline-flex rounded-full bg-foreground px-6 py-3 text-sm font-semibold text-background"
           >
-            See the presets
+            Get in touch
           </Link>
         </Focus>
       </main>

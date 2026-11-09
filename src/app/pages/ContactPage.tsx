@@ -15,7 +15,7 @@ const details = [
 const projectTypes = [
   'Fashion collaboration / brand campaign',
   'Design or artwork request',
-  'Lightroom presets or products',
+  'Fashion Finds or a product question',
   'Something else',
 ];
 

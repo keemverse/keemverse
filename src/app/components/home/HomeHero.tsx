@@ -52,19 +52,12 @@ export default function HomeHero() {
 
         <Focus immediate delay={0.9} y={14} className="mt-8 flex flex-wrap items-center gap-3">
           <Link
-            to="/fashion/presets"
-            onClick={() => track('cta', { item: 'hero-presets' })}
-            className="press inline-flex h-12 items-center gap-2 rounded-full bg-foreground px-7 text-sm font-semibold text-background transition-opacity hover:opacity-90"
-          >
-            {t('home.hero_cta_1')}
-            <span aria-hidden="true">→</span>
-          </Link>
-          <Link
             to="/gallery"
             onClick={() => track('cta', { item: 'hero-gallery' })}
-            className="press inline-flex h-12 items-center rounded-full border border-border px-7 text-sm font-semibold text-foreground transition-colors hover:border-foreground/40"
+            className="press inline-flex h-12 items-center gap-2 rounded-full bg-foreground px-7 text-sm font-semibold text-background transition-opacity hover:opacity-90"
           >
             {t('home.hero_cta_2')}
+            <span aria-hidden="true">→</span>
           </Link>
         </Focus>
 
