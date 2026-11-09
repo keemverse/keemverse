@@ -76,5 +76,11 @@
     "y": 210,
     "width": 318,
     "height": 300
+  },
+  "duo-left:top:T-shirt": {
+    "x": 77,
+    "y": 245,
+    "width": 153,
+    "height": 166
   }
 }
