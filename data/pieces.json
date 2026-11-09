@@ -328,5 +328,16 @@
     "width": 304.6793966192948,
     "height": 236.91326321629435,
     "updatedAt": "2026-11-09T00:10:09.282Z"
+  },
+  {
+    "id": "0cc442a8-1cdc-47b3-8131-97991e64e227",
+    "category": "top",
+    "groupName": "ribbed-long-sleeve",
+    "variantName": "White",
+    "imageUrl": "https://raw.githubusercontent.com/keemverse/keemverse/main/data/piece-assets/0cc442a8-1cdc-47b3-8131-97991e64e227.png",
+    "imagePath": "data/piece-assets/0cc442a8-1cdc-47b3-8131-97991e64e227.png",
+    "width": 304.6793966192948,
+    "height": 236.91326321629435,
+    "updatedAt": "2026-11-09T00:10:13.538Z"
   }
 ]
