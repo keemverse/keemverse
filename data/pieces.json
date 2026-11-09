@@ -372,5 +372,16 @@
     "width": 317.57271728515633,
     "height": 299.9709622430969,
     "updatedAt": "2026-11-09T01:07:41.069Z"
+  },
+  {
+    "id": "28e7dc11-dcef-4321-ae60-eb20be1158bc",
+    "category": "top",
+    "groupName": "cropped-oxford-shirt",
+    "variantName": "Ecru",
+    "imageUrl": "https://raw.githubusercontent.com/keemverse/keemverse/main/data/piece-assets/28e7dc11-dcef-4321-ae60-eb20be1158bc.png",
+    "imagePath": "data/piece-assets/28e7dc11-dcef-4321-ae60-eb20be1158bc.png",
+    "width": 317.57271728515633,
+    "height": 299.9709622430969,
+    "updatedAt": "2026-11-09T01:07:45.427Z"
   }
 ]
