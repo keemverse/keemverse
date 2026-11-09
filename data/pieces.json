@@ -251,5 +251,16 @@
     "width": 258.03132461076893,
     "height": 354.18273523719813,
     "updatedAt": "2026-11-08T23:36:31.939Z"
+  },
+  {
+    "id": "3d032a80-1975-403d-986f-34e8c44900f3",
+    "category": "top",
+    "groupName": "ribbed-long-sleeve",
+    "variantName": "sky blue",
+    "imageUrl": "https://raw.githubusercontent.com/keemverse/keemverse/main/data/piece-assets/3d032a80-1975-403d-986f-34e8c44900f3.webp",
+    "imagePath": "data/piece-assets/3d032a80-1975-403d-986f-34e8c44900f3.webp",
+    "width": 304.6793966192948,
+    "height": 236.91326321629435,
+    "updatedAt": "2026-11-09T00:09:22.949Z"
   }
 ]
