@@ -306,5 +306,16 @@
     "width": 304.6793966192948,
     "height": 236.91326321629435,
     "updatedAt": "2026-11-09T00:09:59.478Z"
+  },
+  {
+    "id": "310dd695-78b7-4bc8-bd07-68a699aa98b9",
+    "category": "top",
+    "groupName": "ribbed-long-sleeve",
+    "variantName": "Oxblood",
+    "imageUrl": "https://raw.githubusercontent.com/keemverse/keemverse/main/data/piece-assets/310dd695-78b7-4bc8-bd07-68a699aa98b9.png",
+    "imagePath": "data/piece-assets/310dd695-78b7-4bc8-bd07-68a699aa98b9.png",
+    "width": 304.6793966192948,
+    "height": 236.91326321629435,
+    "updatedAt": "2026-11-09T00:10:04.555Z"
   }
 ]
