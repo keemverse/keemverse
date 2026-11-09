@@ -394,5 +394,16 @@
     "width": 317.57271728515633,
     "height": 299.9709622430969,
     "updatedAt": "2026-11-09T01:07:49.831Z"
+  },
+  {
+    "id": "537f6962-c3b3-4f01-ae79-0125350bdefe",
+    "category": "top",
+    "groupName": "cropped-oxford-shirt",
+    "variantName": "Maroon",
+    "imageUrl": "https://raw.githubusercontent.com/keemverse/keemverse/main/data/piece-assets/537f6962-c3b3-4f01-ae79-0125350bdefe.png",
+    "imagePath": "data/piece-assets/537f6962-c3b3-4f01-ae79-0125350bdefe.png",
+    "width": 317.57271728515633,
+    "height": 299.9709622430969,
+    "updatedAt": "2026-11-09T01:07:53.922Z"
   }
 ]
