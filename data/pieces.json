@@ -284,5 +284,16 @@
     "width": 304.6793966192948,
     "height": 236.91326321629435,
     "updatedAt": "2026-11-09T00:09:51.582Z"
+  },
+  {
+    "id": "46370604-7384-4b34-8248-9ed3725da21b",
+    "category": "top",
+    "groupName": "ribbed-long-sleeve",
+    "variantName": "Chocolate",
+    "imageUrl": "https://raw.githubusercontent.com/keemverse/keemverse/main/data/piece-assets/46370604-7384-4b34-8248-9ed3725da21b.png",
+    "imagePath": "data/piece-assets/46370604-7384-4b34-8248-9ed3725da21b.png",
+    "width": 304.6793966192948,
+    "height": 236.91326321629435,
+    "updatedAt": "2026-11-09T00:09:55.579Z"
   }
 ]
