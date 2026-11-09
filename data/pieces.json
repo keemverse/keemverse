@@ -416,5 +416,16 @@
     "width": 317.57271728515633,
     "height": 299.9709622430969,
     "updatedAt": "2026-11-09T01:07:57.857Z"
+  },
+  {
+    "id": "cc7023b0-b976-403d-842b-c8d74032433c",
+    "category": "top",
+    "groupName": "cropped-oxford-shirt",
+    "variantName": "Pale Pink",
+    "imageUrl": "https://raw.githubusercontent.com/keemverse/keemverse/main/data/piece-assets/cc7023b0-b976-403d-842b-c8d74032433c.png",
+    "imagePath": "data/piece-assets/cc7023b0-b976-403d-842b-c8d74032433c.png",
+    "width": 317.57271728515633,
+    "height": 299.9709622430969,
+    "updatedAt": "2026-11-09T01:08:01.894Z"
   }
 ]
