@@ -58,6 +58,7 @@ type DockItem = {
   src: string;
   category: PieceCategory;
   groupName: string;
+  variant: string; // colour / style name shown in the variants row
   width?: number; // known size (saved pieces); wardrobe and body are measured
   height?: number;
   targetHeight: number; // how tall to draw it when the size is measured
@@ -205,6 +206,8 @@ export default function LayerStudioPage() {
   const [duoSide, setDuoSide] = useState<DuoSide>("left");
   const [sets, setSets] = useState<{ solo: Layer[]; duo: Layer[] }>({ solo: [], duo: [] });
   const [dockTab, setDockTab] = useState<DockTab>("top");
+  // The piece whose variants (colours) are showing above the strip.
+  const [openGroupKey, setOpenGroupKey] = useState<string | null>(null);
   const [autoRemember, setAutoRemember] = useState(true);
   const [rememberNote, setRememberNote] = useState("");
   const canvasRef = useRef<Canvas>("solo");
@@ -359,10 +362,10 @@ export default function LayerStudioPage() {
     );
   };
 
-  const wearItem = async (item: DockItem) => {
+  const wearItem = async (item: DockItem, toggle = true) => {
     const worn = wornFor(item.category, item.groupName);
     if (worn && worn.src === item.src) {
-      deleteLayer(worn.id); // tap again to take it off
+      if (toggle) deleteLayer(worn.id); // tap again to take it off
       return;
     }
     let width = item.width;
@@ -914,7 +917,7 @@ export default function LayerStudioPage() {
   const dockItems: DockItem[] = [];
   if (dockTab === "body") {
     for (const sp of STARTER_PIECES) {
-      dockItems.push({ key: sp.id, label: sp.name, src: sp.src, category: sp.category, groupName: sp.groupName, targetHeight: 0.9 });
+      dockItems.push({ key: sp.id, label: sp.name, src: sp.src, category: sp.category, groupName: sp.groupName, variant: sp.name, targetHeight: 0.9 });
     }
     // Bodies you saved to the library (name them "Body ...").
     for (const lp of libraryPieces.filter((x) => isBodyGroup(x.groupName))) {
@@ -924,6 +927,7 @@ export default function LayerStudioPage() {
         src: lp.imageUrl,
         category: lp.category || "other",
         groupName: lp.groupName,
+        variant: lp.variantName,
         width: lp.width,
         height: lp.height,
         targetHeight: 0.9,
@@ -938,6 +942,7 @@ export default function LayerStudioPage() {
           src: wardrobeSrc(v.file),
           category: g.category,
           groupName: g.groupName,
+          variant: v.label,
           targetHeight: 0.55,
         });
       }
@@ -949,6 +954,7 @@ export default function LayerStudioPage() {
         src: lp.imageUrl,
         category: lp.category || "other",
         groupName: lp.groupName || lp.id,
+        variant: lp.variantName,
         width: lp.width,
         height: lp.height,
         targetHeight: 0.55,
@@ -957,6 +963,31 @@ export default function LayerStudioPage() {
   }
   const wearingSlot = slotOf(canvas, duoSide);
   const isWorn = (item: DockItem) => layers.some((l) => (l.slot || "solo") === wearingSlot && l.src === item.src);
+  // One tile per piece. Tapping a piece with several variants wears it and opens
+  // its variants (colours) in a row above the strip.
+  const dockPieces: { key: string; groupName: string; category: PieceCategory; items: DockItem[] }[] = [];
+  for (const it of dockItems) {
+    const k = `${it.category}::${it.groupName}`;
+    let g = dockPieces.find((x) => x.key === k);
+    if (!g) {
+      g = { key: k, groupName: it.groupName, category: it.category, items: [] };
+      dockPieces.push(g);
+    }
+    g.items.push(it);
+  }
+  const openPiece = dockPieces.find((g) => g.key === openGroupKey && g.items.length > 1) || null;
+  const tapPiece = (g: (typeof dockPieces)[number]) => {
+    if (g.items.length === 1) {
+      void wearItem(g.items[0]);
+      return;
+    }
+    if (g.items.some(isWorn)) {
+      setOpenGroupKey((cur) => (cur === g.key ? null : g.key));
+      return;
+    }
+    setOpenGroupKey(g.key);
+    void wearItem(g.items[0], false);
+  };
   const tileCls = (on: boolean) =>
     `relative h-16 w-16 shrink-0 snap-start rounded-2xl border-2 overflow-hidden bg-input-background transition-colors ${
       on ? "border-foreground" : "border-transparent"
@@ -1287,6 +1318,46 @@ export default function LayerStudioPage() {
             </div>
           )}
 
+          {dockTab !== "bg" && openPiece && (
+            <div className="space-y-1">
+              <p className="px-0.5 text-[11px] text-muted-foreground">{openPiece.groupName}: pick a variant</p>
+              <div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1" aria-label="Variants">
+                <button
+                  onClick={() => {
+                    const w = wornFor(openPiece.category, openPiece.groupName);
+                    if (w) deleteLayer(w.id);
+                  }}
+                  title="Take off"
+                  className="flex w-12 shrink-0 flex-col items-center gap-0.5"
+                >
+                  <span className="flex h-11 w-11 items-center justify-center rounded-xl border-2 border-transparent bg-input-background text-base text-muted-foreground">
+                    ✕
+                  </span>
+                  <span className="w-full truncate text-center text-[10px] text-muted-foreground">Off</span>
+                </button>
+                {openPiece.items.map((it) => (
+                  <button
+                    key={it.key}
+                    onClick={() => wearItem(it, false)}
+                    title={it.label}
+                    className="flex w-12 shrink-0 flex-col items-center gap-0.5"
+                  >
+                    <span
+                      className={`h-11 w-11 overflow-hidden rounded-xl border-2 bg-input-background ${
+                        isWorn(it) ? "border-foreground" : "border-transparent"
+                      }`}
+                    >
+                      <img src={it.src} alt={it.variant} className="h-full w-full object-cover" draggable={false} />
+                    </span>
+                    <span className={`w-full truncate text-center text-[10px] ${isWorn(it) ? "text-foreground" : "text-muted-foreground"}`}>
+                      {it.variant}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
           <div className="flex gap-2 overflow-x-auto snap-x pb-1 -mx-1 px-1" aria-label="Pieces">
             {dockTab === "bg" ? (
               BACKGROUNDS.map((bg) => (
@@ -1305,11 +1376,26 @@ export default function LayerStudioPage() {
                     ✕
                   </button>
                 )}
-                {dockItems.map((item) => (
-                  <button key={item.key} onClick={() => wearItem(item)} title={item.label} className={tileCls(isWorn(item))}>
-                    <img src={item.src} alt={item.label} className="w-full h-full object-cover" draggable={false} />
-                  </button>
-                ))}
+                {dockPieces.map((g) => {
+                  const wornItem = g.items.find(isWorn);
+                  const shown = wornItem ?? g.items[0];
+                  const multi = g.items.length > 1;
+                  return (
+                    <button
+                      key={g.key}
+                      onClick={() => tapPiece(g)}
+                      title={multi ? `${g.groupName} (${g.items.length} variants)` : shown.label}
+                      className={tileCls(!!wornItem)}
+                    >
+                      <img src={shown.src} alt={g.groupName} className="w-full h-full object-cover" draggable={false} />
+                      {multi && (
+                        <span className="absolute bottom-0.5 right-0.5 min-w-4 rounded-full bg-background/90 px-1 text-center text-[10px] font-medium leading-4 text-foreground">
+                          {g.items.length}
+                        </span>
+                      )}
+                    </button>
+                  );
+                })}
                 <button
                   onClick={() => openBulk(dockTab)}
                   title="Add variants (many images at once)"
@@ -1333,7 +1419,10 @@ export default function LayerStudioPage() {
                 key={t.id}
                 role="tab"
                 aria-selected={dockTab === t.id}
-                onClick={() => setDockTab(t.id)}
+                onClick={() => {
+                  setDockTab(t.id);
+                  setOpenGroupKey(null);
+                }}
                 className={`h-9 shrink-0 rounded-full px-3.5 text-xs font-medium transition-colors ${
                   dockTab === t.id ? "bg-foreground text-background" : "text-muted-foreground hover:text-foreground"
                 }`}
