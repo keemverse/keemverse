@@ -317,5 +317,16 @@
     "width": 304.6793966192948,
     "height": 236.91326321629435,
     "updatedAt": "2026-11-09T00:10:04.555Z"
+  },
+  {
+    "id": "4807cc62-a5ae-4667-8f36-2daa11cf9499",
+    "category": "top",
+    "groupName": "ribbed-long-sleeve",
+    "variantName": "Sage",
+    "imageUrl": "https://raw.githubusercontent.com/keemverse/keemverse/main/data/piece-assets/4807cc62-a5ae-4667-8f36-2daa11cf9499.png",
+    "imagePath": "data/piece-assets/4807cc62-a5ae-4667-8f36-2daa11cf9499.png",
+    "width": 304.6793966192948,
+    "height": 236.91326321629435,
+    "updatedAt": "2026-11-09T00:10:09.282Z"
   }
 ]
