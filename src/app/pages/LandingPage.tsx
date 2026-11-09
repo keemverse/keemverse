@@ -22,7 +22,6 @@ function LandingNav() {
   const items = [
     { label: 'Gallery', action: () => navigate('/gallery') },
     { label: 'Fashion Finds', action: () => navigate('/fashion/finds') },
-    { label: 'Fashion', action: () => navigate('/fashion') },
     { label: 'About', action: () => navigate('/about') },
     { label: 'Contact', action: () => navigate('/contact') },
   ];

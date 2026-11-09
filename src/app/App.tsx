@@ -13,7 +13,6 @@ import { LandingPage } from './pages/LandingPage';
 // The shop pages are where the link in bio sends people, so they stay in the
 // first download too: a lazy chunk would add a round trip before their data
 // can even start loading.
-import { FashionPage } from './pages/FashionPage';
 import FashionFindsPage from './pages/FashionFindsPage';
 
 const GalleryPage = lazy(() => import('./pages/GalleryPage'));
@@ -72,7 +71,8 @@ export default function App() {
         <Routes>
   <Route path="/" element={<LandingPage />} />
 
-<Route path="/fashion" element={<FashionPage />} />
+{/* /fashion was folded into the home page on 10 Nov 2026 (brands band lives there). The page stays in the repo. */}
+<Route path="/fashion" element={<Navigate to="/" replace />} />
 
 <Route
   path="/fashion/finds"
@@ -80,8 +80,8 @@ export default function App() {
 />
 
 {/* Presets were shut down on 9 Nov 2026. Old links and shared URLs land on /fashion. The pages stay in the repo. */}
-<Route path="/fashion/presets" element={<Navigate to="/fashion" replace />} />
-<Route path="/fashion/presets/:slug" element={<Navigate to="/fashion" replace />} />
+<Route path="/fashion/presets" element={<Navigate to="/" replace />} />
+<Route path="/fashion/presets/:slug" element={<Navigate to="/" replace />} />
 
 <Route path="/gallery" element={<GalleryPage />} />
 

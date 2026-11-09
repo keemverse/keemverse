@@ -5,7 +5,6 @@ import logImg from '../../imports/log.png';
 
 const explore = [
   { to: '/gallery', label: 'Gallery' },
-  { to: '/fashion', label: 'Fashion' },
   { to: '/fashion/finds', label: 'Fashion Finds' },
 ];
 
