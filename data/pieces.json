@@ -132,17 +132,6 @@
     "updatedAt": "2026-09-29T14:01:15.324Z"
   },
   {
-    "id": "f1e3a1cc-c7aa-4838-b3d9-a823ef3bc081",
-    "category": "other",
-    "groupName": "Body female",
-    "variantName": "Default",
-    "imageUrl": "https://raw.githubusercontent.com/keemverse/keemverse/main/data/piece-assets/f1e3a1cc-c7aa-4838-b3d9-a823ef3bc081.webp",
-    "imagePath": "data/piece-assets/f1e3a1cc-c7aa-4838-b3d9-a823ef3bc081.webp",
-    "width": 201.39321188417998,
-    "height": 770.1085319403268,
-    "updatedAt": "2026-11-08T20:57:11.977Z"
-  },
-  {
     "id": "cbadef7c-8709-4789-ad48-e51ed601bf2c",
     "category": "bottom",
     "groupName": "twisted-pleat-trousers",
