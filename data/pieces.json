@@ -339,5 +339,16 @@
     "width": 304.6793966192948,
     "height": 236.91326321629435,
     "updatedAt": "2026-11-09T00:10:13.538Z"
+  },
+  {
+    "id": "958d676d-2970-4043-87cd-0e0cb9c36a8a",
+    "category": "top",
+    "groupName": "cropped-oxford-shirt",
+    "variantName": "cornflower",
+    "imageUrl": "https://raw.githubusercontent.com/keemverse/keemverse/main/data/piece-assets/958d676d-2970-4043-87cd-0e0cb9c36a8a.webp",
+    "imagePath": "data/piece-assets/958d676d-2970-4043-87cd-0e0cb9c36a8a.webp",
+    "width": 317.5727172851563,
+    "height": 299.9709622430969,
+    "updatedAt": "2026-11-09T01:07:04.510Z"
   }
 ]
