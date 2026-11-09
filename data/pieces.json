@@ -427,5 +427,16 @@
     "width": 317.57271728515633,
     "height": 299.9709622430969,
     "updatedAt": "2026-11-09T01:08:01.894Z"
+  },
+  {
+    "id": "8999b943-3398-4f1c-8dd2-57c94563323e",
+    "category": "top",
+    "groupName": "cropped-oxford-shirt",
+    "variantName": "Sage",
+    "imageUrl": "https://raw.githubusercontent.com/keemverse/keemverse/main/data/piece-assets/8999b943-3398-4f1c-8dd2-57c94563323e.png",
+    "imagePath": "data/piece-assets/8999b943-3398-4f1c-8dd2-57c94563323e.png",
+    "width": 317.57271728515633,
+    "height": 299.9709622430969,
+    "updatedAt": "2026-11-09T01:08:06.110Z"
   }
 ]
