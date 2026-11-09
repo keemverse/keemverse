@@ -208,9 +208,6 @@ export default function LayerStudioPage() {
   const [dockTab, setDockTab] = useState<DockTab>("top");
   // The piece whose variants (colours) are showing above the strip.
   const [openGroupKey, setOpenGroupKey] = useState<string | null>(null);
-  // When on, wearing a piece adds it over what is already worn (a shirt over a
-  // T-shirt) instead of replacing it. Only the same piece swaps its colour.
-  const [layerOver, setLayerOver] = useState(false);
   const [autoRemember, setAutoRemember] = useState(true);
   const [rememberNote, setRememberNote] = useState("");
   const canvasRef = useRef<Canvas>("solo");
@@ -353,15 +350,17 @@ export default function LayerStudioPage() {
     setSelectedId(layer.id);
   };
 
-  // What the person on the current canvas slot is wearing in a category.
-  // One top, one bottom, one pair of shoes, one hat; extras are one per piece.
+  // What the person on the current canvas slot is wearing for this piece.
+  // A different piece is added over what is worn (a shirt over a T-shirt); a
+  // variant of a piece already on swaps it in place. Shoes and hats are single
+  // slots, so a new pair or hat replaces the old one, and there is one body.
   const wornFor = (category: PieceCategory, groupName: string) => {
     const slot = slotOf(canvas, duoSide);
     return layers.find(
       (l) =>
         (l.slot || "solo") === slot &&
         l.groupCategory === category &&
-        (isBodyGroup(groupName) ? isBodyGroup(l.groupName) : (category !== "other" && !layerOver) || l.groupName === groupName)
+        (isBodyGroup(groupName) ? isBodyGroup(l.groupName) : category === "footwear" || category === "headwear" || l.groupName === groupName)
     );
   };
 
@@ -1319,18 +1318,6 @@ export default function LayerStudioPage() {
                 </button>
               ))}
             </div>
-          )}
-
-          {dockTab !== "bg" && dockTab !== "body" && dockTab !== "other" && (
-            <button
-              onClick={() => setLayerOver((v) => !v)}
-              aria-pressed={layerOver}
-              className={`h-7 self-start rounded-full border px-3 text-[11px] font-medium transition-colors ${
-                layerOver ? "border-foreground bg-foreground text-background" : "border-input text-muted-foreground"
-              }`}
-            >
-              {layerOver ? "Layer over: ON. New pieces go on top of what's worn" : "Layer over: off"}
-            </button>
           )}
 
           {dockTab !== "bg" && openPiece && (
