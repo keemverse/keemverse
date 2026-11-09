@@ -350,5 +350,16 @@
     "width": 317.5727172851563,
     "height": 299.9709622430969,
     "updatedAt": "2026-11-09T01:07:04.510Z"
+  },
+  {
+    "id": "009ba8be-6959-49a7-a7fb-3c7aaafe40ca",
+    "category": "top",
+    "groupName": "cropped-oxford-shirt",
+    "variantName": "Black",
+    "imageUrl": "https://raw.githubusercontent.com/keemverse/keemverse/main/data/piece-assets/009ba8be-6959-49a7-a7fb-3c7aaafe40ca.png",
+    "imagePath": "data/piece-assets/009ba8be-6959-49a7-a7fb-3c7aaafe40ca.png",
+    "width": 317.57271728515633,
+    "height": 299.9709622430969,
+    "updatedAt": "2026-11-09T01:07:36.744Z"
   }
 ]
