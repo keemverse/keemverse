@@ -295,5 +295,16 @@
     "width": 304.6793966192948,
     "height": 236.91326321629435,
     "updatedAt": "2026-11-09T00:09:55.579Z"
+  },
+  {
+    "id": "8b16bf27-6c7e-4bb6-a786-03598411842b",
+    "category": "top",
+    "groupName": "ribbed-long-sleeve",
+    "variantName": "Cream",
+    "imageUrl": "https://raw.githubusercontent.com/keemverse/keemverse/main/data/piece-assets/8b16bf27-6c7e-4bb6-a786-03598411842b.png",
+    "imagePath": "data/piece-assets/8b16bf27-6c7e-4bb6-a786-03598411842b.png",
+    "width": 304.6793966192948,
+    "height": 236.91326321629435,
+    "updatedAt": "2026-11-09T00:09:59.478Z"
   }
 ]
