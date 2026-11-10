@@ -4,6 +4,7 @@ import { socials } from '../lib/socials';
 import logImg from '../../imports/log.png';
 
 const explore = [
+  { to: '/brands', label: 'For brands' },
   { to: '/gallery', label: 'Gallery' },
   { to: '/fashion/finds', label: 'Fashion Finds' },
 ];

@@ -16,6 +16,7 @@ import { LandingPage } from './pages/LandingPage';
 import FashionFindsPage from './pages/FashionFindsPage';
 
 const GalleryPage = lazy(() => import('./pages/GalleryPage'));
+const BrandsPage = lazy(() => import('./pages/BrandsPage'));
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage'));
 const AboutPage = lazy(() => import('./pages/AboutPage'));
 const ContactPage = lazy(() => import('./pages/ContactPage'));
@@ -84,6 +85,7 @@ export default function App() {
 <Route path="/fashion/presets/:slug" element={<Navigate to="/" replace />} />
 
 <Route path="/gallery" element={<GalleryPage />} />
+<Route path="/brands" element={<BrandsPage />} />
 
 {/* Craft was packed away on 6 Nov 2026 (see 02_UNIVERSES/DIGITAL CRAFT/_PACKED_...). Old links land on the home page. */}
 <Route path="/digital-craft" element={<Navigate to="/" replace />} />

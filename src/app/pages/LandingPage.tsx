@@ -19,6 +19,7 @@ const HomeRails = lazy(() => import('../components/HomeRails'));
 function LandingNav() {
   const navigate = useNavigate();
   const items = [
+    { label: 'For brands', action: () => navigate('/brands') },
     { label: 'Gallery', action: () => navigate('/gallery') },
     { label: 'Fashion Finds', action: () => navigate('/fashion/finds') },
     { label: 'About', action: () => navigate('/about') },

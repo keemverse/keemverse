@@ -30,6 +30,10 @@ const PAGES: Record<string, Meta> = {
     title: `Lightroom Presets | ${BRAND}`,
     description: 'Lightroom presets for a consistent, editorial look. Your download link is sent to your email after purchase.',
   },
+  '/brands': {
+    title: `For brands | ${BRAND}`,
+    description: 'Solo and duo outfit stories for fashion brands by Keem (Soft Keem): what you get, how it works and how to book.',
+  },
   '/gallery': {
     title: `Gallery | ${BRAND}`,
     description: 'Frames from Keem\'s shoots.',

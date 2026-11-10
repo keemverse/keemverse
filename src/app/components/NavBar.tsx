@@ -17,6 +17,7 @@ export function NavBar() {
   }, []);
 
   const items = [
+    { label: 'For brands', action: () => navigate('/brands') },
     { label: 'Gallery', action: () => navigate('/gallery') },
     { label: 'Fashion Finds', action: () => navigate('/fashion/finds') },
     { label: 'About', action: () => navigate('/about') },

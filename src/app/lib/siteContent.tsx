@@ -32,7 +32,7 @@ export const CONTENT_GROUPS: GroupDef[] = [
       { key: 'home.headline_1', label: 'Headline, line 1', default: 'Outfits that', accent: true, help: 'Wrap a word in *stars* for amber.' },
       { key: 'home.headline_2', label: 'Headline, line 2', default: 'get *wanted.*', accent: true, help: 'Wrap a word in *stars* for amber.' },
       { key: 'home.tagline', label: 'Tagline', default: "I turn a brand's clothes into solo and duo outfit stories people want to wear, and show you what sold.", multiline: true },
-      { key: 'home.hero_cta_1', label: 'Main button (scrolls to the brand section)', default: 'Work with me' },
+      { key: 'home.hero_cta_1', label: 'Main button (goes to the For brands page)', default: 'Work with me' },
       { key: 'home.hero_cta_2', label: 'Second button (goes to the gallery)', default: 'See the work' },
       { key: 'home.proof_label', label: 'Under the buttons, after the follower count', default: 'follow along on TikTok' },
       { key: 'home.manifesto_eyebrow', label: 'Introduction, small label', default: 'Hi' },

@@ -1,13 +1,14 @@
 import { Link, useLocation } from 'react-router-dom';
 import { motion, useReducedMotion } from 'motion/react';
-import { ShoppingBag, Images, Mail } from 'lucide-react';
+import { Briefcase, ShoppingBag, Images, Mail } from 'lucide-react';
 
-// Phone-only tab bar in the thumb zone: the three places people actually go.
+// Phone-only tab bar in the thumb zone: the four places people actually go.
 // It is hidden on desktop, in the admin tools and during checkout (where the
 // page already has a single clear path). A spacer keeps page content and the
 // footer clear of it.
 
 const TABS = [
+  { label: 'Brands', href: '/brands', icon: Briefcase },
   { label: 'Finds', href: '/fashion/finds', icon: ShoppingBag },
   { label: 'Gallery', href: '/gallery', icon: Images },
   { label: 'Contact', href: '/contact', icon: Mail },
@@ -29,7 +30,7 @@ export default function BottomTabs() {
         aria-label="Main"
         className="chrome-bottom glass-bar fixed inset-x-0 bottom-0 z-40 border-b-0 border-t border-border/70 pb-[env(safe-area-inset-bottom)] md:hidden"
       >
-        <ul className="mx-auto grid max-w-md grid-cols-3">
+        <ul className="mx-auto grid max-w-md grid-cols-4">
           {TABS.map(({ label, href, icon: Icon }) => {
             const active = pathname === href || pathname.startsWith(href + '/');
             return (
