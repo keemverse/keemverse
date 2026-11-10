@@ -69,6 +69,8 @@ export default function HomeBrands() {
   const t = useContent();
   const region = useRegion();
   const [topic, setTopic] = useState<string | null>(null);
+  // Prices stay out of sight until someone asks: the work and the proof come first.
+  const [priced, setPriced] = useState<Record<string, boolean>>({});
 
   const open = (name: string) => {
     track('brand_click', { item: name });
@@ -176,17 +178,25 @@ export default function HomeBrands() {
                   </div>
                 </div>
                 <div className="flex items-center justify-between gap-3 p-5 md:p-6">
-                  <p className="text-sm text-muted-foreground">
-                    {price ? (
-                      <>
-                        from{' '}
-                        <span className="font-[family-name:var(--font-display)] text-2xl text-foreground tabular-nums">{price}</span>
-                        {p.suffix}
-                      </>
-                    ) : (
-                      'Ask for a quote'
-                    )}
-                  </p>
+                  {priced[p.title] && price ? (
+                    <p className="text-sm text-muted-foreground">
+                      from{' '}
+                      <span className="font-[family-name:var(--font-display)] text-2xl text-foreground tabular-nums">{price}</span>
+                      {p.suffix}
+                    </p>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        track('brand_click', { item: p.title, detail: 'see-pricing' });
+                        if (price) setPriced((prev) => ({ ...prev, [p.title]: true }));
+                        else open(p.title);
+                      }}
+                      className="press text-sm text-muted-foreground underline decoration-border underline-offset-4 transition-colors hover:text-foreground"
+                    >
+                      See pricing
+                    </button>
+                  )}
                   <button
                     type="button"
                     onClick={() => open(p.title)}

@@ -1,8 +1,9 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { X } from 'lucide-react';
+import { X, Mail, MessageCircle } from 'lucide-react';
 import { Instagram } from 'lucide-react';
 import { TikTokIcon } from './Icons';
+import { track } from '../lib/track';
 
 interface BookMeModalProps {
   open: boolean;
@@ -32,7 +33,46 @@ const platforms = [
   },
 ];
 
+// Same contact details as the Contact page.
+const WHATSAPP_NUMBER = '2349167174194';
+const EMAIL = 'akeemtajudeen322@gmail.com';
+
+// The four things that tell me whether it is a brand campaign: brand, product,
+// budget and deadline. They arrive pre-typed, so a brand only fills in the blanks.
+function brief(topic?: string) {
+  return [
+    `Hi Keem, I'd like to book: ${topic ?? 'an outfit story'}.`,
+    '',
+    'Brand:',
+    'Product / pieces:',
+    'Budget:',
+    'Deadline:',
+  ].join(String.fromCharCode(10));
+}
+
 export function BookMeModal({ open, onClose, topic }: BookMeModalProps) {
+  const direct = [
+    {
+      name: 'WhatsApp',
+      handle: '+234 916 717 4194',
+      url: `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(brief(topic))}`,
+      Icon: MessageCircle,
+      color: '#25D366',
+      bg: '#effaf3',
+      label: 'Chat',
+      note: 'Fastest',
+    },
+    {
+      name: 'Email',
+      handle: EMAIL,
+      url: `mailto:${EMAIL}?subject=${encodeURIComponent(`Booking: ${topic ?? 'Outfit story'}`)}&body=${encodeURIComponent(brief(topic))}`,
+      Icon: Mail,
+      color: '#44403c',
+      bg: '#f5f5f4',
+      label: 'Write',
+      note: '',
+    },
+  ];
   return (
     <AnimatePresence>
       {open && (
@@ -58,7 +98,7 @@ export function BookMeModal({ open, onClose, topic }: BookMeModalProps) {
             className="fixed inset-0 z-50 flex items-center justify-center px-5 pointer-events-none"
           >
             <div
-              className="w-full max-w-sm no-glass bg-card rounded-3xl shadow-2xl p-8 pointer-events-auto"
+              className="w-full max-w-sm no-glass bg-card rounded-3xl shadow-2xl p-8 pointer-events-auto max-h-[92vh] overflow-y-auto"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Header */}
@@ -69,8 +109,8 @@ export function BookMeModal({ open, onClose, topic }: BookMeModalProps) {
                   </h2>
                   <p className="text-muted-foreground text-sm mt-1">
                     {topic
-                      ? 'Message me on either platform with the brand and what you have in mind.'
-                      : 'Reach out through your preferred platform.'}
+                      ? 'Tell me the brand, the pieces, your budget and your deadline. WhatsApp is fastest.'
+                      : 'Reach out however suits you.'}
                   </p>
                 </div>
                 <button
@@ -81,7 +121,45 @@ export function BookMeModal({ open, onClose, topic }: BookMeModalProps) {
                 </button>
               </div>
 
-              {/* Platform cards */}
+              {/* Direct: WhatsApp and email, with the brief pre-typed */}
+              <div className="flex flex-col gap-3">
+                {direct.map((p) => (
+                  <a
+                    key={p.name}
+                    href={p.url}
+                    target={p.name === 'Email' ? undefined : '_blank'}
+                    rel="noopener noreferrer"
+                    onClick={() => track('brand_click', { item: topic ?? 'book', detail: p.name.toLowerCase() })}
+                    className="flex items-center gap-4 p-4 rounded-2xl border border-stone-100 hover:border-stone-200 transition-all group"
+                    style={{ backgroundColor: p.bg }}
+                  >
+                    <div
+                      className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
+                      style={{ backgroundColor: p.color }}
+                    >
+                      <p.Icon className="w-5 h-5 text-white" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-bold text-stone-900 text-sm">
+                        {p.name}
+                        {p.note && (
+                          <span className="ml-2 rounded-full bg-stone-900 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-white">
+                            {p.note}
+                          </span>
+                        )}
+                      </p>
+                      <p className="text-stone-500 text-xs truncate">{p.handle}</p>
+                    </div>
+                    <span className="text-xs font-bold text-stone-400 group-hover:text-stone-700 transition-colors shrink-0">
+                      {p.label} →
+                    </span>
+                  </a>
+                ))}
+              </div>
+
+              <p className="mt-5 mb-3 text-center text-[11px] uppercase tracking-[0.14em] text-muted-foreground">Or find me on</p>
+
+              {/* Social profiles */}
               <div className="flex flex-col gap-3">
                 {platforms.map((p) => (
                   <a
