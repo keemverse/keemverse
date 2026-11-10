@@ -196,7 +196,7 @@ export function PacksGrid() {
                         if (price) setPriced((prev) => ({ ...prev, [p.title]: true }));
                         else open(p.title);
                       }}
-                      className="press text-sm text-muted-foreground underline decoration-border underline-offset-4 transition-colors hover:text-foreground"
+                      className="press inline-flex min-h-11 items-center text-sm text-muted-foreground underline decoration-border underline-offset-4 transition-colors hover:text-foreground"
                     >
                       See pricing
                     </button>

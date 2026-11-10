@@ -5,7 +5,7 @@ import { compactCount } from '../../lib/useFollowers';
 /** Counts up to `value` the first time it scrolls into view (shows the final number at once for reduced motion). */
 export default function CountUp({ value, className }: { value: number; className?: string }) {
   const ref = useRef<HTMLSpanElement | null>(null);
-  const inView = useInView(ref, { once: true, margin: '0px 0px -10% 0px' });
+  const inView = useInView(ref, { once: true });
   const reduce = useReducedMotion();
   const [shown, setShown] = useState(reduce ? value : 0);
 

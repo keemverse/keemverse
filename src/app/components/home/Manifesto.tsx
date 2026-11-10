@@ -46,7 +46,7 @@ export default function Manifesto() {
             ))}
       </p>
       <Focus blur={false} y={10} className="mt-8">
-        <Link to="/about" className="press inline-flex items-center gap-2 text-sm font-semibold text-foreground underline decoration-border underline-offset-[6px] transition-colors hover:decoration-foreground">
+        <Link to="/about" className="press inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-foreground underline decoration-border underline-offset-[6px] transition-colors hover:decoration-foreground">
           {t('home.manifesto_link')} <span aria-hidden="true">→</span>
         </Link>
       </Focus>
