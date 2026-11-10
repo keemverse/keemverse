@@ -29,9 +29,9 @@ export const CONTENT_GROUPS: GroupDef[] = [
     description: 'The first thing people see: the introduction, the gallery strip, the shop previews and the closing card.',
     fields: [
       { key: 'home.eyebrow', label: 'Small label above the headline', default: 'Keem · fashion storyteller' },
-      { key: 'home.headline_1', label: 'Headline, line 1', default: 'Clothes need', accent: true, help: 'Wrap a word in *stars* for amber.' },
-      { key: 'home.headline_2', label: 'Headline, line 2', default: 'a *story.*', accent: true, help: 'Wrap a word in *stars* for amber.' },
-      { key: 'home.tagline', label: 'Tagline', default: "Good clothes sit unsold without one. I turn a brand's pieces into solo and duo outfit stories people want to wear, and show you what sold.", multiline: true },
+      { key: 'home.headline_1', label: 'Headline, line 1', default: 'Fashion needs', accent: true, help: 'Wrap a word in *stars* for amber.' },
+      { key: 'home.headline_2', label: 'Headline, line 2', default: '*stories.*', accent: true, help: 'Wrap a word in *stars* for amber.' },
+      { key: 'home.tagline', label: 'Tagline', default: "Good clothes go unsold when nobody tells their story. I turn a brand's pieces into solo and duo outfit stories people want to wear, and show you what sold.", multiline: true },
       { key: 'home.hero_cta_1', label: 'Main button (goes to the For brands page)', default: 'Work with me' },
       { key: 'home.hero_cta_2', label: 'Second button (goes to the gallery)', default: 'See the work' },
       { key: 'home.proof_label', label: 'Under the buttons, after the follower count', default: 'follow along on TikTok' },
