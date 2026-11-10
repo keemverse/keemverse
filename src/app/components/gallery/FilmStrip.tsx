@@ -140,7 +140,7 @@ export default function FilmStrip({ frames }: { frames: Frame[] }) {
       aria-label="Frames from my shoots"
       className="relative bg-[#0F0F11] text-[#F5F2EC]"
       ref={outer}
-      style={pinned ? { height: `calc(100vh + ${dist}px)` } : undefined}
+      style={pinned ? { height: `calc(100vh + ${Math.round(dist * 0.35)}px)` } : undefined}
     >
       <ViewCursor />
       {pinned ? (

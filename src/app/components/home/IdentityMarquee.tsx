@@ -1,4 +1,4 @@
-const WORDS = ['Real outfits', 'Pieces I picked', 'Frames from my shoots'];
+const WORDS = ['Outfit stories', 'Solo and duo', 'Made for fashion brands', 'Frames from my shoots'];
 
 /**
  * A quiet editorial ticker: serif italic words between two hairlines, faded at

@@ -6,7 +6,6 @@ import { GeometricBackdrop } from '../components/GeometricBackdrop';
 import HomeHero from '../components/home/HomeHero';
 import IdentityMarquee from '../components/home/IdentityMarquee';
 import Manifesto from '../components/home/Manifesto';
-import TheLoop from '../components/home/TheLoop';
 import HomeClosing from '../components/home/HomeClosing';
 import HomeBrands from '../components/home/HomeBrands';
 import ScrollProgress from '../components/home/ScrollProgress';
@@ -51,6 +50,7 @@ export function LandingPage() {
           <HomeHero />
           <IdentityMarquee />
           <Manifesto />
+          <HomeBrands />
         </div>
       </main>
 
@@ -60,11 +60,9 @@ export function LandingPage() {
 
       <div className="relative z-10 px-5 md:px-8">
         <div className="mx-auto max-w-6xl">
-          <TheLoop />
           <Suspense fallback={<div className="min-h-[60vh]" aria-hidden="true" />}>
             <HomeRails />
           </Suspense>
-          <HomeBrands />
           <HomeClosing />
         </div>
       </div>

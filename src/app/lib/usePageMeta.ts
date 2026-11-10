@@ -16,7 +16,7 @@ type Meta = { title: string; description: string; noindex?: boolean };
 const PAGES: Record<string, Meta> = {
   '/': {
     title: "KEEMVERSE: Keem's fashion world",
-    description: 'Outfits, a photo gallery and fashion finds from Keem (Soft Keem).',
+    description: 'Outfit stories for fashion brands by Keem (Soft Keem): solo and duo content, a photo gallery and fashion finds.',
   },
   '/fashion': {
     title: `Fashion | ${BRAND}`,

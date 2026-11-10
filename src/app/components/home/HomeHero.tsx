@@ -51,13 +51,27 @@ export default function HomeHero() {
         </Focus>
 
         <Focus immediate delay={0.9} y={14} className="mt-8 flex flex-wrap items-center gap-3">
+          <a
+            href="#for-brands"
+            onClick={(e) => {
+              track('cta', { item: 'hero-brands' });
+              const el = document.getElementById('for-brands');
+              if (el) {
+                e.preventDefault();
+                el.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+              }
+            }}
+            className="press inline-flex h-12 items-center gap-2 rounded-full bg-foreground px-7 text-sm font-semibold text-background transition-opacity hover:opacity-90"
+          >
+            {t('home.hero_cta_1')}
+            <span aria-hidden="true">↓</span>
+          </a>
           <Link
             to="/gallery"
             onClick={() => track('cta', { item: 'hero-gallery' })}
-            className="press inline-flex h-12 items-center gap-2 rounded-full bg-foreground px-7 text-sm font-semibold text-background transition-opacity hover:opacity-90"
+            className="press inline-flex h-12 items-center rounded-full border border-border px-7 text-sm font-semibold text-foreground transition-colors hover:border-foreground/40"
           >
             {t('home.hero_cta_2')}
-            <span aria-hidden="true">→</span>
           </Link>
         </Focus>
 
