@@ -72,7 +72,7 @@ export default function ContactPage() {
         ))}
       </div>
 
-      <p className="mt-6 text-center text-xs text-muted-foreground">Remote-first, working with people worldwide. Based in Osogbo, Nigeria.</p>
+      <p className="mt-6 text-center text-xs text-muted-foreground">Remote-first, working with brands and people worldwide.</p>
     </InfoPage>
   );
 }

@@ -46,10 +46,6 @@ export default function HomeHero() {
           </MaskLine>
         </h1>
 
-        <Focus as="p" immediate delay={0.7} y={14} className="mt-6 max-w-md text-base leading-relaxed text-muted-foreground md:text-lg">
-          {t('home.tagline')}
-        </Focus>
-
         <Focus immediate delay={0.9} y={14} className="mt-8 flex flex-wrap items-center gap-3">
           <Link
             to="/brands"

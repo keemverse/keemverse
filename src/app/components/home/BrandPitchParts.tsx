@@ -28,7 +28,7 @@ const STATS = [
   { value: '10.7M', label: 'video views' },
   { value: '6.9M', label: 'people reached' },
   { value: '47%', label: 'of viewers are women' },
-  { value: '80%', label: 'watch from Nigeria' },
+  { value: '66%', label: 'are aged 18 to 24' },
 ];
 
 // Recent stories: one frame each from four different shoots, so a brand can see

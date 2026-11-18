@@ -24,7 +24,7 @@ export function SocialFooter() {
           <div className="max-w-xs">
             <ImageWithFallback src={logImg} alt="KEEMVERSE" className="h-9 w-auto object-contain" />
             <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
-              Keem's fashion world: outfit stories, from Osogbo to anywhere.
+              Keem's fashion world: outfit stories for brands and people everywhere.
             </p>
           </div>
 
