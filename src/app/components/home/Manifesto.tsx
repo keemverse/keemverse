@@ -15,6 +15,13 @@ function Word({ word, range, progress }: { word: string; range: [number, number]
   );
 }
 
+// What a brand gets from that, in three short lines.
+const SOLUTION = [
+  { n: '01', title: 'Styled', line: 'I choose how your pieces come together, so the outfit feels like something.' },
+  { n: '02', title: 'Told', line: 'I turn it into a short story, solo or as a pair, made for TikTok, Instagram and Pinterest.' },
+  { n: '03', title: 'Tracked', line: 'Every post carries your code, and I tell you honestly what it sold.' },
+];
+
 export default function Manifesto() {
   const t = useContent();
   const reduce = useReducedMotion();
@@ -44,7 +51,23 @@ export default function Manifesto() {
               />
             ))}
       </p>
-      <Focus blur={false} y={10} className="mt-6">
+
+      <div className="mt-14 border-t border-border pt-8">
+        <Focus as="p" blur={false} y={10} className="eyebrow text-amber-ink">
+          What that means for your brand
+        </Focus>
+        <ol className="mt-6 grid gap-8 md:grid-cols-3 md:gap-10">
+          {SOLUTION.map((s, i) => (
+            <Focus key={s.n} as="li" blur={false} y={20} delay={0.08 * i}>
+              <span className="font-[family-name:var(--font-display)] text-3xl italic leading-none text-amber-ink/70">{s.n}</span>
+              <h3 className="mt-2 font-[family-name:var(--font-display)] text-2xl leading-tight">{s.title}</h3>
+              <p className="mt-2 max-w-xs text-sm leading-relaxed text-muted-foreground">{s.line}</p>
+            </Focus>
+          ))}
+        </ol>
+      </div>
+
+      <Focus blur={false} y={10} className="mt-10">
         <p className="font-[family-name:var(--font-display)] text-2xl italic text-muted-foreground">Keem</p>
       </Focus>
     </section>

@@ -35,7 +35,7 @@ export const CONTENT_GROUPS: GroupDef[] = [
       { key: 'home.hero_cta_2', label: 'Second button (goes to the gallery)', default: 'See the gallery' },
       { key: 'home.proof_label', label: 'Under the buttons, after the follower count', default: "follow along on TikTok" },
       { key: 'home.manifesto_eyebrow', label: 'Introduction, small label', default: "Hi" },
-      { key: 'home.manifesto', label: 'Introduction paragraph', default: "I'm Keem. I style outfits and film them as little stories, sometimes on my own, sometimes with a partner. I like clothes that feel like something, and I like showing you where to find them.", multiline: true },
+      { key: 'home.manifesto', label: 'Introduction paragraph', default: "I'm Keem, a fashion content creator and creative director. I style outfits and build stories around them: the look, the mood, the way it moves on camera. A good outfit gets scrolled past. A good story gets remembered.", multiline: true },
       { key: 'home.manifesto_link', label: 'Introduction link', default: 'More about me' },
       { key: 'home.frames_eyebrow', label: 'Gallery strip, small label', default: 'From my shoots' },
       { key: 'home.frames_title', label: 'Gallery strip, title', default: 'Frames' },
