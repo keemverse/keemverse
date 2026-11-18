@@ -47,7 +47,7 @@ export default function BrandsPage() {
 
         <div className="mt-20">
           <Focus as="p" blur={false} y={10} className="eyebrow text-amber-ink">
-            Ways to work together
+            Pick how you want to work together
           </Focus>
           <div className="mt-6">
             <PacksGrid />

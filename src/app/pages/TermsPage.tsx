@@ -3,12 +3,12 @@ import { InfoPage } from '../components/InfoPage';
 export default function TermsPage() {
   return (
     <InfoPage eyebrow="Policy" title="Terms and Conditions">
-      <p className="text-sm text-muted-foreground">Last updated: September 5, 2026</p>
+      <p className="text-sm text-muted-foreground">Last updated: November 18, 2026</p>
 
       <h2 className="font-serif text-xl text-foreground mt-8 mb-2">About Keemverse</h2>
       <p>
-        Keemverse LTD (RC 8793345) is a visual storytelling and digital
-        craft studio based in Osogbo, Osun State, Nigeria. By using this
+        Keemverse LTD (RC 8793345) is a fashion content and storytelling
+        studio based in Osogbo, Osun State, Nigeria. By using this
         site or purchasing from us, you agree to the terms below.
       </p>
 
