@@ -57,25 +57,6 @@
     "updatedAt": "2026-11-18T00:00:00.000Z"
   },
   {
-    "id": "studio",
-    "title": "Studio",
-    "note": "Two models in a studio, one in a light blue shirt and black trousers.",
-    "kind": "Editorial",
-    "imageUrl": "/gallery/studio.webp",
-    "thumbUrl": "/gallery/studio-thumb.webp",
-    "imagePath": "public/gallery/studio.webp",
-    "thumbPath": "public/gallery/studio-thumb.webp",
-    "width": 900,
-    "height": 1182,
-    "position": "50% 50%",
-    "credit": "",
-    "href": "",
-    "featured": true,
-    "visible": true,
-    "order": 4,
-    "updatedAt": "2026-11-18T22:51:46.553Z"
-  },
-  {
     "id": "highway",
     "title": "Highway",
     "note": "Leather vest, grey trousers, an empty road.",
