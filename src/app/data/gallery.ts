@@ -13,12 +13,14 @@ import stripes from '../../imports/trend-territory-modeling-portrait.webp';
 export type FrameKind = 'Street' | 'Pair' | 'Studio' | 'Looks';
 
 export interface Frame {
+  /** Small version for grids (the gallery manager makes one for every photo). */
+  thumb?: string;
   id: string;
   src: string;
   title: string;
   /** One honest line about what is in the photo. */
   note: string;
-  kind: FrameKind;
+  kind: string;
   /** Width divided by height. */
   ratio: number;
   /** Where the photo is anchored when it is cropped (CSS object-position). */

@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { FRAMES, FRAME_KINDS, type Frame } from '../data/gallery';
+import type { Frame } from '../data/gallery';
+import { useGallery } from '../lib/useGallery';
 import { Focus, MaskLine } from '../components/ui/Cine';
 import FilterChips from '../components/ui/FilterChips';
 import { Lightbox } from '../components/gallery/Lightbox';
@@ -15,12 +16,31 @@ export default function GalleryPage() {
   const [kind, setKind] = useState<string>('All');
   const [open, setOpen] = useState<number | null>(null);
 
-  const shown = useMemo<Frame[]>(() => (kind === 'All' ? FRAMES : FRAMES.filter((f) => f.kind === kind)), [kind]);
+  const items = useGallery();
+  const frames = useMemo<Frame[]>(
+    () =>
+      items.map((i) => ({
+        id: i.id,
+        src: i.imageUrl,
+        thumb: i.thumbUrl,
+        title: i.title,
+        note: i.note,
+        kind: i.kind,
+        ratio: i.width / i.height,
+        position: i.position,
+        credit: i.credit || undefined,
+        href: i.href || undefined,
+      })),
+    [items]
+  );
+  const kinds = useMemo(() => ['All', ...Array.from(new Set(frames.map((f) => f.kind)))], [frames]);
+  const active = kinds.includes(kind) ? kind : 'All';
+  const shown = useMemo<Frame[]>(() => (active === 'All' ? frames : frames.filter((f) => f.kind === active)), [active, frames]);
   const counts = useMemo(() => {
-    const c: Record<string, number> = { All: FRAMES.length };
-    for (const f of FRAMES) c[f.kind] = (c[f.kind] ?? 0) + 1;
+    const c: Record<string, number> = { All: frames.length };
+    for (const f of frames) c[f.kind] = (c[f.kind] ?? 0) + 1;
     return c;
-  }, []);
+  }, [frames]);
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -38,9 +58,9 @@ export default function GalleryPage() {
           </Focus>
         </section>
 
-        <FilterChips tabs={[...FRAME_KINDS]} activeTab={kind} onChange={setKind} counts={counts} label="Filter frames by type" className="mb-8" />
+        <FilterChips tabs={kinds} activeTab={active} onChange={setKind} counts={counts} label="Filter frames by type" className="mb-8" />
 
-        <div key={kind} className="columns-2 gap-3 md:columns-3 md:gap-5">
+        <div key={active} className="columns-2 gap-3 md:columns-3 md:gap-5">
           {shown.map((f, i) => (
             <Focus key={f.id} blur={false} y={30} delay={(i % 3) * 0.08} className="mb-3 break-inside-avoid md:mb-5">
               <button
@@ -52,7 +72,7 @@ export default function GalleryPage() {
                 style={{ aspectRatio: String(f.ratio) }}
               >
                 <img
-                  src={f.src}
+                  src={f.thumb ?? f.src}
                   alt={`${f.title}: ${f.note}`}
                   loading={i < 3 ? 'eager' : 'lazy'}
                   decoding="async"

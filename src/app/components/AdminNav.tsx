@@ -3,6 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 const LINKS = [
   { to: "/admin", label: "← Admin home" },
   { to: "/admin/products", label: "Products" },
+  { to: "/admin/gallery", label: "Gallery" },
   { to: "/admin/content", label: "Content" },
   { to: "/admin/studio", label: "Studio" },
 ];

@@ -25,6 +25,7 @@ const AdminHomePage = lazy(() => import('./pages/AdminHomePage'));
 const AdminProductsPage = lazy(() => import('./pages/AdminProductsPage'));
 const AdminContentPage = lazy(() => import('./pages/AdminContentPage'));
 const AdminBusinessPage = lazy(() => import('./pages/AdminBusinessPage'));
+const AdminGalleryPage = lazy(() => import('./pages/AdminGalleryPage'));
 const LayerStudioPage = lazy(() => import('./pages/LayerStudioPage'));
 const UiKitPage = lazy(() => import('./pages/UiKitPage'));
 // MediaKitPage: built and working, held in draft — not routed yet.
@@ -100,6 +101,7 @@ export default function App() {
 <Route path="/admin/products" element={<AdminProductsPage />} />
 <Route path="/admin/content" element={<AdminContentPage />} />
 <Route path="/admin/business" element={<AdminBusinessPage />} />
+<Route path="/admin/gallery" element={<AdminGalleryPage />} />
 <Route path="/admin/studio" element={<LayerStudioPage />} />
 
 {SHOW_UI_KIT && <Route path="/ui-kit" element={<UiKitPage />} />}

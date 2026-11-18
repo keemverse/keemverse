@@ -8,16 +8,13 @@ import { track } from '../../lib/track';
 import soloImg from '../../../imports/pack-solo-pinstripe.webp';
 import duoImg from '../../../imports/pack-duo-yoruba.webp';
 import retainerImg from '../../../imports/pack-retainer-green-stripe.webp';
-import vintageImg from '../../../imports/story-vintage-duo.webp';
-import crimsonImg from '../../../imports/story-crimson-duo.webp';
-import allBlackImg from '../../../imports/story-all-black.webp';
-import studioImg from '../../../imports/story-studio-duo.webp';
 import contentSoloImg from '../../../imports/pack-content-solo.webp';
 import contentDuoImg from '../../../imports/pack-content-duo.webp';
 import contentVideoImg from '../../../imports/pack-content-video.webp';
 import { Check } from 'lucide-react';
 import { formatPrice } from '../../lib/currency';
 import { useRegion } from '../../lib/geo';
+import { useGallery } from '../../lib/useGallery';
 
 // The pieces of the brand pitch. The home page shows only a taste (the headline
 // and the proof numbers); the full pitch lives on /brands, where brands who are
@@ -31,15 +28,6 @@ const STATS = [
   { value: '6.9M', label: 'people reached' },
   { value: '47%', label: 'of viewers are women' },
   { value: '66%', label: 'are aged 18 to 24' },
-];
-
-// Recent stories: one frame each from four different shoots, so a brand can see
-// the range (vintage, evening, street, studio; duo and solo).
-const STORIES = [
-  { title: 'Vintage', kind: 'Duo', img: vintageImg, pos: '50% 50%', alt: 'A pair in vintage outfits with suspenders and a flat cap, on grass' },
-  { title: 'Crimson and black', kind: 'Duo', img: crimsonImg, pos: '50% 50%', alt: 'A pair in crimson and black on white stairs, under a black umbrella' },
-  { title: 'All-black street', kind: 'Solo', img: allBlackImg, pos: '50% 40%', alt: 'A solo look in all black on a basketball court, low angle with a ball' },
-  { title: 'Studio', kind: 'Duo', img: studioImg, pos: '50% 50%', alt: 'Two models in a studio, one in a light blue shirt and black trousers' },
 ];
 
 const STEPS = [
@@ -202,11 +190,20 @@ export function ProofBand() {
   );
 }
 
+// The stories come from the admin Gallery: the first four photos marked "Show on
+// home" (or, if none are, the first four photos). Change them at /admin/gallery.
+function useStories() {
+  const all = useGallery();
+  const starred = all.filter((i) => i.featured);
+  return (starred.length > 0 ? starred : all).slice(0, 4);
+}
+
 // The stories as a magazine spread: two across on a phone (four across on a
 // desktop), the second column dropped a little so the grid is not a flat wall.
 // Each frame slides in from its own side, the picture wipes up and settles.
 export function StoriesRow({ bare = false }: { bare?: boolean }) {
   const reduce = useReducedMotion();
+  const stories = useStories();
   const view = { once: true, margin: '0px 0px -8% 0px' };
 
   return (
@@ -216,13 +213,13 @@ export function StoriesRow({ bare = false }: { bare?: boolean }) {
           Recent stories
         </Focus>
       )}
-      <div className={(bare ? '' : 'mt-5 ') + 'grid grid-cols-2 gap-x-3 gap-y-8 md:grid-cols-4 md:gap-x-5 md:gap-y-0'}>
-        {STORIES.map((st, i) => {
+      <div className={(bare ? '' : 'mt-5 ') + 'overflow-x-clip grid grid-cols-2 gap-x-3 gap-y-8 md:grid-cols-4 md:gap-x-5 md:gap-y-0'}>
+        {stories.map((st, i) => {
           const fromLeft = i % 2 === 0;
           const delay = (i % 2) * 0.14 + Math.floor(i / 2) * 0.06;
           return (
             <motion.figure
-              key={st.title}
+              key={st.id}
               initial={reduce ? false : { opacity: 0, x: fromLeft ? -64 : 64, y: 40 }}
               whileInView={{ opacity: 1, x: 0, y: 0 }}
               viewport={view}
@@ -237,11 +234,11 @@ export function StoriesRow({ bare = false }: { bare?: boolean }) {
                 className="relative aspect-[4/5] overflow-hidden rounded-2xl bg-muted"
               >
                 <motion.img
-                  src={st.img}
-                  alt={st.alt}
+                  src={st.thumbUrl}
+                  alt={`${st.title}: ${st.note}`}
                   loading="lazy"
                   draggable={false}
-                  style={{ objectPosition: st.pos }}
+                  style={{ objectPosition: st.position }}
                   initial={reduce ? false : { scale: 1.2 }}
                   whileInView={{ scale: 1 }}
                   viewport={view}
