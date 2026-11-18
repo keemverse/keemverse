@@ -153,7 +153,7 @@
   },
   {
     "id": "pavement",
-    "title": "Pavement",
+    "title": "Streetwear",
     "note": "Cap, tank, wide shorts and sneakers.",
     "kind": "Street",
     "imageUrl": "/gallery/pavement.webp",
@@ -168,7 +168,7 @@
     "featured": false,
     "visible": true,
     "order": 9,
-    "updatedAt": "2026-11-18T00:00:00.000Z"
+    "updatedAt": "2026-11-18T22:52:44.753Z"
   },
   {
     "id": "amber-hour",
