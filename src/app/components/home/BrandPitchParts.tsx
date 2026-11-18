@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { motion, useReducedMotion } from 'motion/react';
+import { CINE_EASE } from '../../lib/cine';
 import { BookMeModal } from '../BookMeModal';
 import { useContent } from '../../lib/siteContent';
 import { Focus } from '../ui/Cine';
@@ -200,34 +202,68 @@ export function ProofBand() {
   );
 }
 
+// The stories as a magazine spread: two across on a phone (four across on a
+// desktop), the second column dropped a little so the grid is not a flat wall.
+// Each frame slides in from its own side, the picture wipes up and settles.
 export function StoriesRow({ bare = false }: { bare?: boolean }) {
+  const reduce = useReducedMotion();
+  const view = { once: true, margin: '0px 0px -8% 0px' };
+
   return (
-    <Focus blur={false} y={20}>
-      {!bare && <p className="eyebrow text-amber-ink">Recent stories</p>}
-      <div className={(bare ? '' : 'mt-5 ') + '-mx-5 flex snap-x snap-mandatory gap-3 overflow-x-auto px-5 pb-3 [scrollbar-width:none] md:mx-0 md:grid md:grid-cols-4 md:gap-5 md:overflow-visible md:px-0 md:pb-0'}>
-        {STORIES.map((st) => (
-          <figure key={st.title} className="group relative w-[62%] shrink-0 snap-start overflow-hidden rounded-2xl md:w-auto">
-            <div className="aspect-[4/5] overflow-hidden">
-              <img
-                src={st.img}
-                alt={st.alt}
-                loading="lazy"
-                draggable={false}
-                style={{ objectPosition: st.pos }}
-                className="h-full w-full object-cover transition-transform duration-[900ms] ease-out group-hover:scale-[1.05]"
-              />
-            </div>
-            <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
-            <figcaption className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-2 p-4">
-              <span className="font-[family-name:var(--font-display)] text-xl leading-tight text-white">{st.title}</span>
-              <span className="rounded-full bg-white/15 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-white backdrop-blur">
-                {st.kind}
-              </span>
-            </figcaption>
-          </figure>
-        ))}
+    <div>
+      {!bare && (
+        <Focus as="p" blur={false} y={10} className="eyebrow text-amber-ink">
+          Recent stories
+        </Focus>
+      )}
+      <div className={(bare ? '' : 'mt-5 ') + 'grid grid-cols-2 gap-x-3 gap-y-8 md:grid-cols-4 md:gap-x-5 md:gap-y-0'}>
+        {STORIES.map((st, i) => {
+          const fromLeft = i % 2 === 0;
+          const delay = (i % 2) * 0.14 + Math.floor(i / 2) * 0.06;
+          return (
+            <motion.figure
+              key={st.title}
+              initial={reduce ? false : { opacity: 0, x: fromLeft ? -64 : 64, y: 40 }}
+              whileInView={{ opacity: 1, x: 0, y: 0 }}
+              viewport={view}
+              transition={{ duration: 1.05, delay, ease: CINE_EASE }}
+              className={'group ' + (i % 2 === 1 ? 'mt-8 md:mt-14' : '')}
+            >
+              <motion.div
+                initial={reduce ? false : { clipPath: 'inset(100% 0% 0% 0%)' }}
+                whileInView={{ clipPath: 'inset(0% 0% 0% 0%)' }}
+                viewport={view}
+                transition={{ duration: 1.25, delay: delay + 0.08, ease: CINE_EASE }}
+                className="relative aspect-[4/5] overflow-hidden rounded-2xl bg-muted"
+              >
+                <motion.img
+                  src={st.img}
+                  alt={st.alt}
+                  loading="lazy"
+                  draggable={false}
+                  style={{ objectPosition: st.pos }}
+                  initial={reduce ? false : { scale: 1.2 }}
+                  whileInView={{ scale: 1 }}
+                  viewport={view}
+                  transition={{ duration: 1.8, delay: delay + 0.08, ease: CINE_EASE }}
+                  className="h-full w-full object-cover transition-transform duration-[900ms] ease-out group-hover:scale-[1.04]"
+                />
+              </motion.div>
+              <motion.figcaption
+                initial={reduce ? false : { opacity: 0, y: 12 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={view}
+                transition={{ duration: 0.8, delay: delay + 0.55, ease: CINE_EASE }}
+                className="mt-3 flex items-baseline justify-between gap-2"
+              >
+                <span className="font-[family-name:var(--font-display)] text-lg leading-tight text-foreground md:text-xl">{st.title}</span>
+                <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">{st.kind}</span>
+              </motion.figcaption>
+            </motion.figure>
+          );
+        })}
       </div>
-    </Focus>
+    </div>
   );
 }
 
