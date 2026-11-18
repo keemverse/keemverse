@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { ShoppingBag, Type, Layers, ArrowUpRight, Lock, Plus, Link2, Eye, Receipt, Images } from "lucide-react";
+import { ShoppingBag, Type, Layers, ArrowUpRight, Lock, Plus, Link2, Eye, Receipt, Images, Home, CreditCard } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { AdminShell } from "../components/AdminShell";
@@ -10,7 +10,9 @@ type Row = { type: string; status: string; updated_at?: string; created_at?: str
 
 const TOOLS = [
   { to: "/admin/products", label: "Products", description: "Fashion Finds, presets and design items: prices, photos, order, status.", icon: ShoppingBag, editor: true },
-  { to: "/admin/gallery", label: "Gallery", description: "Every photo on the site: upload, thumbnails, titles, order, what shows on the home page.", icon: Images, editor: true },
+  { to: "/admin/gallery", label: "Gallery", description: "The photos on the Gallery page: upload, thumbnails, titles, order.", icon: Images, editor: true },
+  { to: "/admin/home-pictures", label: "Main page pictures", description: "The four story pictures on the main page and the top of For brands.", icon: Home, editor: true },
+  { to: "/admin/rate-cards", label: "Rate cards", description: "The picture on each package card on the For brands page.", icon: CreditCard, editor: true },
   { to: "/admin/business", label: "Business", description: "Orders, custom design requests and download links, from your private sheet.", icon: Receipt, editor: false },
   { to: "/admin/content", label: "Site content", description: "Headlines, supporting lines, button labels and Temu links on every page.", icon: Type, editor: false },
   { to: "/admin/studio", label: "Studio", description: "Import images, drag and resize, save or export.", icon: Layers, editor: false },

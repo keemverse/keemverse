@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { LayoutDashboard, ShoppingBag, Type, Layers, ArrowUpRight, Lock, Receipt, Images } from "lucide-react";
+import { LayoutDashboard, ShoppingBag, Type, Layers, ArrowUpRight, Lock, Receipt, Images, Home, CreditCard } from "lucide-react";
 
 // The frame every admin page sits in: one sticky frosted header (where you are,
 // the other tools, which login you are using, a way back to the site and a Lock
@@ -11,6 +11,8 @@ const ITEMS = [
   { to: "/admin", label: "Overview", icon: LayoutDashboard, editor: true },
   { to: "/admin/products", label: "Products", icon: ShoppingBag, editor: true },
   { to: "/admin/gallery", label: "Gallery", icon: Images, editor: true },
+  { to: "/admin/home-pictures", label: "Main page", icon: Home, editor: true },
+  { to: "/admin/rate-cards", label: "Rate cards", icon: CreditCard, editor: true },
   { to: "/admin/business", label: "Business", icon: Receipt, editor: false },
   { to: "/admin/content", label: "Content", icon: Type, editor: false },
   { to: "/admin/studio", label: "Studio", icon: Layers, editor: false },

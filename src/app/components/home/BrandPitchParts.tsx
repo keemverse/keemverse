@@ -190,12 +190,10 @@ export function ProofBand() {
   );
 }
 
-// The stories come from the admin Gallery: the first four photos marked "Show on
-// home" (or, if none are, the first four photos). Change them at /admin/gallery.
+// The stories are the "Main page pictures" in the admin (/admin/home-pictures):
+// the first four visible ones, in order. They are separate from the Gallery.
 function useStories() {
-  const all = useGallery();
-  const starred = all.filter((i) => i.featured);
-  return (starred.length > 0 ? starred : all).slice(0, 4);
+  return useGallery('home').slice(0, 4);
 }
 
 // The stories as a magazine spread: two across on a phone (four across on a
@@ -285,7 +283,12 @@ export function PacksGrid() {
   const [topic, setTopic] = useState<string | null>(null);
   // Prices stay out of sight until someone asks: the work and the proof come first.
   const [priced, setPriced] = useState<Record<string, boolean>>({});
-  const shown = PACKS.filter((p) => p.mode === mode);
+  // The rate card pictures are edited at /admin/rate-cards; the bundled ones are the fallback.
+  const pics = useGallery('packs');
+  const shown = PACKS.filter((p) => p.mode === mode).map((p) => {
+    const pic = pics.find((x) => x.id === p.id);
+    return pic ? { ...p, img: pic.thumbUrl, pos: pic.position } : p;
+  });
 
   const open = (p: Pack) => {
     track('brand_click', { item: p.title, detail: p.mode });

@@ -4,6 +4,8 @@ const LINKS = [
   { to: "/admin", label: "← Admin home" },
   { to: "/admin/products", label: "Products" },
   { to: "/admin/gallery", label: "Gallery" },
+  { to: "/admin/home-pictures", label: "Main page" },
+  { to: "/admin/rate-cards", label: "Rate cards" },
   { to: "/admin/content", label: "Content" },
   { to: "/admin/studio", label: "Studio" },
 ];

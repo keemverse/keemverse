@@ -22,6 +22,10 @@ export type GalleryItem = {
   updatedAt: string;
 };
 
+export type PictureSet = 'gallery' | 'home' | 'packs';
+
+const q = (set: PictureSet) => (set === 'gallery' ? '' : `?set=${set}`);
+
 export const GALLERY_KINDS = ['Solo', 'Duo', 'Street', 'Studio', 'Editorial'];
 
 function headers(secret?: string): Record<string, string> {
@@ -42,8 +46,8 @@ async function ok(res: Response, fallback: string) {
   throw new Error(msg);
 }
 
-export async function fetchGallery(secret?: string): Promise<GalleryItem[]> {
-  const res = await ok(await fetch('/api/gallery', { headers: headers(secret) }), 'Could not load the gallery');
+export async function fetchGallery(secret?: string, set: PictureSet = 'gallery'): Promise<GalleryItem[]> {
+  const res = await ok(await fetch(`/api/gallery${q(set)}`, { headers: headers(secret) }), 'Could not load the gallery');
   return res.json();
 }
 
@@ -62,34 +66,44 @@ export type NewPhoto = {
   height: number;
 };
 
-export async function createGalleryItem(secret: string, photo: NewPhoto): Promise<GalleryItem> {
+export async function createGalleryItem(secret: string, photo: NewPhoto, set: PictureSet = 'gallery'): Promise<GalleryItem> {
   const res = await ok(
-    await fetch('/api/gallery', { method: 'POST', headers: headers(secret), body: JSON.stringify(photo) }),
+    await fetch(`/api/gallery${q(set)}`, { method: 'POST', headers: headers(secret), body: JSON.stringify(photo) }),
     'Could not save the photo'
   );
   return res.json();
 }
 
-export async function updateGalleryItem(secret: string, id: string, patch: Partial<GalleryItem>): Promise<GalleryItem> {
+export async function updateGalleryItem(secret: string, id: string, patch: Partial<GalleryItem>, set: PictureSet = 'gallery'): Promise<GalleryItem> {
   const res = await ok(
-    await fetch('/api/gallery', { method: 'PATCH', headers: headers(secret), body: JSON.stringify({ id, ...patch }) }),
+    await fetch(`/api/gallery${q(set)}`, { method: 'PATCH', headers: headers(secret), body: JSON.stringify({ id, ...patch }) }),
     'Could not save the change'
   );
   return res.json();
 }
 
-export async function reorderGallery(secret: string, ids: string[]): Promise<void> {
+export async function reorderGallery(secret: string, ids: string[], set: PictureSet = 'gallery'): Promise<void> {
   await ok(
-    await fetch('/api/gallery', { method: 'PATCH', headers: headers(secret), body: JSON.stringify({ order: ids }) }),
+    await fetch(`/api/gallery${q(set)}`, { method: 'PATCH', headers: headers(secret), body: JSON.stringify({ order: ids }) }),
     'Could not save the order'
   );
 }
 
-export async function deleteGalleryItem(secret: string, id: string): Promise<void> {
+export async function deleteGalleryItem(secret: string, id: string, set: PictureSet = 'gallery'): Promise<void> {
   await ok(
-    await fetch(`/api/gallery?id=${encodeURIComponent(id)}`, { method: 'DELETE', headers: headers(secret) }),
+    await fetch(`/api/gallery?${set === 'gallery' ? '' : `set=${set}&`}id=${encodeURIComponent(id)}`, { method: 'DELETE', headers: headers(secret) }),
     'Could not delete the photo'
   );
+}
+
+export type PreparedPhoto = { imageDataUrl: string; thumbDataUrl: string; width: number; height: number };
+
+export async function replaceGalleryPicture(secret: string, id: string, prepared: PreparedPhoto, set: PictureSet = 'gallery'): Promise<GalleryItem> {
+  const res = await ok(
+    await fetch(`/api/gallery${q(set)}`, { method: 'PUT', headers: headers(secret), body: JSON.stringify({ id, ...prepared }) }),
+    'Could not replace the picture'
+  );
+  return res.json();
 }
 
 function loadFile(file: File): Promise<HTMLImageElement> {

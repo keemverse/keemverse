@@ -1,23 +1,33 @@
 import { useEffect, useState } from 'react';
-import { fetchGallery, type GalleryItem } from './galleryApi';
-import seed from '../../../data/gallery.json';
+import { fetchGallery, type GalleryItem, type PictureSet } from './galleryApi';
+import gallerySeed from '../../../data/gallery.json';
+import homeSeed from '../../../data/home-pictures.json';
+import packSeed from '../../../data/pack-pictures.json';
 
-// The public gallery list. It starts from the copy bundled with the site (so the
-// first paint is instant and the site still works if the server is slow), then
-// swaps in the live list from /api/gallery, which is what the admin Gallery page
-// edits. Everything that shows photos (home, For brands, Gallery) reads from here.
+// The public picture lists. Each starts from the copy bundled with the site (so the
+// first paint is instant and the site still works if the server is slow), then swaps
+// in the live list from /api/gallery, which is what the admin pages edit.
+//   gallery -> the Gallery page      home -> the story pictures on the main page and
+//   For brands page      packs -> the rate card pictures
 
-const bundled = (seed as GalleryItem[]).filter((i) => i.visible !== false).sort((a, b) => a.order - b.order);
-let live: GalleryItem[] | null = null;
-let pending: Promise<void> | null = null;
+const sorted = (list: GalleryItem[]) => list.filter((i) => i.visible !== false).sort((a, b) => a.order - b.order);
+
+const bundled: Record<PictureSet, GalleryItem[]> = {
+  gallery: sorted(gallerySeed as GalleryItem[]),
+  home: sorted(homeSeed as GalleryItem[]),
+  packs: sorted(packSeed as GalleryItem[]),
+};
+const live: Partial<Record<PictureSet, GalleryItem[]>> = {};
+const pending: Partial<Record<PictureSet, boolean>> = {};
 const listeners = new Set<() => void>();
 
-function load() {
-  if (live || pending) return;
-  pending = fetchGallery()
+function load(set: PictureSet) {
+  if (live[set] || pending[set]) return;
+  pending[set] = true;
+  fetchGallery(undefined, set)
     .then((items) => {
       if (Array.isArray(items) && items.length > 0) {
-        live = items.filter((i) => i.visible !== false).sort((a, b) => a.order - b.order);
+        live[set] = sorted(items);
         listeners.forEach((l) => l());
       }
     })
@@ -25,19 +35,19 @@ function load() {
       /* keep the bundled copy */
     })
     .finally(() => {
-      pending = null;
+      pending[set] = false;
     });
 }
 
-export function useGallery(): GalleryItem[] {
+export function useGallery(set: PictureSet = 'gallery'): GalleryItem[] {
   const [, force] = useState(0);
   useEffect(() => {
     const l = () => force((n) => n + 1);
     listeners.add(l);
-    load();
+    load(set);
     return () => {
       listeners.delete(l);
     };
-  }, []);
-  return live ?? bundled;
+  }, [set]);
+  return live[set] ?? bundled[set];
 }
