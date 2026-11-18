@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import type { Frame } from '../data/gallery';
 import { useGallery } from '../lib/useGallery';
@@ -11,6 +11,19 @@ import { SocialFooter } from '../components/SocialFooter';
 
 // Every frame, laid out like a contact sheet: a staggered column wall that
 // reflows by shoot type. Tap a frame for the full-screen viewer.
+
+// Plain flex columns, not CSS multi-column: multi-column layouts with animated
+// children mis-measure on iPhone browsers (blank tiles, text drawn over them).
+function useColumnCount() {
+  const [n, setN] = useState(() => (typeof window !== 'undefined' && window.matchMedia('(min-width: 768px)').matches ? 3 : 2));
+  useEffect(() => {
+    const mq = window.matchMedia('(min-width: 768px)');
+    const on = () => setN(mq.matches ? 3 : 2);
+    mq.addEventListener('change', on);
+    return () => mq.removeEventListener('change', on);
+  }, []);
+  return n;
+}
 
 export default function GalleryPage() {
   const [kind, setKind] = useState<string>('All');
@@ -36,6 +49,19 @@ export default function GalleryPage() {
   const kinds = useMemo(() => ['All', ...Array.from(new Set(frames.map((f) => f.kind)))], [frames]);
   const active = kinds.includes(kind) ? kind : 'All';
   const shown = useMemo<Frame[]>(() => (active === 'All' ? frames : frames.filter((f) => f.kind === active)), [active, frames]);
+  const columns = useColumnCount();
+  // Each photo goes into the currently shortest column, so the wall stays level.
+  const wall = useMemo(() => {
+    const cols: { f: Frame; i: number }[][] = Array.from({ length: columns }, () => []);
+    const heights = new Array(columns).fill(0);
+    shown.forEach((f, i) => {
+      let k = 0;
+      for (let c = 1; c < columns; c++) if (heights[c] < heights[k] - 0.001) k = c;
+      cols[k].push({ f, i });
+      heights[k] += 1 / (f.ratio || 0.75);
+    });
+    return cols;
+  }, [shown, columns]);
   const counts = useMemo(() => {
     const c: Record<string, number> = { All: frames.length };
     for (const f of frames) c[f.kind] = (c[f.kind] ?? 0) + 1;
@@ -60,33 +86,37 @@ export default function GalleryPage() {
 
         <FilterChips tabs={kinds} activeTab={active} onChange={setKind} counts={counts} label="Filter frames by type" className="mb-8" />
 
-        <div key={active} className="columns-2 gap-3 md:columns-3 md:gap-5">
-          {shown.map((f, i) => (
-            <Focus key={f.id} blur={false} y={30} delay={(i % 3) * 0.08} className="mb-3 break-inside-avoid md:mb-5">
-              <button
-                type="button"
-                data-frame
-                onClick={() => setOpen(i)}
-                aria-label={`Open ${f.title}`}
-                className="group spot cine-sheen relative block w-full overflow-hidden rounded-2xl bg-muted text-left outline-offset-4"
-                style={{ aspectRatio: String(f.ratio) }}
-              >
-                <img
-                  src={f.thumb ?? f.src}
-                  alt={`${f.title}: ${f.note}`}
-                  loading={i < 3 ? 'eager' : 'lazy'}
-                  decoding="async"
-                  draggable={false}
-                  className="h-full w-full object-cover transition-transform duration-[1400ms] ease-out group-hover:scale-[1.05] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
-                  style={{ objectPosition: f.position ?? '50% 50%' }}
-                />
-                <span className="pointer-events-none absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/60 to-transparent opacity-90 transition-opacity duration-500 md:opacity-0 md:group-hover:opacity-100" />
-                <span className="pointer-events-none absolute inset-x-3 bottom-3 flex items-end justify-between gap-2 text-white md:translate-y-2 md:opacity-0 md:transition-all md:duration-500 md:group-hover:translate-y-0 md:group-hover:opacity-100">
-                  <span className="font-[family-name:var(--font-display)] text-lg leading-tight">{f.title}</span>
-                  <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-white/75">{f.kind}</span>
-                </span>
-              </button>
-            </Focus>
+        <div key={active} className="flex items-start gap-3 md:gap-5">
+          {wall.map((col, c) => (
+            <div key={c} className="flex min-w-0 flex-1 flex-col gap-3 md:gap-5">
+              {col.map(({ f, i }) => (
+                <Focus key={f.id} blur={false} y={30} delay={(i % 3) * 0.08}>
+                  <button
+                    type="button"
+                    data-frame
+                    onClick={() => setOpen(i)}
+                    aria-label={`Open ${f.title}`}
+                    className="group spot cine-sheen relative block w-full overflow-hidden rounded-2xl bg-muted text-left outline-offset-4"
+                    style={{ aspectRatio: String(f.ratio) }}
+                  >
+                    <img
+                      src={f.thumb ?? f.src}
+                      alt={`${f.title}: ${f.note}`}
+                      loading={i < 4 ? 'eager' : 'lazy'}
+                      decoding="async"
+                      draggable={false}
+                      className="h-full w-full object-cover transition-transform duration-[1400ms] ease-out group-hover:scale-[1.05] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
+                      style={{ objectPosition: f.position ?? '50% 50%' }}
+                    />
+                    <span className="pointer-events-none absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/60 to-transparent opacity-90 transition-opacity duration-500 md:opacity-0 md:group-hover:opacity-100" />
+                    <span className="pointer-events-none absolute inset-x-3 bottom-3 flex items-end justify-between gap-2 text-white md:translate-y-2 md:opacity-0 md:transition-all md:duration-500 md:group-hover:translate-y-0 md:group-hover:opacity-100">
+                      <span className="font-[family-name:var(--font-display)] text-lg leading-tight">{f.title}</span>
+                      <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-white/75">{f.kind}</span>
+                    </span>
+                  </button>
+                </Focus>
+              ))}
+            </div>
           ))}
         </div>
 
