@@ -165,10 +165,10 @@
     "position": "50% 55%",
     "credit": "",
     "href": "",
-    "featured": false,
+    "featured": true,
     "visible": true,
     "order": 9,
-    "updatedAt": "2026-11-18T22:52:44.753Z"
+    "updatedAt": "2026-11-18T22:52:48.138Z"
   },
   {
     "id": "amber-hour",
