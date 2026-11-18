@@ -1,9 +1,8 @@
 import React, { Suspense, lazy } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 
-import { NavBar } from './components/NavBar';
-import { ScrollToTop, InternalLinks, RouteTransition, ScrollChrome, PointerLight, PageViews } from './components/AppShell';
-import BottomTabs from './components/BottomTabs';
+import { SiteHeader } from './components/SiteHeader';
+import { ScrollToTop, InternalLinks, RouteTransition, ScrollChrome, PageViews } from './components/AppShell';
 import { useTheme } from './lib/useTheme';
 import { usePageMeta } from './lib/usePageMeta';
 // The landing page ships with the first load; every other page is fetched when
@@ -18,7 +17,6 @@ import FashionFindsPage from './pages/FashionFindsPage';
 const GalleryPage = lazy(() => import('./pages/GalleryPage'));
 const BrandsPage = lazy(() => import('./pages/BrandsPage'));
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage'));
-const AboutPage = lazy(() => import('./pages/AboutPage'));
 const ContactPage = lazy(() => import('./pages/ContactPage'));
 const RefundPolicyPage = lazy(() => import('./pages/RefundPolicyPage'));
 const PrivacyPolicyPage = lazy(() => import('./pages/PrivacyPolicyPage'));
@@ -46,9 +44,9 @@ function PageMeta() {
 
 function ConditionalNavBar() {
   const { pathname } = useLocation();
-  // The home page has its own bar and the admin console is its own space.
-  if (pathname === '/' || pathname.startsWith('/admin')) return null;
-  return <NavBar />;
+  // One header on every public page; the admin console is its own space.
+  if (pathname.startsWith('/admin')) return null;
+  return <SiteHeader />;
 }
 
 export default function App() {
@@ -61,7 +59,6 @@ export default function App() {
         <ScrollToTop />
         <ScrollChrome />
         <InternalLinks />
-        <PointerLight />
         <PageViews />
         <ConditionalNavBar />
 
@@ -88,7 +85,8 @@ export default function App() {
 {/* Craft was packed away on 6 Nov 2026 (see 02_UNIVERSES/DIGITAL CRAFT/_PACKED_...). Old links land on the home page. */}
 <Route path="/digital-craft" element={<Navigate to="/" replace />} />
 
-<Route path="/about" element={<AboutPage />} />
+{/* About folded into the home page (the "Hi, I am Keem" note) on 18 Nov 2026. The page stays in the repo. */}
+<Route path="/about" element={<Navigate to="/" replace />} />
 <Route path="/contact" element={<ContactPage />} />
 <Route path="/refund-policy" element={<RefundPolicyPage />} />
 <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
@@ -110,7 +108,6 @@ export default function App() {
 </Routes>
         </Suspense>
         </RouteTransition>
-        <BottomTabs />
       </div>
     </BrowserRouter>
   );

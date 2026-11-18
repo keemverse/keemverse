@@ -14,8 +14,11 @@ function readExplicitChoice(): Theme | null {
   }
 }
 
+// Light mode only (decided 18 Nov 2026): the site is always the calm cream look, whatever the
+// device or an old saved choice says. To bring dark mode back, restore the media check here and
+// the saved choice below, and put the toggle back in BurgerMenu.
 function systemTheme(): Theme {
-  return media?.matches ? 'dark' : 'light';
+  return 'light';
 }
 
 function applyTheme(theme: Theme) {
@@ -59,7 +62,7 @@ function applyThemeFaded(theme: Theme) {
  * visit without having to find the switch. Toggling makes a choice
  * explicit and pins it, overriding the device setting from then on.
  */
-let explicitChoice: Theme | null = readExplicitChoice();
+let explicitChoice: Theme | null = null;
 let theme: Theme = explicitChoice ?? systemTheme();
 const listeners = new Set<() => void>();
 
@@ -104,9 +107,8 @@ media?.addEventListener('change', recompute);
 export function useTheme() {
   const current = useSyncExternalStore(subscribe, getSnapshot, () => 'light');
 
-  const toggleTheme = useCallback(() => {
-    setTheme(current === 'dark' ? 'light' : 'dark');
-  }, [current]);
+  // Light only: there is nothing to toggle.
+  const toggleTheme = useCallback(() => {}, []);
 
   return { theme: current, toggleTheme };
 }

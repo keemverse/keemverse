@@ -17,7 +17,7 @@ export default function HomeClosing() {
 
   return (
     <section className="mt-24 md:mt-36">
-      <div className="glass sheen overflow-hidden rounded-3xl px-6 py-14 text-center md:px-12 md:py-20">
+      <div className="border-t border-border px-0 py-16 text-center md:py-24">
         <Focus as="p" blur={false} y={10} className="eyebrow text-amber-ink">
           {t('home.cta_eyebrow')}
         </Focus>

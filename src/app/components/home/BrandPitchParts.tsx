@@ -178,7 +178,7 @@ const PACKS: Pack[] = [
 export function ProofBand() {
   return (
     <Focus blur={false} y={20} delay={0.1}>
-      <div className="glass sheen overflow-hidden rounded-3xl px-5 py-7 md:px-10 md:py-9">
+      <div className="border-y border-border py-8 md:py-10">
         <dl className="grid grid-cols-2 gap-y-7 md:grid-cols-4 md:gap-y-0">
           {STATS.map((s, i) => (
             <div
@@ -200,11 +200,11 @@ export function ProofBand() {
   );
 }
 
-export function StoriesRow() {
+export function StoriesRow({ bare = false }: { bare?: boolean }) {
   return (
     <Focus blur={false} y={20}>
-      <p className="eyebrow text-amber-ink">Recent stories</p>
-      <div className="-mx-5 mt-5 flex snap-x snap-mandatory gap-3 overflow-x-auto px-5 pb-3 [scrollbar-width:none] md:mx-0 md:grid md:grid-cols-4 md:gap-5 md:overflow-visible md:px-0 md:pb-0">
+      {!bare && <p className="eyebrow text-amber-ink">Recent stories</p>}
+      <div className={(bare ? '' : 'mt-5 ') + '-mx-5 flex snap-x snap-mandatory gap-3 overflow-x-auto px-5 pb-3 [scrollbar-width:none] md:mx-0 md:grid md:grid-cols-4 md:gap-5 md:overflow-visible md:px-0 md:pb-0'}>
         {STORIES.map((st) => (
           <figure key={st.title} className="group relative w-[62%] shrink-0 snap-start overflow-hidden rounded-2xl md:w-auto">
             <div className="aspect-[4/5] overflow-hidden">
@@ -290,7 +290,7 @@ export function PacksGrid() {
           const price = formatPrice(p.price, region, 'NGN');
           return (
             <Focus key={p.id} blur={false} y={26} delay={0.08 * i} className="w-[84%] shrink-0 snap-start md:w-auto">
-              <article className={'group glass relative flex h-full flex-col overflow-hidden rounded-3xl ' + (p.tag ? 'ring-1 ring-amber-ink/40' : '')}>
+              <article className={'group no-glass relative flex h-full flex-col overflow-hidden rounded-3xl border border-border bg-card ' + (p.tag ? 'ring-1 ring-amber-ink/40' : '')}>
                 <div className="relative aspect-[5/4] overflow-hidden">
                   <img
                     src={p.img}

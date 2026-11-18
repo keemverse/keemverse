@@ -1,5 +1,4 @@
 import { useRef } from 'react';
-import { Link } from 'react-router-dom';
 import { motion, useReducedMotion, useScroll, useTransform, type MotionValue } from 'motion/react';
 import { useContent } from '../../lib/siteContent';
 import { Focus } from '../ui/Cine';
@@ -25,7 +24,7 @@ export default function Manifesto() {
   const words = text.split(/\s+/).filter(Boolean);
 
   return (
-    <section className="mt-20 md:mt-32" aria-label="About Keem">
+    <section id="hi" className="mt-24 scroll-mt-24 md:mt-36" aria-label="About Keem">
       <Focus as="p" blur={false} y={10} className="eyebrow text-amber-ink">
         {t('home.manifesto_eyebrow')}
       </Focus>
@@ -45,10 +44,8 @@ export default function Manifesto() {
               />
             ))}
       </p>
-      <Focus blur={false} y={10} className="mt-8">
-        <Link to="/about" className="press inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-foreground underline decoration-border underline-offset-[6px] transition-colors hover:decoration-foreground">
-          {t('home.manifesto_link')} <span aria-hidden="true">→</span>
-        </Link>
+      <Focus blur={false} y={10} className="mt-6">
+        <p className="font-[family-name:var(--font-display)] text-2xl italic text-muted-foreground">Keem</p>
       </Focus>
     </section>
   );

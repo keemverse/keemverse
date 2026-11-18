@@ -1,8 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { IconButton } from './IconButton';
-import { ThemeToggle } from './ThemeToggle';
-import { useTheme } from '../../lib/useTheme';
 
 export interface BurgerMenuItem {
   label: string;
@@ -21,7 +19,6 @@ interface BurgerMenuProps {
  */
 export function BurgerMenu({ items }: BurgerMenuProps) {
   const [open, setOpen] = useState(false);
-  const { theme } = useTheme();
   const wrapRef = useRef<HTMLDivElement | null>(null);
 
   // Close when tapping elsewhere or pressing Escape, like any menu people know.
@@ -91,13 +88,6 @@ export function BurgerMenu({ items }: BurgerMenuProps) {
                 {item.label}
               </motion.button>
             ))}
-
-            <div className="flex items-center justify-between gap-3 px-5 py-3 border-t border-border">
-              <span className="text-sm text-foreground/80">
-                {theme === 'dark' ? 'Dark mode' : 'Light mode'}
-              </span>
-              <ThemeToggle />
-            </div>
           </motion.div>
         )}
       </AnimatePresence>
