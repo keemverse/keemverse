@@ -19,25 +19,6 @@
     "updatedAt": "2026-11-18T00:00:00.000Z"
   },
   {
-    "id": "crimson-and-black",
-    "title": "Crimson and black",
-    "note": "A pair in crimson and black on white stairs, under a black umbrella.",
-    "kind": "Duo",
-    "imageUrl": "/gallery/crimson-and-black.webp",
-    "thumbUrl": "/gallery/crimson-and-black-thumb.webp",
-    "imagePath": "public/gallery/crimson-and-black.webp",
-    "thumbPath": "public/gallery/crimson-and-black-thumb.webp",
-    "width": 900,
-    "height": 1200,
-    "position": "50% 50%",
-    "credit": "",
-    "href": "",
-    "featured": true,
-    "visible": true,
-    "order": 2,
-    "updatedAt": "2026-11-18T00:00:00.000Z"
-  },
-  {
     "id": "highway",
     "title": "Highway",
     "note": "Leather vest, grey trousers, an empty road.",
