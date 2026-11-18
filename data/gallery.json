@@ -60,7 +60,7 @@
     "id": "studio",
     "title": "Studio",
     "note": "Two models in a studio, one in a light blue shirt and black trousers.",
-    "kind": "Duo",
+    "kind": "Editorial",
     "imageUrl": "/gallery/studio.webp",
     "thumbUrl": "/gallery/studio-thumb.webp",
     "imagePath": "public/gallery/studio.webp",
@@ -73,7 +73,7 @@
     "featured": true,
     "visible": true,
     "order": 4,
-    "updatedAt": "2026-11-18T00:00:00.000Z"
+    "updatedAt": "2026-11-18T22:51:46.553Z"
   },
   {
     "id": "highway",
