@@ -38,25 +38,6 @@
     "updatedAt": "2026-11-18T00:00:00.000Z"
   },
   {
-    "id": "all-black-street",
-    "title": "All-black street",
-    "note": "A solo look in all black on a basketball court, low angle with a ball.",
-    "kind": "Solo",
-    "imageUrl": "/gallery/all-black-street.webp",
-    "thumbUrl": "/gallery/all-black-street-thumb.webp",
-    "imagePath": "public/gallery/all-black-street.webp",
-    "thumbPath": "public/gallery/all-black-street-thumb.webp",
-    "width": 900,
-    "height": 1200,
-    "position": "50% 40%",
-    "credit": "",
-    "href": "",
-    "featured": true,
-    "visible": true,
-    "order": 3,
-    "updatedAt": "2026-11-18T00:00:00.000Z"
-  },
-  {
     "id": "highway",
     "title": "Highway",
     "note": "Leather vest, grey trousers, an empty road.",
