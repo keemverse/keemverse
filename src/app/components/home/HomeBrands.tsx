@@ -2,11 +2,10 @@ import { Link } from 'react-router-dom';
 import { useContent } from '../../lib/siteContent';
 import { Focus } from '../ui/Cine';
 import { track } from '../../lib/track';
-import { ProofBand } from './BrandPitchParts';
 
-// The home page shows only a taste of the brand pitch: the headline and the proof
-// numbers. Brands who want more tap through to /brands, where the photos, the
-// steps, the packages and the booking live. Keep this short on purpose.
+// The home page shows only a taste of the brand pitch: the headline, one line,
+// and a way in. The proof numbers, the photos, the steps, the packages and the
+// booking all live on /brands, for brands who want the detail. Keep this short.
 
 export default function HomeBrands() {
   const t = useContent();
@@ -26,11 +25,7 @@ export default function HomeBrands() {
         {t('home.brands_lede')}
       </Focus>
 
-      <div className="mt-10">
-        <ProofBand />
-      </div>
-
-      <Focus blur={false} y={12} delay={0.15} className="mt-8">
+      <Focus blur={false} y={12} delay={0.15} className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3">
         <Link
           to="/brands"
           onClick={() => track('cta', { item: 'home-brands-more' })}
@@ -38,6 +33,7 @@ export default function HomeBrands() {
         >
           See how I work with brands <span aria-hidden="true">→</span>
         </Link>
+        <p className="text-sm text-muted-foreground">6.9M people reached in the last year.</p>
       </Focus>
     </section>
   );
