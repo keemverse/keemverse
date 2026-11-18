@@ -1,24 +1,5 @@
 [
   {
-    "id": "vintage",
-    "title": "Vintage",
-    "note": "A pair in vintage outfits with suspenders and a flat cap, on grass.",
-    "kind": "Duo",
-    "imageUrl": "/gallery/vintage.webp",
-    "thumbUrl": "/gallery/vintage-thumb.webp",
-    "imagePath": "public/gallery/vintage.webp",
-    "thumbPath": "public/gallery/vintage-thumb.webp",
-    "width": 900,
-    "height": 1200,
-    "position": "50% 50%",
-    "credit": "",
-    "href": "",
-    "featured": true,
-    "visible": true,
-    "order": 1,
-    "updatedAt": "2026-11-18T00:00:00.000Z"
-  },
-  {
     "id": "highway",
     "title": "Highway",
     "note": "Leather vest, grey trousers, an empty road.",
