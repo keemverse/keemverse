@@ -146,10 +146,10 @@
     "position": "50% 60%",
     "credit": "",
     "href": "",
-    "featured": false,
+    "featured": true,
     "visible": true,
     "order": 8,
-    "updatedAt": "2026-11-18T22:52:13.405Z"
+    "updatedAt": "2026-11-18T22:52:19.410Z"
   },
   {
     "id": "pavement",
