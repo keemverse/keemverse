@@ -29,13 +29,13 @@
     "thumbPath": "public/packs/duo-posted-thumb.webp",
     "width": 960,
     "height": 1280,
-    "position": "100% 0%",
+    "position": "0% 100%",
     "credit": "",
     "href": "",
     "featured": false,
     "visible": true,
     "order": 2,
-    "updatedAt": "2026-11-18T23:35:43.059Z"
+    "updatedAt": "2026-11-18T23:35:56.861Z"
   },
   {
     "id": "retainer",
