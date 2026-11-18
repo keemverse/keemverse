@@ -82,11 +82,15 @@ function EndCard({ pinned }: { pinned: boolean }) {
   );
 }
 
+const PIN_STRIP = false;
+
 export default function FilmStrip({ frames }: { frames: Frame[] }) {
   const t = useContent();
   const reduce = useReducedMotion();
   const wide = useMediaQuery('(min-width: 768px)');
-  const pinned = wide && !reduce;
+  // The pinned scroll (the page stopped while the photos slid sideways) is retired: it made
+  // the home page long and jumpy. The strip is now a plain swipe row. Set PIN_STRIP to true to bring it back.
+  const pinned = PIN_STRIP && wide && !reduce;
 
   const outer = useRef<HTMLDivElement | null>(null);
   const track = useRef<HTMLDivElement | null>(null);

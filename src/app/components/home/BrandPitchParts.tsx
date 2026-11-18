@@ -37,9 +37,9 @@ const STORIES = [
 ];
 
 const STEPS = [
-  { n: '01', title: 'Send the pieces', line: 'Three outfits from your range, or a list I can pick up. I plan the story with you.' },
-  { n: '02', title: 'I style and shoot', line: 'A solo or duo outfit story: video, carousel, Reel and Pinterest pins.' },
-  { n: '03', title: 'You see what sold', line: 'Every post carries a WhatsApp tag and your code, with a short sales report after 7 days.' },
+  { n: '01', title: 'Send the pieces', line: 'Three outfits from your range, or a list I can pick up. We plan the story together.' },
+  { n: '02', title: 'I style and film it', line: 'A solo or duo outfit story: a video, a carousel, a Reel and Pinterest pins.' },
+  { n: '03', title: 'You see what sold', line: 'Every post carries a WhatsApp tag and your code, and I send you a short sales report after 7 days.' },
 ];
 
 type Pack = {
@@ -54,17 +54,17 @@ type Pack = {
 };
 
 const PACKS: Pack[] = [
-  { title: 'Solo Outfit Story', line: 'One model, up to three of your outfits.', price: 250000, img: soloImg, pos: '50% 40%', alt: 'A solo outfit story: wide pinstripe trousers and a white shirt with a tie' },
+  { title: 'Solo Outfit Story', line: 'Just me, in up to three of your outfits.', price: 250000, img: soloImg, pos: '50% 40%', alt: 'A solo outfit story: wide pinstripe trousers and a white shirt with a tie' },
   {
     title: 'Duo Outfit Story',
-    line: 'Two models, up to three outfits. The format that has travelled furthest.',
+    line: 'Two of us, up to three outfits. The format that has done best for me.',
     price: 350000,
     img: duoImg,
     pos: '50% 45%',
     alt: 'A duo outfit story: a pair in matching native wear at a sacred grove',
     tag: 'Strongest format',
   },
-  { title: 'Monthly Retainer', line: 'Four stories a month, solo or duo, with a monthly sales report. Three month minimum.', price: 300000, suffix: ' a month', img: retainerImg, pos: '50% 40%', alt: 'A monthly series: a pair in matching green striped polos outside a building' },
+  { title: 'Monthly Retainer', line: 'Four stories a month, solo or duo, with a sales report each month. Three-month minimum.', price: 300000, suffix: ' a month', img: retainerImg, pos: '50% 40%', alt: 'A monthly series: a pair in matching green striped polos outside a building' },
 ];
 
 export function ProofBand() {

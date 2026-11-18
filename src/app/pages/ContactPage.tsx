@@ -14,7 +14,6 @@ const details = [
 
 const projectTypes = [
   'Fashion collaboration / brand campaign',
-  'Design or artwork request',
   'Fashion Finds or a product question',
   'Something else',
 ];
@@ -137,7 +136,7 @@ function BriefForm() {
 export default function ContactPage() {
   const t = useContent();
   return (
-    <InfoPage eyebrow="Get in touch" title="Contact us">
+    <InfoPage eyebrow="Get in touch" title="Say hello">
       <p className="text-center">{t('contact.intro')}</p>
 
       <div className="mt-6">

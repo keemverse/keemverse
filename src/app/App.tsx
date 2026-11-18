@@ -23,8 +23,6 @@ const ContactPage = lazy(() => import('./pages/ContactPage'));
 const RefundPolicyPage = lazy(() => import('./pages/RefundPolicyPage'));
 const PrivacyPolicyPage = lazy(() => import('./pages/PrivacyPolicyPage'));
 const TermsPage = lazy(() => import('./pages/TermsPage'));
-const CheckoutPage = lazy(() => import('./pages/CheckoutPage'));
-const CheckoutSuccessPage = lazy(() => import('./pages/CheckoutSuccessPage'));
 const AdminHomePage = lazy(() => import('./pages/AdminHomePage'));
 const AdminProductsPage = lazy(() => import('./pages/AdminProductsPage'));
 const AdminContentPage = lazy(() => import('./pages/AdminContentPage'));
@@ -96,8 +94,9 @@ export default function App() {
 <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
 <Route path="/terms" element={<TermsPage />} />
 
-<Route path="/checkout" element={<CheckoutPage />} />
-<Route path="/checkout/success" element={<CheckoutSuccessPage />} />
+{/* Nothing is sold on KEEMVERSE any more (18 Nov 2026): old checkout links go home. The pages stay in the repo. */}
+<Route path="/checkout" element={<Navigate to="/" replace />} />
+<Route path="/checkout/success" element={<Navigate to="/" replace />} />
 
 <Route path="/admin" element={<AdminHomePage />} />
 <Route path="/admin/products" element={<AdminProductsPage />} />

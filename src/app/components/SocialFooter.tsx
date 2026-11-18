@@ -12,7 +12,6 @@ const explore = [
 const help = [
   { to: '/about', label: 'About' },
   { to: '/contact', label: 'Contact' },
-  { to: '/refund-policy', label: 'Refund & Delivery' },
   { to: '/privacy-policy', label: 'Privacy Policy' },
   { to: '/terms', label: 'Terms' },
 ];

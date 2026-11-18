@@ -4,7 +4,6 @@ import { SocialFooter } from '../components/SocialFooter';
 import { BurgerMenu } from '../components/ui/BurgerMenu';
 import { GeometricBackdrop } from '../components/GeometricBackdrop';
 import HomeHero from '../components/home/HomeHero';
-import IdentityMarquee from '../components/home/IdentityMarquee';
 import Manifesto from '../components/home/Manifesto';
 import HomeClosing from '../components/home/HomeClosing';
 import HomeBrands from '../components/home/HomeBrands';
@@ -49,7 +48,6 @@ export function LandingPage() {
         <div className="mx-auto max-w-6xl">
           <LandingNav />
           <HomeHero />
-          <IdentityMarquee />
           <Manifesto />
           <HomeBrands />
         </div>
