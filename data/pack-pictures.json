@@ -105,12 +105,12 @@
     "thumbPath": "public/packs/photo-video-thumb.webp",
     "width": 900,
     "height": 1125,
-    "position": "50% 50%",
+    "position": "0% 50%",
     "credit": "",
     "href": "",
     "featured": false,
     "visible": true,
     "order": 6,
-    "updatedAt": "2026-11-18T23:28:25.132Z"
+    "updatedAt": "2026-11-18T23:28:26.802Z"
   }
 ]
