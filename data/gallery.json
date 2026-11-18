@@ -134,7 +134,7 @@
   },
   {
     "id": "same-wall",
-    "title": "Same wall",
+    "title": "Western",
     "note": "Matching leather and hats on a concrete ledge.",
     "kind": "Duo",
     "imageUrl": "/gallery/same-wall.webp",
@@ -149,7 +149,7 @@
     "featured": false,
     "visible": true,
     "order": 8,
-    "updatedAt": "2026-11-18T00:00:00.000Z"
+    "updatedAt": "2026-11-18T22:52:13.405Z"
   },
   {
     "id": "pavement",
